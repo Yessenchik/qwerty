@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Дополнительные данные</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #f0f2f5;
+      padding: 20px;
+      font-size: 14px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+    .form-wrapper {
+      max-width: 480px;
+      background: #fff;
+      padding: 20px;
+      margin: 40px auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      width: 100%;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .btn {
+      font-family: "Segoe UI", sans-serif;
+      font-size: 14px;
+      border: none;
+      border-radius: 4px;
+      padding: 10px;
+      width: 100%;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background-color: #004d99;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .btn-reset {
+      background-color: #ccc;
+      color: #333;
+      margin-top: 20px;
+      margin-bottom: 0;
+    }
+    .button-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .btn-reset:hover {
+      background-color: #bbb;
+    }
+    .arrow {
+      font-weight: normal;
+    }
+    .field-error {
+      color: red;
+      font-size: 0.85em;
+      margin-top: 4px;
+    }
+    .field-error-input {
+      border-color: red !important;
+      box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="form-wrapper">
+    <h2>Дополнительные данные</h2>
+    <form id="additionalForm">
+      <label>Номер удостоверения личности:
+        <input type="text" id="idNumber" required />
+      </label>
+
+      <label>Дата выдачи:
+        <input type="text" id="idIssueDate" required />
+      </label>
+
+      <label>Кем выдан:
+        <input type="text" id="issuedBy" required />
+      </label>
+
+      <button type="button" class="btn btn-reset" id="resetButton">
+        <span class="btn-label">Сбросить данные</span>
+        <span class="arrow">&#128465;</span>
+      </button>
+      <div class="button-row">
+        <button type="button" class="btn btn-primary" onclick="window.location.href='form-documents.html'">
+          <span class="arrow">&#8592;</span>
+          <span class="btn-label">Назад</span>
+        </button>
+        <button type="submit" class="btn btn-primary">
+          <span class="btn-label">Далее</span>
+          <span class="arrow">&#8594;</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script>
+    flatpickr("#idIssueDate", {
+      dateFormat: "Y-m-d",
+      locale: "ru"
+    });
+
+    const form = document.getElementById("additionalForm");
+    const idNumber = document.getElementById("idNumber");
+    const idIssueDate = document.getElementById("idIssueDate");
+    const issuedBy = document.getElementById("issuedBy");
+
+    document.getElementById("resetButton").onclick = () => {
+      form.reset();
+      localStorage.removeItem("studentAdditional");
+    };
+
+    form.onsubmit = (e) => {
+      e.preventDefault();
+      const data = {
+        idNumber: idNumber.value.trim(),
+        idIssueDate: idIssueDate.value.trim(),
+        issuedBy: issuedBy.value
+      };
+      localStorage.setItem("studentAdditional", JSON.stringify(data));
+      alert("Данные сохранены");
+      window.location.href = "form-confirm.html";
+    };
+
+    function validateOnBlur(el, message) {
+      el.addEventListener("blur", () => {
+        const next = el.nextElementSibling;
+        if (next && next.classList.contains("field-error")) next.remove();
+        el.classList.remove("field-error-input");
+        el.style.border = "";
+
+        if (!el.value.trim()) {
+          const error = document.createElement("div");
+          error.className = "field-error";
+          error.textContent = message;
+          el.insertAdjacentElement("afterend", error);
+          el.style.border = "2px solid red";
+          el.classList.add("field-error-input");
+        }
+      });
+    }
+
+    validateOnBlur(document.getElementById("idIssueDate"), "Пожалуйста, укажите дату выдачи");
+    validateOnBlur(document.getElementById("issuedBy"), "Пожалуйста, укажите кем выдано");
+  </script>
+</body>
+</html>

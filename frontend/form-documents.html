@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Документы студента</title>
+  <style>
+    label {
+      display: block;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      margin-top: 4px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-family: "Segoe UI", sans-serif;
+      font-size: 14px;
+    }
+    .date-picker-wrapper input {
+      padding: 10px 12px;
+      background-image: url("data:image/svg+xml;utf8,<svg fill='%23004d99' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 20px 20px;
+      appearance: none;
+      -webkit-appearance: none;
+      border-radius: 6px;
+    }
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #f0f2f5;
+      padding: 20px;
+      font-size: 14px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+    .form-wrapper {
+      max-width: 480px;
+      background: #fff;
+      padding: 20px;
+      margin: 40px auto;
+      border-radius: 6px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      width: 100%;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 20px;
+    }
+    input[type="file"] {
+      width: 100%;
+      padding: 10px 12px;
+      margin-top: 4px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-family: "Segoe UI", sans-serif;
+      font-size: 14px;
+      height: auto;
+    }
+    .btn {
+      font-family: "Segoe UI", sans-serif;
+      font-size: 14px;
+      border: none;
+      border-radius: 6px;
+      padding: 10px;
+      width: 100%;
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+    .btn-primary {
+      background-color: #004d99;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      padding: 10px;
+    }
+    .btn-reset {
+      background-color: #ccc;
+      color: #333;
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .btn-reset:hover {
+      background-color: #bbb;
+    }
+    .arrow {
+      font-weight: normal;
+    }
+    video, canvas {
+      display: block;
+      margin: 10px auto;
+      max-width: 100%;
+    }
+    video {
+      transform: scaleX(-1);
+    }
+    .field-error {
+      color: red;
+      font-size: 0.85em;
+      margin-top: 4px;
+    }
+    .field-error-input {
+      border-color: red !important;
+      box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2);
+    }
+    @media (max-width: 480px) {
+      label {
+        font-size: 13px;
+      }
+      input, select, input[type="file"], .date-picker-wrapper input {
+        font-size: 13px;
+        padding: 10px 12px;
+      }
+    }
+    .toast {
+      position: fixed;
+      background-color: #333;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      z-index: 9999;
+    }
+    .toast.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    @media (min-width: 481px) {
+      .toast {
+        bottom: 20px;
+        right: 20px;
+        transform: translateY(20px);
+      }
+      .toast.show {
+        transform: translateY(0);
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+</head>
+<body>
+  <div id="toast" class="toast">Уведомление</div>
+  <div class="form-wrapper">
+    <h2>Загрузка документов</h2>
+    <form id="documentForm" novalidate>
+      <label>Удостоверение личности (фото или скан):
+        <input type="file" id="idCard" accept="image/*,application/pdf" />
+        <img id="idCardPreview" alt="Предпросмотр удостоверения" style="display:none; max-height:150px; margin-top:10px;"/>
+      </label>
+
+      <label>Справка о месте обучения:
+        <input type="file" id="universityProof" accept="image/*,application/pdf" />
+        <img id="universityProofPreview" alt="Предпросмотр справки" style="display:none; max-height:150px; margin-top:10px;"/>
+      </label>
+
+      <label>Селфи с камерой:</label>
+      <div id="mobileSelfie" style="display: none;">
+        <input type="file" id="selfieUpload" accept="image/*" capture="user" />
+      </div>
+      <div id="desktopSelfie">
+        <button type="button" class="btn btn-primary" onclick="captureSelfie()">
+          <span class="btn-label">Сделать селфи</span>
+        </button>
+        <video id="video" autoplay playsinline muted width="100%" style="display:none;"></video>
+        <canvas id="canvas" style="display:none;"></canvas>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <h2 style="text-align: center; margin-bottom: 20px; font-size: 20px;">Дополнительные данные</h2>
+
+        <label>Номер удостоверение личности:
+          <input type="text" id="documentNumber" inputmode="numeric" pattern="\d*"/>
+        </label>
+
+        <label>Дата выдачи документа:</label>
+        <div class="date-picker-wrapper">
+          <input type="text" id="documentIssueDate" placeholder="Выберите дату" />
+        </div>
+
+        <label>Кем выдан:
+          <input type="text" id="documentIssuer" />
+        </label>
+      </div>
+
+      <button type="button" class="btn btn-reset" id="resetButton">
+        <span class="btn-label">Сбросить данные</span>
+        <span class="arrow">&#128465;</span>
+      </button>
+
+      <div style="display: flex; flex-direction: row; justify-content: space-between; gap: 10px; margin-top: 20px;">
+        <button type="button" class="btn btn-primary" id="backButton">
+          <span class="arrow">&#8592;</span>
+          <span class="btn-label">Назад</span>
+        </button>
+
+        <button type="submit" class="btn btn-primary" id="nextButton">
+          <span class="btn-label">Далее</span>
+          <span class="arrow">&#8594;</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById("documentForm");
+    const idCardInput = document.getElementById("idCard");
+    const universityProofInput = document.getElementById("universityProof");
+    const selfieUpload = document.getElementById("selfieUpload");
+    const idCardPreview = document.getElementById("idCardPreview");
+    const universityProofPreview = document.getElementById("universityProofPreview");
+    const canvas = document.getElementById("canvas");
+    const video = document.getElementById("video");
+    const mobileSelfieDiv = document.getElementById('mobileSelfie');
+    const desktopSelfieDiv = document.getElementById('desktopSelfie');
+    const documentNumberInput = document.getElementById("documentNumber");
+    // Автоматическая очистка от нецифровых символов
+    documentNumberInput.addEventListener("input", () => {
+      documentNumberInput.value = documentNumberInput.value.replace(/\D/g, '');
+    });
+    const documentIssueDateInput = document.getElementById("documentIssueDate");
+    const documentIssuerInput = document.getElementById("documentIssuer");
+    const resetButton = document.getElementById("resetButton");
+    const backButton = document.getElementById("backButton");
+    const nextButton = document.getElementById("nextButton");
+
+    // Показать нужную версию селфи
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+      mobileSelfieDiv.style.display = 'block';
+      desktopSelfieDiv.style.display = 'none';
+    } else {
+      mobileSelfieDiv.style.display = 'none';
+      desktopSelfieDiv.style.display = 'block';
+    }
+
+    // Превью для idCard
+    idCardInput.addEventListener('change', () => {
+      previewFile(idCardInput, idCardPreview);
+    });
+
+    // Превью для universityProof
+    universityProofInput.addEventListener('change', () => {
+      previewFile(universityProofInput, universityProofPreview);
+    });
+
+    // Превью для selfieUpload (мобильное)
+    selfieUpload.addEventListener('change', () => {
+      if (selfieUpload.files.length) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const ctx = canvas.getContext('2d');
+          const img = new Image();
+          img.onload = function() {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
+            canvas.style.display = 'block';
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(selfieUpload.files[0]);
+      } else {
+        clearCanvas();
+      }
+    });
+
+    function previewFile(inputElement, previewImg) {
+      if (inputElement.files && inputElement.files[0]) {
+        const file = inputElement.files[0];
+        if (file.type.startsWith("image/")) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            previewImg.style.display = 'block';
+          };
+          reader.readAsDataURL(file);
+        } else {
+          previewImg.src = '';
+          previewImg.style.display = 'none';
+        }
+      } else {
+        previewImg.src = '';
+        previewImg.style.display = 'none';
+      }
+    }
+
+    function clearCanvas() {
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      canvas.style.display = 'none';
+    }
+
+    // Сброс формы и очистка localStorage, preview, canvas и ошибок
+    resetButton.onclick = function () {
+      form.reset();
+      localStorage.removeItem("studentDocuments");
+      clearCanvas();
+      idCardPreview.src = '';
+      idCardPreview.style.display = 'none';
+      universityProofPreview.src = '';
+      universityProofPreview.style.display = 'none';
+      document.querySelectorAll(".field-error").forEach(e => e.remove());
+      document.querySelectorAll(".field-error-input").forEach(el => {
+        el.classList.remove("field-error-input");
+        el.style.border = "";
+      });
+    };
+
+    // Функция для селфи через камеру (десктоп) с отсчётом
+    function captureSelfie() {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+          video.srcObject = stream;
+          video.style.display = 'block';
+          video.onloadedmetadata = () => {
+            video.play();
+            // Отсчёт перед захватом
+            let countdown = 3;
+            const countdownElement = document.createElement('div');
+            countdownElement.id = 'countdown-overlay';
+            // Новый стиль для countdownElement
+            countdownElement.style.position = 'absolute';
+            countdownElement.style.top = video.offsetTop + 10 + 'px';
+            countdownElement.style.left = video.offsetLeft + 10 + 'px';
+            countdownElement.style.transform = 'none';
+            countdownElement.style.fontSize = '2rem';
+            countdownElement.style.fontWeight = 'bold';
+            countdownElement.style.color = '#004d99';
+            countdownElement.style.background = 'rgba(255,255,255,0.8)';
+            countdownElement.style.padding = '10px 20px';
+            countdownElement.style.borderRadius = '8px';
+            countdownElement.style.zIndex = 1000;
+            countdownElement.textContent = countdown;
+            document.body.appendChild(countdownElement);
+
+            const timer = setInterval(() => {
+              countdown--;
+              if (countdown > 0) {
+                countdownElement.textContent = countdown;
+              } else {
+                clearInterval(timer);
+                countdownElement.remove();
+                const context = canvas.getContext('2d');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                context.translate(canvas.width, 0);
+                context.scale(-1, 1);
+                context.drawImage(video, 0, 0);
+                stream.getTracks().forEach(track => track.stop());
+                canvas.style.display = 'block';
+                video.style.display = 'none';
+              }
+            }, 1000);
+          };
+        })
+        .catch(err => alert('Ошибка доступа к камере: ' + err));
+    }
+
+    // Функция сбора данных формы
+    function collectFormData() {
+      const idCardFile = idCardInput.files.length ? idCardInput.files[0] : null;
+      const universityProofFile = universityProofInput.files.length ? universityProofInput.files[0] : null;
+
+      return new Promise((resolve) => {
+        // Прочитать файлы idCard и universityProof в base64
+        Promise.all([
+          fileToBase64(idCardFile),
+          fileToBase64(universityProofFile)
+        ]).then(([idCardBase64, universityProofBase64]) => {
+          let selfieData = null;
+          if (isMobile) {
+            if (selfieUpload.files.length) {
+              // Мобильное селфи - берем файл selfieUpload и конвертируем в base64
+              fileToBase64(selfieUpload.files[0]).then(base64 => {
+                selfieData = base64 || null;
+                resolve({
+                  documentNumber: documentNumberInput.value.trim(),
+                  documentIssueDate: documentIssueDateInput.value.trim(),
+                  documentIssuer: documentIssuerInput.value.trim(),
+                  selfieUploaded: selfieData,
+                  idCardPreview: idCardBase64,
+                  universityProofPreview: universityProofBase64
+                });
+              });
+              return;
+            } else {
+              selfieData = null;
+            }
+          } else {
+            // Десктоп - берем данные из canvas если есть
+            if (canvas.style.display !== 'none') {
+              selfieData = canvas.toDataURL();
+            } else {
+              selfieData = null;
+            }
+          }
+          resolve({
+            documentNumber: documentNumberInput.value.trim(),
+            documentIssueDate: documentIssueDateInput.value.trim(),
+            documentIssuer: documentIssuerInput.value.trim(),
+            selfieUploaded: selfieData,
+            idCardPreview: idCardBase64,
+            universityProofPreview: universityProofBase64
+          });
+        });
+      });
+    }
+
+    // Конвертация файла в base64
+    function fileToBase64(file) {
+      return new Promise((resolve) => {
+        if (!file) {
+          resolve(null);
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          resolve(e.target.result);
+        };
+        reader.onerror = function() {
+          resolve(null);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Сохранение данных в localStorage
+    function saveToLocalStorage(data) {
+      localStorage.setItem("studentDocuments", JSON.stringify(data));
+    }
+
+    // Загрузка данных из localStorage при загрузке страницы
+    window.onload = function() {
+      flatpickr("#documentIssueDate", {
+        dateFormat: "Y-m-d",
+        locale: "ru"
+      });
+
+      const savedData = localStorage.getItem("studentDocuments");
+      if (!savedData) return;
+      let data = null;
+      try {
+        data = JSON.parse(savedData);
+      } catch {
+        return;
+      }
+      if (!data) return;
+
+      if (data.documentNumber) documentNumberInput.value = data.documentNumber;
+      if (data.documentIssueDate) documentIssueDateInput.value = data.documentIssueDate;
+      if (data.documentIssuer) documentIssuerInput.value = data.documentIssuer;
+
+      // Вставляем превью idCard
+      if (data.idCardPreview) {
+        idCardPreview.src = data.idCardPreview;
+        idCardPreview.style.display = 'block';
+      } else {
+        idCardPreview.src = '';
+        idCardPreview.style.display = 'none';
+      }
+
+      // Вставляем превью universityProof
+      if (data.universityProofPreview) {
+        universityProofPreview.src = data.universityProofPreview;
+        universityProofPreview.style.display = 'block';
+      } else {
+        universityProofPreview.src = '';
+        universityProofPreview.style.display = 'none';
+      }
+
+      // Отрисовываем селфи
+      if (data.selfieUploaded) {
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        img.onload = function() {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0);
+          canvas.style.display = 'block';
+          if (!isMobile) {
+            video.style.display = 'none';
+          }
+        };
+        img.src = data.selfieUploaded;
+      } else {
+        clearCanvas();
+      }
+    };
+
+    // Обработчик кнопки "Назад"
+    backButton.onclick = function() {
+      collectFormData().then(data => {
+        saveToLocalStorage(data);
+        window.location.href = "form-personal.html";
+      });
+    };
+
+    // Обработчик кнопки "Далее" и сабмит формы
+    form.onsubmit = function(e) {
+      e.preventDefault();
+
+      let hasErrors = false;
+
+      removeError(documentNumberInput);
+      removeError(documentIssueDateInput);
+      removeError(documentIssuerInput);
+
+      if (!documentNumberInput.value.trim() || !/^\d+$/.test(documentNumberInput.value.trim())) {
+        showError(documentNumberInput, "Введите номер удостоверения");
+        hasErrors = true;
+      }
+      if (!documentIssueDateInput.value.trim()) {
+        showError(documentIssueDateInput, "Выберите дату выдачи");
+        hasErrors = true;
+      }
+      if (!documentIssuerInput.value.trim()) {
+        showError(documentIssuerInput, "Введите кем выдан документ");
+        hasErrors = true;
+      }
+
+      if (hasErrors) {
+        showToast("Пожалуйста, исправьте ошибки в форме");
+        return;
+      }
+
+      // Проверка данных со страницы form-personal.html
+      const personalDataRaw = localStorage.getItem("studentFormData");
+      if (!personalDataRaw) {
+        alert("Личные данные не найдены. Пожалуйста, заполните предыдущую форму.");
+        window.location.href = "form-personal.html";
+        return;
+      }
+
+      let personalData;
+      try {
+        personalData = JSON.parse(personalDataRaw);
+      } catch (e) {
+        alert("Ошибка чтения личных данных. Повторите ввод.");
+        window.location.href = "form-personal.html";
+        return;
+      }
+
+      if (
+        !personalData.fullName ||
+        !personalData.birthDate ||
+        !personalData.phone ||
+        personalData.fullName.trim() === "" ||
+        personalData.birthDate.trim() === "" ||
+        personalData.phone.trim() === ""
+      ) {
+        alert("Личные данные заполнены некорректно. Вернитесь и проверьте информацию.");
+        window.location.href = "form-personal.html";
+        return;
+      }
+
+      collectFormData().then(data => {
+        saveToLocalStorage(data);
+        showToast("Данные сохранены");
+        window.location.href = "form-success.html";
+      });
+    };
+
+    // Всплывающее уведомление
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.remove("show");
+      void toast.offsetWidth;
+      toast.classList.add("show");
+      clearTimeout(toast.hideTimeout);
+      toast.hideTimeout = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3000);
+    }
+
+    // Валидация полей
+    function showError(el, message) {
+      removeError(el);
+      const error = document.createElement("div");
+      error.className = "field-error";
+      error.textContent = message;
+      el.insertAdjacentElement("afterend", error);
+      el.style.border = "2px solid red";
+      el.classList.add("field-error-input");
+    }
+
+    function removeError(el) {
+      const next = el.nextElementSibling;
+      if (next && next.classList.contains("field-error")) {
+        next.remove();
+      }
+      el.style.border = "";
+      el.classList.remove("field-error-input");
+    }
+
+    function validateOnBlur(el, message, pattern = null) {
+      el.addEventListener("blur", () => {
+        removeError(el);
+        if (!el.value.trim()) {
+          showError(el, message);
+        } else if (pattern && !pattern.test(el.value.trim())) {
+          showError(el, message);
+        }
+      });
+    }
+
+    validateOnBlur(documentNumberInput, "Введите номер удостоверения", /^\d+$/);
+    validateOnBlur(documentIssueDateInput, "Выберите дату выдачи");
+    validateOnBlur(documentIssuerInput, "Введите кем выдан документ");
+  </script>
+</body>
+</html>
