@@ -158,6 +158,35 @@
         transform: translateY(0);
       }
     }
+
+    .gender-selection {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .gender-card {
+      flex: 1;
+      background-color: #fff;
+      border: 2px solid #ccc;
+      border-radius: 6px;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: bold;
+      transition: border-color 0.3s, background-color 0.3s, color 0.3s;
+    }
+    .gender-card input[type="radio"] {
+      display: none;
+    }
+    .gender-card:hover {
+      border-color: #004d99;
+    }
+    .gender-card.selected {
+      border-color: #004d99;
+      background-color: #004d99;
+      color: white;
+    }
   </style>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -165,19 +194,19 @@
 <body>
   <div id="toast" class="toast">Уведомление</div>
   <div class="form-wrapper">
-    <h2>Загрузка документов</h2>
+    <h2>Загрузка документов студента</h2>
     <form id="documentForm" novalidate>
-      <label>Удостоверение личности (фото или скан):
+      <label>Удостоверение личности (фотография или скан-копия):
         <input type="file" id="idCard" accept="image/*,application/pdf" />
         <img id="idCardPreview" alt="Предпросмотр удостоверения" style="display:none; max-height:150px; margin-top:10px;"/>
       </label>
 
-      <label>Справка о месте обучения:
+      <label>Справка с места учёбы:
         <input type="file" id="universityProof" accept="image/*,application/pdf" />
         <img id="universityProofPreview" alt="Предпросмотр справки" style="display:none; max-height:150px; margin-top:10px;"/>
       </label>
 
-      <label>Селфи с камерой:</label>
+      <label>Фотография (селфи) с камерой устройства:</label>
       <div id="mobileSelfie" style="display: none;">
         <input type="file" id="selfieUpload" accept="image/*" capture="user" />
       </div>
@@ -192,7 +221,7 @@
       <div style="margin-top: 20px;">
         <h2 style="text-align: center; margin-bottom: 20px; font-size: 20px;">Дополнительные данные</h2>
 
-        <label>Номер удостоверение личности:
+        <label>Номер удостоверения личности:
           <input type="text" id="documentNumber" inputmode="numeric" pattern="\d*"/>
         </label>
 
@@ -201,9 +230,33 @@
           <input type="text" id="documentIssueDate" placeholder="Выберите дату" />
         </div>
 
-        <label>Кем выдан:
+        <label>Орган, выдавший документ:
           <input type="text" id="documentIssuer" />
         </label>
+
+        <label>Являетесь ли Вы магистрантом?</label>
+        <div class="gender-selection">
+          <label class="gender-card">
+            <input type="radio" name="isGraduate" value="Да" />
+            Да
+          </label>
+          <label class="gender-card">
+            <input type="radio" name="isGraduate" value="Нет" />
+            Нет
+          </label>
+        </div>
+
+        <label>Наличие инвалидности:</label>
+        <div class="gender-selection">
+          <label class="gender-card">
+            <input type="radio" name="hasDisability" value="Есть" />
+            Есть
+          </label>
+          <label class="gender-card">
+            <input type="radio" name="hasDisability" value="Нету" />
+            Нету
+          </label>
+        </div>
       </div>
 
       <button type="button" class="btn btn-reset" id="resetButton">
@@ -329,6 +382,12 @@
         el.classList.remove("field-error-input");
         el.style.border = "";
       });
+      // Убрать выделения radio-кнопок и ошибки
+      document.querySelectorAll(".gender-card").forEach(card => card.classList.remove("selected"));
+      document.querySelectorAll(".gender-selection + .field-error").forEach(err => err.remove());
+      // Сбросить выбор radio-кнопок
+      document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+      // (end radio reset)
     };
 
     // Функция для селфи через камеру (десктоп) с отсчётом
@@ -386,46 +445,49 @@
       const idCardFile = idCardInput.files.length ? idCardInput.files[0] : null;
       const universityProofFile = universityProofInput.files.length ? universityProofInput.files[0] : null;
 
+      const idCardBase64Promise = idCardFile
+        ? fileToBase64(idCardFile)
+        : Promise.resolve(idCardPreview.src || null);
+
+      const universityProofBase64Promise = universityProofFile
+        ? fileToBase64(universityProofFile)
+        : Promise.resolve(universityProofPreview.src || null);
+
       return new Promise((resolve) => {
-        // Прочитать файлы idCard и universityProof в base64
-        Promise.all([
-          fileToBase64(idCardFile),
-          fileToBase64(universityProofFile)
-        ]).then(([idCardBase64, universityProofBase64]) => {
+        Promise.all([idCardBase64Promise, universityProofBase64Promise]).then(([idCardBase64, universityProofBase64]) => {
           let selfieData = null;
           if (isMobile) {
             if (selfieUpload.files.length) {
-              // Мобильное селфи - берем файл selfieUpload и конвертируем в base64
               fileToBase64(selfieUpload.files[0]).then(base64 => {
-                selfieData = base64 || null;
+                selfieData = base64 || (canvas.style.display !== 'none' ? canvas.toDataURL() : null);
                 resolve({
                   documentNumber: documentNumberInput.value.trim(),
                   documentIssueDate: documentIssueDateInput.value.trim(),
                   documentIssuer: documentIssuerInput.value.trim(),
                   selfieUploaded: selfieData,
                   idCardPreview: idCardBase64,
-                  universityProofPreview: universityProofBase64
+                  universityProofPreview: universityProofBase64,
+                  isGraduate: document.querySelector('input[name="isGraduate"]:checked')?.value || "",
+                  hasDisability: document.querySelector('input[name="hasDisability"]:checked')?.value || ""
                 });
               });
               return;
             } else {
-              selfieData = null;
+              selfieData = canvas.style.display !== 'none' ? canvas.toDataURL() : null;
             }
           } else {
-            // Десктоп - берем данные из canvas если есть
-            if (canvas.style.display !== 'none') {
-              selfieData = canvas.toDataURL();
-            } else {
-              selfieData = null;
-            }
+            selfieData = canvas.style.display !== 'none' ? canvas.toDataURL() : null;
           }
+
           resolve({
             documentNumber: documentNumberInput.value.trim(),
             documentIssueDate: documentIssueDateInput.value.trim(),
             documentIssuer: documentIssuerInput.value.trim(),
             selfieUploaded: selfieData,
             idCardPreview: idCardBase64,
-            universityProofPreview: universityProofBase64
+            universityProofPreview: universityProofBase64,
+            isGraduate: document.querySelector('input[name="isGraduate"]:checked')?.value || "",
+            hasDisability: document.querySelector('input[name="hasDisability"]:checked')?.value || ""
           });
         });
       });
@@ -474,6 +536,20 @@
       if (data.documentNumber) documentNumberInput.value = data.documentNumber;
       if (data.documentIssueDate) documentIssueDateInput.value = data.documentIssueDate;
       if (data.documentIssuer) documentIssuerInput.value = data.documentIssuer;
+      if (data.isGraduate) {
+        const input = document.querySelector(`input[name="isGraduate"][value="${data.isGraduate}"]`);
+        if (input) {
+          input.checked = true;
+          input.parentElement.classList.add("selected");
+        }
+      }
+      if (data.hasDisability) {
+        const input = document.querySelector(`input[name="hasDisability"][value="${data.hasDisability}"]`);
+        if (input) {
+          input.checked = true;
+          input.parentElement.classList.add("selected");
+        }
+      }
 
       // Вставляем превью idCard
       if (data.idCardPreview) {
@@ -521,7 +597,20 @@
       });
     };
 
-    // Обработчик кнопки "Далее" и сабмит формы
+    // Создаем контейнер для ошибки селфи (один раз)
+    let selfieErrorContainerEl = null;
+    function getSelfieErrorContainer() {
+      if (selfieErrorContainerEl && selfieErrorContainerEl.parentNode) return selfieErrorContainerEl;
+      selfieErrorContainerEl = document.createElement("div");
+      selfieErrorContainerEl.className = "selfie-error-container";
+      if (isMobile) {
+        selfieUpload.insertAdjacentElement("afterend", selfieErrorContainerEl);
+      } else {
+        canvas.insertAdjacentElement("afterend", selfieErrorContainerEl);
+      }
+      return selfieErrorContainerEl;
+    }
+
     form.onsubmit = function(e) {
       e.preventDefault();
 
@@ -531,16 +620,67 @@
       removeError(documentIssueDateInput);
       removeError(documentIssuerInput);
 
+      // Remove previous errors for file inputs
+      removeError(idCardInput);
+      removeError(universityProofInput);
+
+      // Remove previous errors for radio groups
+      const isGraduateInput = document.querySelector('input[name="isGraduate"]:checked');
+      const hasDisabilityInput = document.querySelector('input[name="hasDisability"]:checked');
+
+      // Remove previous errors
+      document.querySelectorAll('input[name="isGraduate"]').forEach(el => removeError(el));
+      document.querySelectorAll('input[name="hasDisability"]').forEach(el => removeError(el));
+
+      // Удаляем ошибку селфи
+      const selfieErrorContainer = getSelfieErrorContainer();
+      removeError(selfieErrorContainer);
+
+      // Validate document number
       if (!documentNumberInput.value.trim() || !/^\d+$/.test(documentNumberInput.value.trim())) {
         showError(documentNumberInput, "Введите номер удостоверения");
         hasErrors = true;
       }
+      // Validate issue date
       if (!documentIssueDateInput.value.trim()) {
         showError(documentIssueDateInput, "Выберите дату выдачи");
         hasErrors = true;
       }
+      // Validate issuer
       if (!documentIssuerInput.value.trim()) {
         showError(documentIssuerInput, "Введите кем выдан документ");
+        hasErrors = true;
+      }
+
+      // Validate file inputs (idCardInput and universityProofInput)
+      if (!idCardInput.files.length) {
+        showError(idCardInput, "Загрузите удостоверение личности");
+        hasErrors = true;
+      }
+      if (!universityProofInput.files.length) {
+        showError(universityProofInput, "Загрузите справку о месте обучения");
+        hasErrors = true;
+      }
+
+      // Validate radio buttons
+      if (!isGraduateInput) {
+        showError(document.querySelector('input[name="isGraduate"]'), "Выберите вариант для 'Магистрант'");
+        hasErrors = true;
+      }
+      if (!hasDisabilityInput) {
+        showError(document.querySelector('input[name="hasDisability"]'), "Выберите вариант для 'Инвалидность'");
+        hasErrors = true;
+      }
+
+      // Проверка селфи
+      let isSelfieProvided = false;
+      if (isMobile) {
+        isSelfieProvided = selfieUpload.files.length > 0;
+      } else {
+        isSelfieProvided = canvas && canvas.style.display !== "none";
+      }
+      if (!isSelfieProvided) {
+        showError(selfieErrorContainer, "Сделайте или загрузите селфи");
         hasErrors = true;
       }
 
@@ -551,6 +691,7 @@
 
       // Проверка данных со страницы form-personal.html
       const personalDataRaw = localStorage.getItem("studentFormData");
+      console.log("Raw data:", personalDataRaw);
       if (!personalDataRaw) {
         alert("Личные данные не найдены. Пожалуйста, заполните предыдущую форму.");
         window.location.href = "form-personal.html";
@@ -560,6 +701,7 @@
       let personalData;
       try {
         personalData = JSON.parse(personalDataRaw);
+        console.log("Parsed data:", personalData);
       } catch (e) {
         alert("Ошибка чтения личных данных. Повторите ввод.");
         window.location.href = "form-personal.html";
@@ -567,11 +709,11 @@
       }
 
       if (
-        !personalData.fullName ||
-        !personalData.birthDate ||
+        !personalData.firstName ||
+        !personalData.lastName ||
         !personalData.phone ||
-        personalData.fullName.trim() === "" ||
-        personalData.birthDate.trim() === "" ||
+        personalData.firstName.trim() === "" ||
+        personalData.lastName.trim() === "" ||
         personalData.phone.trim() === ""
       ) {
         alert("Личные данные заполнены некорректно. Вернитесь и проверьте информацию.");
@@ -605,18 +747,53 @@
       const error = document.createElement("div");
       error.className = "field-error";
       error.textContent = message;
-      el.insertAdjacentElement("afterend", error);
-      el.style.border = "2px solid red";
-      el.classList.add("field-error-input");
+      // Если это контейнер для селфи-ошибки, просто append
+      if (el.classList && el.classList.contains("selfie-error-container")) {
+        el.appendChild(error);
+      } else if (el.type === "radio") {
+        const group = document.querySelectorAll(`input[name="${el.name}"]`);
+        const groupWrapper = group[0].closest(".gender-selection");
+        group.forEach(input => {
+          input.classList.add("field-error-input");
+          input.parentElement.style.border = "2px solid red";
+        });
+        if (groupWrapper && !groupWrapper.nextElementSibling?.classList.contains("field-error")) {
+          const error = document.createElement("div");
+          error.className = "field-error";
+          error.textContent = message;
+          groupWrapper.insertAdjacentElement("afterend", error);
+        }
+      } else {
+        el.insertAdjacentElement("afterend", error);
+        el.style.border = "2px solid red";
+        el.classList.add("field-error-input");
+      }
     }
 
     function removeError(el) {
-      const next = el.nextElementSibling;
-      if (next && next.classList.contains("field-error")) {
-        next.remove();
+      // Если это контейнер для селфи-ошибки, удаляем все field-error внутри
+      if (el.classList && el.classList.contains("selfie-error-container")) {
+        Array.from(el.querySelectorAll(".field-error")).forEach(e => e.remove());
+      } else if (el.type === "radio") {
+        const group = document.querySelectorAll(`input[name="${el.name}"]`);
+        group.forEach(input => {
+          input.classList.remove("field-error-input");
+          input.parentElement.style.border = "";
+        });
+        // Также удалим ошибку после .gender-selection
+        const groupWrapper = el.closest(".gender-selection");
+        const next = groupWrapper?.nextElementSibling;
+        if (next && next.classList.contains("field-error")) {
+          next.remove();
+        }
+      } else {
+        const next = el.nextElementSibling;
+        if (next && next.classList.contains("field-error")) {
+          next.remove();
+        }
+        el.style.border = "";
+        el.classList.remove("field-error-input");
       }
-      el.style.border = "";
-      el.classList.remove("field-error-input");
     }
 
     function validateOnBlur(el, message, pattern = null) {
@@ -633,6 +810,18 @@
     validateOnBlur(documentNumberInput, "Введите номер удостоверения", /^\d+$/);
     validateOnBlur(documentIssueDateInput, "Выберите дату выдачи");
     validateOnBlur(documentIssuerInput, "Введите кем выдан документ");
+
+    // Активация .selected у выбранной radio-кнопки
+    document.querySelectorAll('.gender-card input[type="radio"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        const group = radio.closest('.gender-selection');
+        if (group) {
+          group.querySelectorAll('.gender-card').forEach(card => card.classList.remove('selected'));
+        }
+        radio.parentElement.classList.add('selected');
+        removeError(radio); // удаление ошибки при выборе
+      });
+    });
   </script>
 </body>
 </html>

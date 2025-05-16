@@ -336,7 +336,7 @@
   <div id="toast" class="toast">Уведомление</div>
   <div class="form-wrapper">
     <h2>Личные данные</h2>
-    <form id="addStudentForm">
+    <form id="addStudentForm" novalidate>
       <label>Фамилия:
         <input type="text" id="inputLastName" required />
       </label>
@@ -637,8 +637,8 @@
     relativePhoneInput.addEventListener("input", formatPhoneInput);
 
     function showError(el, message) {
-      removeError(el); // в случае повторной ошибки, убираем предыдущую
-
+      removeError(el);
+      // Gender radio group special handling
       if (el.name === "gender") {
         const genderError = document.querySelector(".gender-selection + .field-error");
         if (!genderError) {
@@ -649,34 +649,108 @@
         }
         document.getElementById("genderLabel")?.classList.add("field-error");
         document.querySelectorAll(".gender-card").forEach(card => {
-          card.style.borderColor = "red";
+          card.classList.add("field-error-input");
         });
       } else {
-        const error = document.createElement("div");
-        error.className = "field-error";
-        error.textContent = message;
-        el.insertAdjacentElement("afterend", error);
-        el.style.border = "2px solid red";
-        el.classList.add("field-error-input");
+        // For selects, place error after the custom select display
+        if (el.tagName === "SELECT" && el.id === "inputUniversity") {
+          const display = document.getElementById("displayUniversity");
+          const error = document.createElement("div");
+          error.className = "field-error";
+          error.textContent = message;
+          display.insertAdjacentElement("afterend", error);
+          display.classList.add("field-error-input");
+        } else if (el.tagName === "SELECT" && el.id === "inputRelative") {
+          const display = document.getElementById("displayRelative");
+          const error = document.createElement("div");
+          error.className = "field-error";
+          error.textContent = message;
+          display.insertAdjacentElement("afterend", error);
+          display.classList.add("field-error-input");
+        } else if (el.tagName === "SELECT" && el.id === "inputRentalPeriod") {
+          const display = document.getElementById("displayRentalPeriod");
+          const error = document.createElement("div");
+          error.className = "field-error";
+          error.textContent = message;
+          display.insertAdjacentElement("afterend", error);
+          display.classList.add("field-error-input");
+        } else if (el.id === "inputMoveInDate") {
+          // Date input: place error after date-picker-wrapper
+          const wrapper = el.closest(".date-picker-wrapper");
+          if (wrapper) {
+            const error = document.createElement("div");
+            error.className = "field-error";
+            error.textContent = message;
+            wrapper.insertAdjacentElement("afterend", error);
+            el.classList.add("field-error-input");
+          }
+        } else {
+          // Default: after input
+          const error = document.createElement("div");
+          error.className = "field-error";
+          error.textContent = message;
+          el.insertAdjacentElement("afterend", error);
+          el.classList.add("field-error-input");
+        }
       }
     }
 
     function removeError(el) {
+      // Gender radio group special handling
+      if (el.name === "gender") {
+        document.getElementById("genderLabel")?.classList.remove("field-error");
+        document.querySelectorAll(".gender-card").forEach(card => {
+          card.classList.remove("field-error-input");
+        });
+        const genderError = document.querySelector(".gender-selection + .field-error");
+        if (genderError) genderError.remove();
+        return;
+      }
+      // For selects, error is after display
+      if (el.tagName === "SELECT" && el.id === "inputUniversity") {
+        const display = document.getElementById("displayUniversity");
+        const next = display.nextElementSibling;
+        if (next && next.classList.contains("field-error")) {
+          next.remove();
+        }
+        display.classList.remove("field-error-input");
+        return;
+      }
+      if (el.tagName === "SELECT" && el.id === "inputRelative") {
+        const display = document.getElementById("displayRelative");
+        const next = display.nextElementSibling;
+        if (next && next.classList.contains("field-error")) {
+          next.remove();
+        }
+        display.classList.remove("field-error-input");
+        return;
+      }
+      if (el.tagName === "SELECT" && el.id === "inputRentalPeriod") {
+        const display = document.getElementById("displayRentalPeriod");
+        const next = display.nextElementSibling;
+        if (next && next.classList.contains("field-error")) {
+          next.remove();
+        }
+        display.classList.remove("field-error-input");
+        return;
+      }
+      if (el.id === "inputMoveInDate") {
+        const wrapper = el.closest(".date-picker-wrapper");
+        if (wrapper) {
+          const next = wrapper.nextElementSibling;
+          if (next && next.classList.contains("field-error")) {
+            next.remove();
+          }
+        }
+        el.classList.remove("field-error-input");
+        return;
+      }
+      // Default: after input
       const next = el.nextElementSibling;
       if (next && next.classList.contains("field-error")) {
         next.remove();
       }
-      el.style.border = "";
       el.classList.remove("field-error-input");
-      // Remove highlight from gender label if gender input
-      if (el.name === "gender") {
-        document.getElementById("genderLabel")?.classList.remove("field-error");
-        document.querySelectorAll(".gender-card").forEach(card => {
-          card.style.borderColor = "#ccc";
-        });
-        const genderError = document.querySelector(".gender-selection + .field-error");
-        if (genderError) genderError.remove();
-      }
     }
 
     document.getElementById("addStudentForm").addEventListener("submit", function(e) {
@@ -691,41 +765,72 @@
       const rentalPeriod = document.getElementById("inputRentalPeriod");
       const gender = document.querySelector('input[name="gender"]:checked');
 
+      // Remove all previous errors and borders
+      // For all required fields, also remove errors from custom select displays
+      [
+        lastName, firstName, iin, phone, rPhone, university, relative, moveInDate, rentalPeriod
+      ].forEach(el => removeError(el));
+      removeError(document.querySelector('input[name="gender"]'));
+
+      // Remove all .field-error for good measure
+      document.querySelectorAll(".field-error").forEach(e => e.remove());
+      document.querySelectorAll(".field-error-input").forEach(e => e.classList.remove("field-error-input"));
+
       // Удаление выделения и повторное выделение выбранного пола
       document.querySelectorAll(".gender-card").forEach(card => card.classList.remove("selected"));
       if (gender) gender.parentElement.classList.add("selected");
 
-      const requiredFields = [lastName, firstName, iin, phone, rPhone, university, relative, moveInDate, rentalPeriod];
+      const requiredFields = [
+        { el: lastName, name: "Фамилия" },
+        { el: firstName, name: "Имя" },
+        { el: iin, name: "ИИН" },
+        { el: phone, name: "Телефон номер студента" },
+        { el: rPhone, name: "Телефон номер родственника" },
+        { el: university, name: "Место обучения" },
+        { el: relative, name: "Родственник" },
+        { el: moveInDate, name: "Дата заселения" },
+        { el: rentalPeriod, name: "Срок аренды" }
+      ];
       let isValid = true;
 
+      // Gender
       if (!gender) {
         showError(document.querySelector('input[name="gender"]'), "Пожалуйста, выберите пол");
         isValid = false;
       }
 
-      requiredFields.forEach(el => {
-        removeError(el);
-        if (!el || !el.value.trim()) {
+      // Required
+      requiredFields.forEach(obj => {
+        const el = obj.el;
+        // For select, check value
+        if (!el || !el.value || !el.value.trim()) {
           showError(el, "Поле обязательно");
           isValid = false;
         }
       });
 
-      if (!/^\d{12}$/.test(iin.value)) {
+      // IIN: 12 digits
+      if (iin.value && !/^\d{12}$/.test(iin.value)) {
         showError(iin, "Введите ИИН из 12 цифр");
         isValid = false;
       }
 
+      // Phone pattern
       const phonePattern = /^\+7 \d{3} \d{3} \d{4}$/;
-      if (!phonePattern.test(phone.value)) {
+      if (phone.value && !phonePattern.test(phone.value)) {
         showError(phone, "Введите телефон в формате +7 XXX XXX XXXX");
         isValid = false;
       }
-      if (!phonePattern.test(rPhone.value)) {
+      if (rPhone.value && !phonePattern.test(rPhone.value)) {
         showError(rPhone, "Введите телефон в формате +7 XXX XXX XXXX");
         isValid = false;
       }
-      if (phone.value === rPhone.value) {
+      // Phone numbers must not match
+      if (
+        phone.value &&
+        rPhone.value &&
+        phone.value === rPhone.value
+      ) {
         showError(phone, "Номера студентов и родственников не должны совпадать");
         showError(rPhone, "Номера студентов и родственников не должны совпадать");
         isValid = false;
@@ -757,7 +862,6 @@
         console.log("Форма прошла валидацию, данные сохранены, переходим далее.");
         window.location.href = "form-documents.html";
       } else {
-        // showToast is already called for gender error, so no overlap here
         console.log("Форма содержит ошибки. Проверьте ввод.");
       }
     });
@@ -782,6 +886,8 @@
           showError(el, message);
         } else if (pattern && !pattern.test(el.value.trim())) {
           showError(el, message);
+        } else {
+          removeError(el);
         }
       });
     }
@@ -791,6 +897,39 @@
     validateOnBlur(iinInput, "Введите ИИН из 12 цифр", /^\d{12}$/);
     validateOnBlur(phoneInput, "Введите телефон в формате +7 XXX XXX XXXX", /^\+7 \d{3} \d{3} \d{4}$/);
     validateOnBlur(relativePhoneInput, "Введите телефон в формате +7 XXX XXX XXXX", /^\+7 \d{3} \d{3} \d{4}$/);
+
+    // University select blur
+    document.getElementById("displayUniversity").addEventListener("blur", function() {
+      const select = document.getElementById("inputUniversity");
+      removeError(select);
+      if (!select.value.trim()) {
+        showError(select, "Поле обязательно");
+      }
+    });
+    // Relative select blur
+    document.getElementById("displayRelative").addEventListener("blur", function() {
+      const select = document.getElementById("inputRelative");
+      removeError(select);
+      if (!select.value.trim()) {
+        showError(select, "Поле обязательно");
+      }
+    });
+    // RentalPeriod select blur
+    document.getElementById("displayRentalPeriod").addEventListener("blur", function() {
+      const select = document.getElementById("inputRentalPeriod");
+      removeError(select);
+      if (!select.value.trim()) {
+        showError(select, "Поле обязательно");
+      }
+    });
+    // MoveInDate blur
+    document.getElementById("inputMoveInDate").addEventListener("blur", function() {
+      const el = this;
+      removeError(el);
+      if (!el.value.trim()) {
+        showError(el, "Поле обязательно");
+      }
+    });
 
     function checkPhonesMatch() {
       removeError(phoneInput);
@@ -936,6 +1075,7 @@
       const select = document.getElementById(`input${id}`);
 
       display.addEventListener("click", () => {
+        removeError(select);
         const isOpen = options.style.display === "block";
         document.querySelectorAll(".custom-options").forEach(o => o.style.display = "none");
         document.querySelectorAll(".custom-select").forEach(d => d.classList.remove("active"));
@@ -972,6 +1112,19 @@
           }
         });
       });
+    });
+
+    // Добавить обработчик focus для всех input и select в форме: при фокусе удалять ошибку
+    document.querySelectorAll("#addStudentForm input, #addStudentForm select").forEach(el => {
+      el.addEventListener("focus", () => removeError(el));
+    });
+    // Принудительно для телефонов, так как inputmode может мешать focus
+    phoneInput.addEventListener("focus", () => removeError(phoneInput));
+    relativePhoneInput.addEventListener("focus", () => removeError(relativePhoneInput));
+
+    // Добавить обработчик focus для кастомных radio (пол)
+    document.querySelectorAll(".gender-card input").forEach(input => {
+      input.addEventListener("focus", () => removeError(input));
     });
 
     window.addEventListener("click", (e) => {
