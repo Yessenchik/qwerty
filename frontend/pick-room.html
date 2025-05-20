@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Выбор комнаты</title>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: #f0f2f5;
+        padding: 20px;
+        font-size: 14px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+      }
+      .form-wrapper {
+        max-width: 600px;
+        background: #fff;
+        padding: 20px;
+        margin: 40px auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
+      }
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .room-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: space-between;
+      }
+      .room-card {
+        border: 2px solid #ccc;
+        width: 18%;
+        min-width: 60px;
+        height: 70px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+        border-radius: 6px;
+        background-color: #fff;
+        box-sizing: border-box;
+      }
+      .room-card.available {
+        border-color: green;
+      }
+      .room-card.full {
+        border-color: red;
+      }
+      .room-card.selected {
+        background-color: #004d99;
+        color: #ffffff;
+        border: 2px solid #004d99;
+        box-shadow: 0 0 8px rgba(0, 77, 153, 0.8);
+        transform: scale(1.05);
+        transition: all 0.25s ease;
+      }
+
+      .room-card:not(.selected) {
+        transition: all 0.25s ease;
+      }
+
+      .room-card:hover {
+        transform: scale(1.02);
+        border-color: #004d99;
+        box-shadow: 0 0 4px rgba(0, 77, 153, 0.4);
+      }
+      .room-status {
+        margin-top: 8px;
+        font-size: 13px;
+        font-weight: bold;
+      }
+      .free {
+        color: green;
+      }
+      .occupied {
+        color: red;
+      }
+      .btn {
+        background-color: #004d99;
+        color: white;
+        border: none;
+        padding: 10px;
+        margin-top: 20px;
+        width: 100%;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      .floor-section {
+        margin-bottom: 20px;
+      }
+      .floor-section {
+        opacity: 1;
+        transition: opacity 0.3s ease-in-out;
+      }
+
+      .floor-section.hidden {
+        opacity: 0;
+        pointer-events: none;
+        height: 0;
+        overflow: hidden;
+        padding: 0;
+        margin: 0;
+      }
+      #block-sections h3 {
+        margin-top: 30px;
+        color: #004d99;
+      }
+      select {
+        width: 100%;
+        padding: 10px;
+        border: 2px solid #ccc;
+        border-radius: 6px;
+        box-sizing: border-box;
+        font-size: 14px;
+        background-color: #fff;
+        transition: border-color 0.3s;
+      }
+      select:focus {
+        border-color: #004d99;
+        box-shadow: 0 0 0 2px rgba(0, 77, 153, 0.2);
+        outline: none;
+      }
+      option:checked {
+        background-color: #004d99;
+        color: white;
+      }
+      @media (max-width: 768px) {
+        .blocks-wrapper {
+          flex-direction: column;
+        }
+        .block-column {
+          width: 100%;
+        }
+      }
+      .custom-select-wrapper {
+        position: relative;
+        user-select: none;
+      }
+
+      .custom-select {
+        background-color: #fff;
+        border: 2px solid #ccc;
+        padding: 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: border-color 0.3s;
+        position: relative;
+      }
+
+      .custom-select::after {
+        content: "▾";
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #004d99;
+        font-size: 14px;
+        pointer-events: none;
+      }
+
+      .custom-select.active,
+      .custom-select:hover {
+        border-color: #004d99;
+      }
+
+      .custom-options {
+        position: absolute;
+        background-color: #fff;
+        border: 2px solid #ccc;
+        border-top: none;
+        width: 100%;
+        max-height: 180px;
+        overflow-y: auto;
+        display: none;
+        z-index: 10;
+      }
+
+      .custom-options div {
+        padding: 10px;
+        cursor: pointer;
+      }
+
+      .custom-options div:hover {
+        background-color: #004d99;
+        color: white;
+      }
+    </style>
+    <style>
+      .btn-reset {
+        background-color: #ccc;
+        color: #333;
+        margin-top: 10px;
+        padding: 10px;
+        font-size: 14px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .btn-reset:hover {
+        background-color: #bbb;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="form-wrapper">
+      <h2>Выбор комнаты</h2>
+      <div id="block-sections"></div>
+      <div
+        style="
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          gap: 10px;
+          margin-top: 20px;
+        "
+      >
+        <button type="button" class="btn btn-primary" id="backButton">
+          <span class="arrow">&#8592;</span>
+          <span class="btn-label">Назад</span>
+        </button>
+        <button class="btn btn-primary" onclick="confirmRoom()">
+          <span class="btn-label">Подтвердить выбор</span>
+          <span class="arrow">&#10003;</span>
+        </button>
+      </div>
+      <button type="button" class="btn btn-reset" id="resetButton">
+        <span class="btn-label">Сбросить выбор</span>
+        <span class="arrow">&#128465;</span>
+      </button>
+    </div>
+
+    <script>
+      const distribution = {
+        А: {
+          2: {
+            rooms: [
+              201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213,
+              214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226,
+              227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
+            ],
+            places: [
+              7, 6, 6, 7, 5, 7, 7, 7, 7, 5, 8, 4, 7, 7, 6, 6, 5, 7, 7, 7, 7, 5,
+              7, 7, 7, 7, 5, 6, 7, 5, 7, 7, 7, 7, 5, 7, 7, 6, 6,
+            ],
+          },
+          3: {
+            rooms: [
+              301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313,
+              314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326,
+              327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339,
+            ],
+            places: [
+              7, 6, 6, 7, 5, 7, 7, 7, 7, 5, 8, 4, 7, 7, 6, 6, 5, 7, 7, 7, 7, 5,
+              7, 7, 7, 7, 5, 6, 7, 5, 7, 7, 7, 7, 5, 7, 7, 6, 6,
+            ],
+          },
+          4: {
+            rooms: [
+              401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413,
+              414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+              427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439,
+            ],
+            places: [
+              7, 6, 6, 7, 5, 7, 7, 7, 7, 5, 8, 4, 7, 7, 6, 6, 5, 7, 7, 7, 7, 5,
+              7, 7, 7, 7, 5, 6, 7, 5, 7, 7, 7, 7, 5, 7, 7, 6, 6,
+            ],
+          },
+          5: {
+            rooms: [
+              501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513,
+              514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526,
+              527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539,
+            ],
+            places: [
+              7, 6, 6, 7, 5, 7, 7, 7, 7, 5, 8, 4, 7, 7, 6, 6, 5, 7, 7, 7, 7, 5,
+              7, 7, 7, 7, 5, 6, 7, 5, 7, 7, 7, 7, 5, 7, 7, 6, 6,
+            ],
+          },
+        },
+        Б: {
+          2: {
+            rooms: [
+              201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213,
+              214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226,
+              227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
+            ],
+            places: [
+              7, 6, 6, 7, 5, 7, 7, 7, 7, 5, 8, 4, 7, 7, 6, 6, 5, 7, 7, 7, 7, 5,
+              7, 7, 7, 7, 5, 6, 7, 5, 7, 7, 7, 7, 5, 7, 7, 6, 6,
+            ],
+          },
+          3: {
+            rooms: [
+              301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313,
+              314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326,
+              327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339,
+            ],
+            places: [
+              7, 6, 6, 7, 5, 7, 7, 7, 7, 5, 8, 4, 7, 7, 6, 6, 5, 7, 7, 7, 7, 5,
+              7, 7, 7, 7, 5, 6, 7, 5, 7, 7, 7, 7, 5, 7, 7, 6, 6,
+            ],
+          },
+          4: {
+            rooms: [
+              401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413,
+              414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+              427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439,
+            ],
+            places: [
+              7, 6, 6, 7, 5, 7, 7, 7, 7, 5, 8, 4, 7, 7, 6, 6, 5, 7, 7, 7, 7, 5,
+              7, 7, 7, 7, 5, 6, 7, 5, 7, 7, 7, 7, 5, 7, 7, 6, 6,
+            ],
+          },
+          5: {
+            rooms: [
+              501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513,
+              514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526,
+              527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539,
+            ],
+            places: [
+              7, 6, 6, 7, 5, 7, 7, 7, 7, 5, 8, 4, 7, 7, 6, 6, 5, 7, 7, 7, 7, 5,
+              7, 7, 7, 7, 5, 6, 7, 5, 7, 7, 7, 7, 5, 7, 7, 6, 6,
+            ],
+          },
+        },
+        В: {
+          2: {
+            rooms: [
+              201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213,
+              214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226,
+              227, 228,
+            ],
+            places: [
+              7, 6, 6, 7, 4, 6, 6, 4, 6, 6, 5, 5, 3, 7, 3, 7, 5, 7, 7, 6, 6, 3,
+              7, 5, 7, 7, 6, 6,
+            ],
+          },
+          3: {
+            rooms: [
+              301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313,
+              314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326,
+              327, 328,
+            ],
+            places: [
+              7, 6, 6, 7, 4, 6, 6, 4, 6, 6, 5, 5, 3, 7, 3, 7, 5, 7, 7, 6, 6, 3,
+              7, 5, 7, 7, 6, 6,
+            ],
+          },
+          4: {
+            rooms: [
+              401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413,
+              414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+              427, 428,
+            ],
+            places: [
+              7, 6, 6, 7, 4, 6, 6, 4, 6, 6, 5, 5, 3, 7, 3, 7, 5, 7, 7, 6, 6, 3,
+              7, 5, 7, 7, 6, 6,
+            ],
+          },
+          5: {
+            rooms: [
+              501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513,
+              514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526,
+              527, 528,
+            ],
+            places: [
+              7, 6, 6, 7, 4, 6, 6, 4, 6, 6, 5, 5, 3, 7, 3, 7, 5, 7, 7, 6, 6, 3,
+              7, 5, 7, 7, 6, 6,
+            ],
+          },
+        },
+      };
+
+      const rooms = [];
+      for (const block in distribution) {
+        for (const floor in distribution[block]) {
+          const floorData = distribution[block][floor];
+          floorData.rooms.forEach((roomNumber, idx) => {
+            const roomId = `${block}-${roomNumber}`;
+            rooms.push({
+              id: roomId,
+              type: "Обычная",
+              status: "free",
+              places: floorData.places[idx],
+              occupied: 0,
+            });
+          });
+        }
+      }
+
+      const blockSections = {};
+      const parent = document.getElementById("block-sections");
+
+      // Кастомный выпадающий список для фильтрации этажей
+      const customWrapper = document.createElement("div");
+      customWrapper.className = "custom-select-wrapper";
+      customWrapper.style.marginBottom = "20px";
+
+      const customDisplay = document.createElement("div");
+      customDisplay.className = "custom-select";
+      customDisplay.textContent = "Показать все этажи";
+
+      const customOptions = document.createElement("div");
+      customOptions.className = "custom-options";
+
+      const values = ["all", "2", "3", "4", "5"];
+      const labels = [
+        "Показать все этажи",
+        "Только этаж 2",
+        "Только этаж 3",
+        "Только этаж 4",
+        "Только этаж 5",
+      ];
+
+      values.forEach((val, i) => {
+        const opt = document.createElement("div");
+        opt.dataset.value = val;
+        opt.textContent = labels[i];
+        customOptions.appendChild(opt);
+      });
+      if (customOptions.children.length === 0) {
+        const warning = document.createElement("div");
+        warning.textContent = "Нет доступных этажей";
+        warning.style.color = "red";
+        customOptions.appendChild(warning);
+      }
+
+      customDisplay.addEventListener("click", () => {
+        const isOpen = customOptions.style.display === "block";
+        document
+          .querySelectorAll(".custom-options")
+          .forEach((o) => (o.style.display = "none"));
+        document
+          .querySelectorAll(".custom-select")
+          .forEach((d) => d.classList.remove("active"));
+        if (!isOpen) {
+          customOptions.style.display = "block";
+          customDisplay.classList.add("active");
+        }
+      });
+
+      // Refactored: use unified filtering logic
+      let currentFloorFilter = "all";
+      let currentBlockFilter = "all";
+
+      customOptions.querySelectorAll("div").forEach((opt) => {
+        opt.addEventListener("click", () => {
+          currentFloorFilter = opt.dataset.value;
+          customDisplay.textContent = opt.textContent;
+          customOptions.style.display = "none";
+          applyFilters();
+        });
+      });
+
+      customWrapper.appendChild(customDisplay);
+      customWrapper.appendChild(customOptions);
+      parent.appendChild(customWrapper);
+
+      // Кастомный селект для фильтрации по блокам (А, Б, В)
+      const blockFilterWrapper = document.createElement("div");
+      blockFilterWrapper.className = "custom-select-wrapper";
+      blockFilterWrapper.style.marginBottom = "20px";
+
+      const blockDisplay = document.createElement("div");
+      blockDisplay.className = "custom-select";
+      blockDisplay.textContent = "Показать все блоки";
+
+      const blockOptions = document.createElement("div");
+      blockOptions.className = "custom-options";
+
+      const blockValues = ["all", "А", "Б", "В"];
+      const blockLabels = [
+        "Показать все блоки",
+        "Только блок А",
+        "Только блок Б",
+        "Только блок В",
+      ];
+
+      blockValues.forEach((val, i) => {
+        const opt = document.createElement("div");
+        opt.dataset.value = val;
+        opt.textContent = blockLabels[i];
+        blockOptions.appendChild(opt);
+      });
+      if (blockOptions.children.length === 0) {
+        const warning = document.createElement("div");
+        warning.textContent = "Нет доступных блоков";
+        warning.style.color = "red";
+        blockOptions.appendChild(warning);
+      }
+
+      blockDisplay.addEventListener("click", () => {
+        const isOpen = blockOptions.style.display === "block";
+        document
+          .querySelectorAll(".custom-options")
+          .forEach((o) => (o.style.display = "none"));
+        document
+          .querySelectorAll(".custom-select")
+          .forEach((d) => d.classList.remove("active"));
+        if (!isOpen) {
+          blockOptions.style.display = "block";
+          blockDisplay.classList.add("active");
+        }
+      });
+
+      blockOptions.querySelectorAll("div").forEach((opt) => {
+        opt.addEventListener("click", () => {
+          currentBlockFilter = opt.dataset.value;
+          blockDisplay.textContent = opt.textContent;
+          blockOptions.style.display = "none";
+          applyFilters();
+        });
+      });
+
+      function applyFilters() {
+        document.querySelectorAll("#block-sections > h3").forEach((h3) => {
+          const block = h3.textContent.trim().slice(-1);
+          const showBlock =
+            currentBlockFilter === "all" || currentBlockFilter === block;
+
+          let sibling = h3.nextElementSibling;
+          let anyVisible = false;
+
+          while (sibling && sibling.tagName !== "H3") {
+            if (sibling.classList.contains("floor-section")) {
+              const floorText = sibling.querySelector("h4")?.textContent || "";
+              const showFloor =
+                currentFloorFilter === "all" ||
+                floorText.includes(currentFloorFilter);
+              const visible = showBlock && showFloor;
+
+              if (visible) {
+                sibling.classList.remove("hidden");
+                sibling.style.display = "";
+                anyVisible = true;
+              } else {
+                sibling.classList.add("hidden");
+              }
+            }
+            sibling = sibling.nextElementSibling;
+          }
+
+          h3.style.display = anyVisible ? "" : "none";
+        });
+      }
+
+      blockFilterWrapper.appendChild(blockDisplay);
+      blockFilterWrapper.appendChild(blockOptions);
+      parent.insertBefore(blockFilterWrapper, customWrapper);
+
+      ["А", "Б", "В"].forEach((block) => {
+        const blockTitle = document.createElement("h3");
+        blockTitle.textContent = `Блок ${block}`;
+        parent.appendChild(blockTitle);
+
+        blockSections[block] = {};
+
+        for (let floor = 2; floor <= 5; floor++) {
+          const floorDiv = document.createElement("div");
+          floorDiv.className = "floor-section";
+          const title = document.createElement("h4");
+          title.textContent = `${floor} этаж`;
+          title.style.margin = "10px 0 5px";
+          floorDiv.appendChild(title);
+
+          const roomGrid = document.createElement("div");
+          roomGrid.className = "room-grid";
+          floorDiv.appendChild(roomGrid);
+
+          blockSections[block][floor] = roomGrid;
+          parent.appendChild(floorDiv);
+        }
+      });
+
+      rooms.forEach((room) => {
+        const div = document.createElement("div");
+        div.className = "room-card";
+        div.dataset.id = room.id;
+        if (room.occupied < room.places) {
+          div.classList.add("available");
+        } else {
+          div.classList.add("full");
+        }
+        div.innerHTML = `
+        <div>${room.id}</div>
+        <div>${room.occupied}/${room.places}</div>
+      `;
+        if (room.occupied < room.places) {
+          div.addEventListener("click", () => {
+            if (div.classList.contains("selected")) return; // Не увеличивать, если уже выбрана
+
+            // найти предыдущую выбранную комнату
+            const previouslySelected = document.querySelector(
+              ".room-card.selected"
+            );
+            if (previouslySelected && previouslySelected !== div) {
+              previouslySelected.classList.remove("selected");
+              const prevId = previouslySelected.dataset.id;
+              const prevRoom = rooms.find((r) => r.id === prevId);
+              if (prevRoom && prevRoom.occupied > 0) {
+                prevRoom.occupied--;
+                previouslySelected.querySelector(
+                  "div:nth-child(2)"
+                ).textContent = `${prevRoom.occupied}/${prevRoom.places}`;
+              }
+            }
+
+            // отметить новую выбранную
+            div.classList.add("selected");
+            const currentRoom = rooms.find((r) => r.id === room.id);
+            currentRoom.occupied++;
+            div.querySelector(
+              "div:nth-child(2)"
+            ).textContent = `${currentRoom.occupied}/${currentRoom.places}`;
+          });
+        } else {
+          div.style.pointerEvents = "none";
+          div.style.opacity = "0.6";
+        }
+        let targetFloor = parseInt(room.id.split("-")[1].charAt(0));
+        let blockKey = room.id.split("-")[0];
+        let floorContainer = blockSections[blockKey]?.[targetFloor];
+        if (floorContainer) {
+          floorContainer.appendChild(div);
+        }
+      });
+
+      function confirmRoom() {
+        const selected = document.querySelector(".room-card.selected");
+        if (!selected) {
+          alert("Пожалуйста, выберите комнату");
+          return;
+        }
+
+        // Проверка поддержки localStorage
+        try {
+          localStorage.setItem("storage_test", "1");
+          localStorage.removeItem("storage_test");
+        } catch (e) {
+          alert(
+            "Ошибка: localStorage недоступен. Попробуйте другой браузер или отключите режим инкогнито."
+          );
+          return;
+        }
+
+        // Проверка, не изменилась ли доступность комнаты
+        const roomId = selected.dataset.id;
+        const room = rooms.find((r) => r.id === roomId);
+        if (!room || room.occupied >= room.places) {
+          alert(
+            "Ошибка: выбранная комната недоступна. Пожалуйста, выберите другую."
+          );
+          selected.classList.remove("selected");
+          return;
+        }
+
+        localStorage.setItem("selectedRoom", selected.dataset.id);
+
+        const personal = localStorage.getItem("studentFormData");
+        const documents = JSON.parse(
+          localStorage.getItem("studentDocuments") || "null"
+        );
+
+        if (!personal) {
+          alert("Вы не заполнили форму form-personal корректно.");
+          window.location.href = "form-personal.html";
+          return;
+        }
+
+        if (
+          !documents ||
+          !documents.documentNumber?.trim() ||
+          !documents.documentIssueDate?.trim() ||
+          !documents.documentIssuer?.trim() ||
+          !documents.selfieUploaded ||
+          !documents.idCardPreview ||
+          !documents.universityProofPreview ||
+          !documents.isGraduate?.trim() ||
+          !documents.hasDisability?.trim()
+        ) {
+          alert("Вы не заполнили форму form-documents корректно.");
+          window.location.href = "form-documents.html";
+          return;
+        }
+
+        window.location.href = "confirmation.html";
+      }
+
+      window.addEventListener("click", (e) => {
+        if (!e.target.closest(".custom-select-wrapper")) {
+          document
+            .querySelectorAll(".custom-options")
+            .forEach((o) => (o.style.display = "none"));
+          document
+            .querySelectorAll(".custom-select")
+            .forEach((d) => d.classList.remove("active"));
+        }
+      });
+      document.getElementById("resetButton").onclick = function () {
+        const selected = document.querySelector(".room-card.selected");
+        if (selected) {
+          const roomId = selected.dataset.id;
+          const room = rooms.find((r) => r.id === roomId);
+          if (room && room.occupied > 0) {
+            room.occupied--;
+            selected.querySelector(
+              "div:nth-child(2)"
+            ).textContent = `${room.occupied}/${room.places}`;
+          }
+          selected.classList.remove("selected");
+        }
+      };
+
+      document.getElementById("backButton").onclick = function () {
+        window.location.href = "form-documents.html";
+      };
+    </script>
+  </body>
+</html>

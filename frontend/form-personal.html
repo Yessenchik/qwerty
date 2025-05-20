@@ -1,1137 +1,1691 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Личные данные</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
-  <style>
-    .loading-spinner {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #004d99;
-      border-radius: 50%;
-      width: 18px;
-      height: 18px;
-      animation: spin 1s linear infinite;
-      display: inline-block;
-      vertical-align: middle;
-      margin-left: 10px;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    body {
-      font-family: "Segoe UI", sans-serif;
-      background: #f0f2f5;
-      padding: 20px;
-      font-size: 14px;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
-    }
-    .form-wrapper {
-      max-width: 480px;
-      background: #fff;
-      padding: 20px;
-      margin: 40px auto;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      width: 100%;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    input, select {
-      width: 100%;
-      padding: 8px;
-      margin-top: 4px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-sizing: border-box;
-    }
-    .currency-input {
-      position: relative;
-      width: 100%;
-    }
-    .currency-input input {
-      padding-right: 24px;
-      box-sizing: border-box;
-    }
-    .tenge-symbol {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #555;
-      pointer-events: none;
-    }
-    .btn {
-      font-family: "Segoe UI", sans-serif;
-      font-size: 14px;
-      border: none;
-      border-radius: 4px;
-      padding: 10px;
-      width: 100%;
-      cursor: pointer;
-    }
-    .btn-primary {
-      background-color: #004d99;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-    }
-    .btn-reset {
-      background-color: #ccc;
-      color: #333;
-      margin-top: 10px;
-    }
-    .btn-reset:hover {
-      background-color: #bbb;
-    }
-    .arrow {
-      margin-left: 6px;
-      font-weight: normal;
-    }
-    .field-error {
-      color: red;
-      font-size: 0.85em;
-      margin-top: 4px;
-    }
-    input[type="number"] {
-      appearance: textfield;
-      -moz-appearance: textfield;
-    }
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-    .flatpickr-day.selected,
-    .flatpickr-day.startRange,
-    .flatpickr-day.endRange,
-    .flatpickr-day.selected:focus,
-    .flatpickr-day.selected:hover {
-      background: #004d99;
-      border-color: #004d99;
-      color: white;
-    }
-
-    .date-picker-wrapper {
-      position: relative;
-    }
-
-    .date-picker-wrapper input {
-      padding-right: 36px;
-      background-image: url("data:image/svg+xml;utf8,<svg fill='%23004d99' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z'/></svg>");
-      background-repeat: no-repeat;
-      background-position: right 10px center;
-      background-size: 20px 20px;
-      appearance: none;
-      -webkit-appearance: none;
-    }
-    @media (max-width: 480px) {
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Личные данные</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
+    <style>
+      .loading-spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #004d99;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        animation: spin 1s linear infinite;
+        display: inline-block;
+        vertical-align: middle;
+        margin-left: 10px;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
       body {
-        padding: 10px;
-        font-size: 13px;
+        font-family: "Segoe UI", sans-serif;
+        background: #f0f2f5;
+        padding: 20px;
+        font-size: 14px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
       }
       .form-wrapper {
-        padding: 16px;
-        margin: 10px;
+        max-width: 480px;
+        background: #fff;
+        padding: 20px;
+        margin: 40px auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
       }
-      .btn {
-        padding: 10px;
-        font-size: 14px;
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
       }
-      .toast {
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
+      label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
       }
-
-      .custom-select,
-      .currency-input input,
-      .date-picker-wrapper input,
-      .gender-card,
-      .custom-options div {
-        font-size: 13px;
-        padding: 8px;
-      }
-
       input,
       select {
-        font-size: 13px;
-        height: auto;
+        width: 100%;
+        padding: 8px;
+        margin-top: 4px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
       }
-
-      input,
-      select,
-      .custom-select,
-      .custom-options div {
+      .currency-input {
+        position: relative;
+        width: 100%;
+      }
+      .currency-input input {
+        padding-right: 24px;
+        box-sizing: border-box;
+      }
+      .tenge-symbol {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #555;
+        pointer-events: none;
+      }
+      .btn {
+        font-family: "Segoe UI", sans-serif;
         font-size: 14px;
+        border: none;
+        border-radius: 4px;
+        padding: 10px;
+        width: 100%;
+        cursor: pointer;
       }
-
-      label {
-        font-size: 13px;
-      }
-
-      .gender-selection {
-        flex-direction: row;
-        flex-wrap: wrap;
+      .btn-primary {
+        background-color: #004d99;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         gap: 10px;
+      }
+      .btn-reset {
+        background-color: #ccc;
+        color: #333;
+        margin-top: 10px;
+      }
+      .btn-reset:hover {
+        background-color: #bbb;
+      }
+      .arrow {
+        margin-left: 6px;
+        font-weight: normal;
+      }
+      .field-error {
+        color: red;
+        font-size: 0.85em;
+        margin-top: 4px;
+      }
+      input[type="number"] {
+        appearance: textfield;
+        -moz-appearance: textfield;
+      }
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      .flatpickr-day.selected,
+      .flatpickr-day.startRange,
+      .flatpickr-day.endRange,
+      .flatpickr-day.selected:focus,
+      .flatpickr-day.selected:hover {
+        background: #004d99;
+        border-color: #004d99;
+        color: white;
+      }
+
+      .date-picker-wrapper {
+        position: relative;
+      }
+
+      .date-picker-wrapper input {
+        padding-right: 36px;
+        background-image: url("data:image/svg+xml;utf8,<svg fill='%23004d99' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 20px 20px;
+        appearance: none;
+        -webkit-appearance: none;
+      }
+      @media (max-width: 480px) {
+        body {
+          padding: 10px;
+          font-size: 13px;
+        }
+        .form-wrapper {
+          padding: 16px;
+          margin: 10px;
+        }
+        .btn {
+          padding: 10px;
+          font-size: 14px;
+        }
+        .toast {
+          top: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+        }
+
+        .custom-select,
+        .currency-input input,
+        .date-picker-wrapper input,
+        .gender-card,
+        .custom-options div {
+          font-size: 13px;
+          padding: 8px;
+        }
+
+        input,
+        select {
+          font-size: 13px;
+          height: auto;
+        }
+
+        input,
+        select,
+        .custom-select,
+        .custom-options div {
+          font-size: 14px;
+        }
+
+        label {
+          font-size: 13px;
+        }
+
+        .gender-selection {
+          flex-direction: row;
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+
+        .gender-card {
+          width: calc(50% - 5px);
+        }
+      }
+      .toast {
+        position: fixed;
+        background-color: #333;
+        color: white;
+        padding: 10px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.5s ease, transform 0.5s ease;
+        z-index: 9999;
+      }
+      .toast.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      @media (min-width: 481px) {
+        .toast {
+          bottom: 20px;
+          right: 20px;
+          transform: translateY(20px);
+        }
+        .toast.show {
+          transform: translateY(0);
+        }
+      }
+
+      #genderLabel {
+        margin-bottom: 0;
+        display: inline-block;
+      }
+      .gender-selection {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 4px;
       }
 
       .gender-card {
-        width: calc(50% - 5px);
+        flex: 1;
+        background-color: #fff;
+        border: 2px solid #ccc;
+        border-radius: 6px;
+        padding: 10px;
+        text-align: center;
+        cursor: pointer;
+        font-weight: bold;
+        transition: border-color 0.3s, background-color 0.3s, color 0.3s;
       }
-    }
-    .toast {
-      position: fixed;
-      background-color: #333;
-      color: white;
-      padding: 10px 16px;
-      border-radius: 6px;
-      font-size: 14px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.5s ease, transform 0.5s ease;
-      z-index: 9999;
-    }
-    .toast.show {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    @media (min-width: 481px) {
-      .toast {
-        bottom: 20px;
-        right: 20px;
-        transform: translateY(20px);
+
+      .gender-card input[type="radio"] {
+        display: none;
       }
-      .toast.show {
-        transform: translateY(0);
+
+      .gender-card:hover {
+        border-color: #004d99;
       }
-    }
 
-    #genderLabel {
-      margin-bottom: 0;
-      display: inline-block;
-    }
-    .gender-selection {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      margin-top: 4px;
-    }
+      .gender-card.selected {
+        border-color: #004d99;
+        background-color: #004d99;
+        color: white;
+      }
+      input:focus,
+      select:focus,
+      .custom-select.active {
+        border-color: #004d99 !important;
+        box-shadow: 0 0 0 2px rgba(0, 77, 153, 0.2);
+      }
 
-    .gender-card {
-      flex: 1;
-      background-color: #fff;
-      border: 2px solid #ccc;
-      border-radius: 6px;
-      padding: 10px;
-      text-align: center;
-      cursor: pointer;
-      font-weight: bold;
-      transition: border-color 0.3s, background-color 0.3s, color 0.3s;
-    }
+      .field-error-input {
+        border-color: red !important;
+        box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2);
+      }
 
-    .gender-card input[type="radio"] {
-      display: none;
-    }
+      option:checked {
+        background-color: #004d99;
+        color: white;
+      }
 
+      .custom-select-wrapper {
+        position: relative;
+        user-select: none;
+        margin-top: 8px;
+      }
 
-    .gender-card:hover {
-      border-color: #004d99;
-    }
+      .custom-select {
+        background-color: #fff;
+        border: 2px solid #ccc;
+        padding: 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: border-color 0.3s;
+        position: relative;
+      }
 
-    .gender-card.selected {
-      border-color: #004d99;
-      background-color: #004d99;
-      color: white;
-    }
-    input:focus,
-    select:focus,
-    .custom-select.active {
-      border-color: #004d99 !important;
-      box-shadow: 0 0 0 2px rgba(0, 77, 153, 0.2);
-    }
+      .custom-select::after {
+        content: "▾";
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #004d99;
+        font-size: 14px;
+        pointer-events: none;
+      }
 
-    .field-error-input {
-      border-color: red !important;
-      box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2);
-    }
+      .custom-select.active,
+      .custom-select:hover {
+        border-color: #004d99;
+      }
 
-    option:checked {
-      background-color: #004d99;
-      color: white;
-    }
+      .custom-options {
+        position: absolute;
+        background-color: #fff;
+        border: 2px solid #ccc;
+        border-top: none;
+        width: 100%;
+        max-height: 180px;
+        overflow-y: auto;
+        display: none;
+        z-index: 10;
+      }
 
-    .custom-select-wrapper {
-      position: relative;
-      user-select: none;
-      margin-top: 8px;
-    }
+      .custom-options div {
+        padding: 10px;
+        cursor: pointer;
+      }
 
-    .custom-select {
-      background-color: #fff;
-      border: 2px solid #ccc;
-      padding: 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: border-color 0.3s;
-      position: relative;
-    }
-
-    .custom-select::after {
-      content: "▾";
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #004d99;
-      font-size: 14px;
-      pointer-events: none;
-    }
-
-    .custom-select.active,
-    .custom-select:hover {
-      border-color: #004d99;
-    }
-
-    .custom-options {
-      position: absolute;
-      background-color: #fff;
-      border: 2px solid #ccc;
-      border-top: none;
-      width: 100%;
-      max-height: 180px;
-      overflow-y: auto;
-      display: none;
-      z-index: 10;
-    }
-
-    .custom-options div {
-      padding: 10px;
-      cursor: pointer;
-    }
-
-    .custom-options div:hover,
-    .custom-options div.selected {
-      background-color: #004d99;
-      color: white;
-    }
-  </style>
-</head>
-<body>
-
-  <div id="toast" class="toast">Уведомление</div>
-  <div class="form-wrapper">
-    <h2>Личные данные</h2>
-    <form id="addStudentForm" novalidate>
-      <label>Фамилия:
-        <input type="text" id="inputLastName" required />
-      </label>
-      <label>Имя:
-        <input type="text" id="inputFirstName" required />
-      </label>
-      <label>Отчество:
-        <input type="text" id="inputMiddleName" />
-      </label>
-      <label for="inputGender" id="genderLabel">Выберите пол:</label>
-      <div class="gender-selection">
-        <label class="gender-card">
-          <input type="radio" id="inputGender" name="gender" value="Мужчина" required />
-          Мужчина
+      .custom-options div:hover,
+      .custom-options div.selected {
+        background-color: #004d99;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="toast" class="toast">Уведомление</div>
+    <div class="form-wrapper">
+      <h2>Личные данные</h2>
+      <form id="addStudentForm" novalidate>
+        <label
+          >Фамилия:
+          <input type="text" id="inputLastName" required />
         </label>
-        <label class="gender-card">
-          <input type="radio" name="gender" value="Женщина" required />
-          Женщина
+        <label
+          >Имя:
+          <input type="text" id="inputFirstName" required />
         </label>
-      </div>
-
-      <label>ИИН:
-        <input type="text" id="inputIin" maxlength="12" pattern="\d{12}" inputmode="numeric" placeholder="Введите 12 цифр" required />
-      </label>
-
-      <label>Телефон номер студента:
-        <input type="text" id="inputPhone" required placeholder="+7 700 000 0000" inputmode="numeric" pattern="\+7 \d{3} \d{3} \d{4}" />
-      </label>
-
-      <label>Место обучения:</label>
-      <div class="custom-select-wrapper">
-        <div class="custom-select" id="displayUniversity">Выберите место обучения</div>
-        <div class="custom-options" id="optionsUniversity">
-          <div data-value="">Выберите место обучения</div>
-          <div data-value="ГККП «Строительно-технический колледж» акимата г. Астана">ГККП «Строительно-технический колледж» акимата г. Астана</div>
-          <div data-value="ГККП «Колледж общественного питания и сервиса» акимата г. Астана">ГККП «Колледж общественного питания и сервиса» акимата г. Астана</div>
-          <div data-value="ГККП «Технологический колледж» акимата г. Астана">ГККП «Технологический колледж» акимата г. Астана</div>
-          <div data-value="ГККП «Технический колледж» акимата г. Астана">ГККП «Технический колледж» акимата г. Астана</div>
-          <div data-value="ГККП «Колледж энергетики и связи» акимата г. Астана">ГККП «Колледж энергетики и связи» акимата г. Астана</div>
-          <div data-value="ГККП «Профессионально-технический колледж» акимата г. Астана">ГККП «Профессионально-технический колледж» акимата г. Астана</div>
-          <div data-value="ГККП «Многопрофильный колледж» акимата г. Астана">ГККП «Многопрофильный колледж» акимата г. Астана</div>
-          <div data-value="ГККП «Гуманитарный колледж» Управления образования г. Астана">ГККП «Гуманитарный колледж» Управления образования г. Астана</div>
-          <div data-value="ГККП «Политехнический колледж» Управления образования г. Астана">ГККП «Политехнический колледж» Управления образования г. Астана</div>
-          <div data-value="ГКП на ПХВ  «Высший колледж транспорта и коммуникаций» акимата г. Астана">ГКП на ПХВ  «Высший колледж транспорта и коммуникаций» акимата г. Астана</div>
-          <div data-value="ГККП «Колледж экономики, технологии и стандартизации пищевых производств» Управления образования Г. Астана">ГККП «Колледж экономики, технологии и стандартизации пищевых производств» Управления образования Г. Астана</div>
-          <div data-value="Колледж - ГКП на ПХВ «Высший медицинский колледж» акимата Г. Астана">Колледж - ГКП на ПХВ «Высший медицинский колледж» акимата Г. Астана</div>
-          <div data-value="Учреждение «Высший Торгово-экнонмический колледж Казпотребсоюза">Учреждение «Высший Торгово-экнонмический колледж Казпотребсоюза</div>
-          <div data-value="ТОО «Колледж Управления»">ТОО «Колледж Управления»</div>
-          <div data-value="Колледж иностранных языков «Лингва»">Колледж иностранных языков «Лингва»</div>
-          <div data-value="ТОО «Медико-технический колледж»">ТОО «Медико-технический колледж»</div>
-          <div data-value="Колледж «Даналық»">Колледж «Даналық»</div>
-          <div data-value="Международный колледж имени Магжана Жумабаева">Международный колледж имени Магжана Жумабаева</div>
-          <div data-value="Колледж «Туран»">Колледж «Туран»</div>
-          <div data-value="Учреждение «Колледж им.Д.А. Куанева в г. Астана">Учреждение «Колледж им.Д.А. Куанева в г. Астана</div>
-          <div data-value="ТОО Гуманитарно-технический колледж «АСУ»">ТОО Гуманитарно-технический колледж «АСУ»</div>
-          <div data-value="ТОО «Индустриальный инженерно-экономический колледж»">ТОО «Индустриальный инженерно-экономический колледж»</div>
-          <div data-value="ТОО «Астанинский технико-экономический колледж»">ТОО «Астанинский технико-экономический колледж»</div>
-          <div data-value="Колледж АО «Казахский университет технологий и безнеса»">Колледж АО «Казахский университет технологий и безнеса»</div>
-          <div data-value="ТОО «Акмолинский колледж АО Казахская академия транспорта и коммуникаций им. Тынышпаева»">ТОО «Акмолинский колледж АО Казахская академия транспорта и коммуникаций им. Тынышпаева»</div>
-          <div data-value="Учреждение «Колледж Евразийского гуманитарного института»">Учреждение «Колледж Евразийского гуманитарного института»</div>
-          <div data-value="Многопрофильный колледж «Паразат»">Многопрофильный колледж «Паразат»</div>
-          <div data-value="ТОО Колледж менендмента и бизнеса»">ТОО Колледж менендмента и бизнеса»</div>
-          <div data-value="Колледж АО «Финансовая академия»">Колледж АО «Финансовая академия»</div>
-          <div data-value="Учреждение «Колледж городского хозяйства «Туран-Профи»">Учреждение «Колледж городского хозяйства «Туран-Профи»</div>
-          <div data-value="Учреждение медицинский колледж «Шипагер»">Учреждение медицинский колледж «Шипагер»</div>
-          <div data-value="Экономико-юридический колледж">Экономико-юридический колледж</div>
-          <div data-value="Казахстанский международный лингвистический колледж">Казахстанский международный лингвистический колледж</div>
-          <div data-value="ТОО «Республиканская медицинская академия»">ТОО «Республиканская медицинская академия»</div>
-          <div data-value="Гуманитарно-юридический колледж КАЗГЮУ">Гуманитарно-юридический колледж КАЗГЮУ</div>
-          <div data-value="ГКП на ПХВ «Колледж сервиса и туризма»">ГКП на ПХВ «Колледж сервиса и туризма»</div>
-          <div data-value="ТОО Медицинский колледж «Томирис»">ТОО Медицинский колледж «Томирис»</div>
-          <div data-value="Педагогический колледж Международного университета Астаны">Педагогический колледж Международного университета Астаны</div>
-          <div data-value="ЧУ «Коллдеж медресе Астана»">ЧУ «Коллдеж медресе Астана»</div>
-          <div data-value="Казахский Швейцарско-Американский колледж">Казахский Швейцарско-Американский колледж</div>
-          <div data-value="Учреждение «Колледж городского хозяйства «Астана Профи»">Учреждение «Колледж городского хозяйства «Астана Профи»</div>
-          <div data-value="Учреждение Университет Есиль">Учреждение Университет Есиль</div>
-          <div data-value="Евразийский национальный университет им. Л.Н. Гумилева">Евразийский национальный университет им. Л.Н. Гумилева</div>
-          <div data-value="Казахский агротехнический университет имени С. Сейфуллина">Казахский агротехнический университет имени С. Сейфуллина</div>
-          <div data-value="Университет КАЗГЮУ имени М. Нарикбаева">Университет КАЗГЮУ имени М. Нарикбаева</div>
-          <div data-value="Медицинский университет Астана">Медицинский университет Астана</div>
-          <div data-value="Евразийский гуманитарный институт">Евразийский гуманитарный институт</div>
-          <div data-value="Казахский университет технологии и бизнеса">Казахский университет технологии и бизнеса</div>
-          <div data-value="Казахский университет экономики, финансов и международной торговли">Казахский университет экономики, финансов и международной торговли</div>
-          <div data-value="Университет «Астана»">Университет «Астана»</div>
-          <div data-value="Универистет «Туран-Астана»">Универистет «Туран-Астана»</div>
-          <div data-value="Академия государственного управления при Президенте Республики Казахстан">Академия государственного управления при Президенте Республики Казахстан</div>
-          <div data-value="Казахская национальная акаедмия хореграфии">Казахская национальная акаедмия хореграфии</div>
-          <div data-value="Международный универсистет Астана">Международный универсистет Астана</div>
-          <div data-value="Astana IT University">Astana IT University</div>
-          <div data-value="Назарбаев Университет">Назарбаев Университет</div>
-          <div data-value="Академия физической культуры и массового спорта">Академия физической культуры и массового спорта</div>
-          <div data-value="Казахский национальный педагогический университет имени Абая (Филиал)">Казахский национальный педагогический университет имени Абая (Филиал)</div>
-          <div data-value="Казахский национальный университет имени аль-Фараби">Казахский национальный университет имени аль-Фараби</div>
-          <div data-value="Казахский национальный технический университет имени К. И. Сатпаева">Казахский национальный технический университет имени К. И. Сатпаева</div>
-          <div data-value="Казахский национальный медицинский университет имени С. Д. Асфендиярова">Казахский национальный медицинский университет имени С. Д. Асфендиярова</div>
-          <div data-value="Казахский национальный аграрный университет">Казахский национальный аграрный университет</div>
-          <div data-value="Карагандинский государственный университет имени Е. А. Букетова">Карагандинский государственный университет имени Е. А. Букетова</div>
-          <div data-value="Костанайский государственный университет имени А. Байтурсынова">Костанайский государственный университет имени А. Байтурсынова</div>
-          <div data-value="Павлодарский государственный университет имени С. Торайгырова">Павлодарский государственный университет имени С. Торайгырова</div>
-          <div data-value="Южно-Казахстанский государственный университет имени М. Ауэзова">Южно-Казахстанский государственный университет имени М. Ауэзова</div>
-          <div data-value="Западно-Казахстанский аграрно-технический университет имени Жангир хана">Западно-Казахстанский аграрно-технический университет имени Жангир хана</div>
+        <label
+          >Отчество:
+          <input type="text" id="inputMiddleName" />
+        </label>
+        <label for="inputGender" id="genderLabel">Выберите пол:</label>
+        <div class="gender-selection">
+          <label class="gender-card">
+            <input
+              type="radio"
+              id="inputGender"
+              name="gender"
+              value="Мужчина"
+              required
+            />
+            Мужчина
+          </label>
+          <label class="gender-card">
+            <input type="radio" name="gender" value="Женщина" required />
+            Женщина
+          </label>
         </div>
-        <select id="inputUniversity" name="university" style="display: none;">
-          <option value="">Выберите университет</option>
-          <option value="ГККП «Строительно-технический колледж» акимата г. Астана">ГККП «Строительно-технический колледж» акимата г. Астана</option>
-          <option value="ГККП «Колледж общественного питания и сервиса» акимата г. Астана">ГККП «Колледж общественного питания и сервиса» акимата г. Астана</option>
-          <option value="ГККП «Технологический колледж» акимата г. Астана">ГККП «Технологический колледж» акимата г. Астана</option>
-          <option value="ГККП «Технический колледж» акимата г. Астана">ГККП «Технический колледж» акимата г. Астана</option>
-          <option value="ГККП «Колледж энергетики и связи» акимата г. Астана">ГККП «Колледж энергетики и связи» акимата г. Астана</option>
-          <option value="ГККП «Профессионально-технический колледж» акимата г. Астана">ГККП «Профессионально-технический колледж» акимата г. Астана</option>
-          <option value="ГККП «Многопрофильный колледж» акимата г. Астана">ГККП «Многопрофильный колледж» акимата г. Астана</option>
-          <option value="ГККП «Гуманитарный колледж» Управления образования г. Астана">ГККП «Гуманитарный колледж» Управления образования г. Астана</option>
-          <option value="ГККП «Политехнический колледж» Управления образования г. Астана">ГККП «Политехнический колледж» Управления образования г. Астана</option>
-          <option value="ГКП на ПХВ  «Высший колледж транспорта и коммуникаций» акимата г. Астана">ГКП на ПХВ  «Высший колледж транспорта и коммуникаций» акимата г. Астана</option>
-          <option value="ГККП «Колледж экономики, технологии и стандартизации пищевых производств» Управления образования Г. Астана">ГККП «Колледж экономики, технологии и стандартизации пищевых производств» Управления образования Г. Астана</option>
-          <option value="Колледж - ГКП на ПХВ «Высший медицинский колледж» акимата Г. Астана">Колледж - ГКП на ПХВ «Высший медицинский колледж» акимата Г. Астана</option>
-          <option value="Учреждение «Высший Торгово-экнонмический колледж Казпотребсоюза">Учреждение «Высший Торгово-экнонмический колледж Казпотребсоюза</option>
-          <option value="ТОО «Колледж Управления»">ТОО «Колледж Управления»</option>
-          <option value="Колледж иностранных языков «Лингва»">Колледж иностранных языков «Лингва»</option>
-          <option value="ТОО «Медико-технический колледж»">ТОО «Медико-технический колледж»</option>
-          <option value="Колледж «Даналық»">Колледж «Даналық»</option>
-          <option value="Международный колледж имени Магжана Жумабаева">Международный колледж имени Магжана Жумабаева</option>
-          <option value="Колледж «Туран»">Колледж «Туран»</option>
-          <option value="Учреждение «Колледж им.Д.А. Куанева в г. Астана">Учреждение «Колледж им.Д.А. Куанева в г. Астана</option>
-          <option value="ТОО Гуманитарно-технический колледж «АСУ»">ТОО Гуманитарно-технический колледж «АСУ»</option>
-          <option value="ТОО «Индустриальный инженерно-экономический колледж»">ТОО «Индустриальный инженерно-экономический колледж»</option>
-          <option value="ТОО «Астанинский технико-экономический колледж»">ТОО «Астанинский технико-экономический колледж»</option>
-          <option value="Колледж АО «Казахский университет технологий и безнеса»">Колледж АО «Казахский университет технологий и безнеса»</option>
-          <option value="ТОО «Акмолинский колледж АО Казахская академия транспорта и коммуникаций им. Тынышпаева»">ТОО «Акмолинский колледж АО Казахская академия транспорта и коммуникаций им. Тынышпаева»</option>
-          <option value="Учреждение «Колледж Евразийского гуманитарного института»">Учреждение «Колледж Евразийского гуманитарного института»</option>
-          <option value="Многопрофильный колледж «Паразат»">Многопрофильный колледж «Паразат»</option>
-          <option value="ТОО Колледж менендмента и бизнеса»">ТОО Колледж менендмента и бизнеса»</option>
-          <option value="Колледж АО «Финансовая академия»">Колледж АО «Финансовая академия»</option>
-          <option value="Учреждение «Колледж городского хозяйства «Туран-Профи»">Учреждение «Колледж городского хозяйства «Туран-Профи»</option>
-          <option value="Учреждение медицинский колледж «Шипагер»">Учреждение медицинский колледж «Шипагер»</option>
-          <option value="Экономико-юридический колледж">Экономико-юридический колледж</option>
-          <option value="Казахстанский международный лингвистический колледж">Казахстанский международный лингвистический колледж</option>
-          <option value="ТОО «Республиканская медицинская академия»">ТОО «Республиканская медицинская академия»</option>
-          <option value="Гуманитарно-юридический колледж КАЗГЮУ">Гуманитарно-юридический колледж КАЗГЮУ</option>
-          <option value="ГКП на ПХВ «Колледж сервиса и туризма»">ГКП на ПХВ «Колледж сервиса и туризма»</option>
-          <option value="ТОО Медицинский колледж «Томирис»">ТОО Медицинский колледж «Томирис»</option>
-          <option value="Педагогический колледж Международного университета Астаны">Педагогический колледж Международного университета Астаны</option>
-          <option value="ЧУ «Коллдеж медресе Астана»">ЧУ «Коллдеж медресе Астана»</option>
-          <option value="Казахский Швейцарско-Американский колледж">Казахский Швейцарско-Американский колледж</option>
-          <option value="Учреждение «Колледж городского хозяйства «Астана Профи»">Учреждение «Колледж городского хозяйства «Астана Профи»</option>
-          <option value="Учреждение Университет Есиль">Учреждение Университет Есиль</option>
-          <option value="Евразийский национальный университет им. Л.Н. Гумилева">Евразийский национальный университет им. Л.Н. Гумилева</option>
-          <option value="Казахский агротехнический университет имени С. Сейфуллина">Казахский агротехнический университет имени С. Сейфуллина</option>
-          <option value="Университет КАЗГЮУ имени М. Нарикбаева">Университет КАЗГЮУ имени М. Нарикбаева</option>
-          <option value="Медицинский университет Астана">Медицинский университет Астана</option>
-          <option value="Евразийский гуманитарный институт">Евразийский гуманитарный институт</option>
-          <option value="Казахский университет технологии и бизнеса">Казахский университет технологии и бизнеса</option>
-          <option value="Казахский университет экономики, финансов и международной торговли">Казахский университет экономики, финансов и международной торговли</option>
-          <option value="Университет «Астана»">Университет «Астана»</option>
-          <option value="Универистет «Туран-Астана»">Универистет «Туран-Астана»</option>
-          <option value="Академия государственного управления при Президенте Республики Казахстан">Академия государственного управления при Президенте Республики Казахстан</option>
-          <option value="Казахская национальная акаедмия хореграфии">Казахская национальная акаедмия хореграфии</option>
-          <option value="Международный универсистет Астана">Международный универсистет Астана</option>
-          <option value="Astana IT University">Astana IT University</option>
-          <option value="Назарбаев Университет">Назарбаев Университет</option>
-          <option value="Академия физической культуры и массового спорта">Академия физической культуры и массового спорта</option>
-          <option value="Казахский национальный педагогический университет имени Абая (Филиал)">Казахский национальный педагогический университет имени Абая (Филиал)</option>
-          <option value="Казахский национальный университет имени аль-Фараби">Казахский национальный университет имени аль-Фараби</option>
-          <option value="Казахский национальный технический университет имени К. И. Сатпаева">Казахский национальный технический университет имени К. И. Сатпаева</option>
-          <option value="Казахский национальный медицинский университет имени С. Д. Асфендиярова">Казахский национальный медицинский университет имени С. Д. Асфендиярова</option>
-          <option value="Казахский национальный аграрный университет">Казахский национальный аграрный университет</option>
-          <option value="Карагандинский государственный университет имени Е. А. Букетова">Карагандинский государственный университет имени Е. А. Букетова</option>
-          <option value="Костанайский государственный университет имени А. Байтурсынова">Костанайский государственный университет имени А. Байтурсынова</option>
-          <option value="Павлодарский государственный университет имени С. Торайгырова">Павлодарский государственный университет имени С. Торайгырова</option>
-          <option value="Южно-Казахстанский государственный университет имени М. Ауэзова">Южно-Казахстанский государственный университет имени М. Ауэзова</option>
-          <option value="Западно-Казахстанский аграрно-технический университет имени Жангир хана">Западно-Казахстанский аграрно-технический университет имени Жангир хана</option>
-        </select>
-      </div>
 
-      <label>Родственник:</label>
-      <div class="custom-select-wrapper">
-        <div class="custom-select" id="displayRelative">Выберите</div>
-        <div class="custom-options" id="optionsRelative">
-          <div data-value="">Выберите</div>
-          <div data-value="Мать">Мать</div>
-          <div data-value="Отец">Отец</div>
-          <div data-value="Брат">Брат</div>
-          <div data-value="Сестра">Сестра</div>
-        </div>
-        <select id="inputRelative" name="relative" style="display: none;">
-          <option value="">Выберите</option>
-          <option value="Мать">Мать</option>
-          <option value="Отец">Отец</option>
-          <option value="Брат">Брат</option>
-          <option value="Сестра">Сестра</option>
-        </select>
-      </div>
+        <label
+          >ИИН:
+          <input
+            type="text"
+            id="inputIin"
+            maxlength="12"
+            pattern="\d{12}"
+            inputmode="numeric"
+            placeholder="Введите 12 цифр"
+            required
+          />
+        </label>
 
-      <label>Телефон номер родственника:
-        <input type="text" id="inputRelativePhone" required placeholder="+7 700 000 0001" inputmode="numeric" pattern="\+7 \d{3} \d{3} \d{4}" />
-      </label>
+        <label
+          >Номер телефона студента:
+          <input
+            type="text"
+            id="inputPhone"
+            required
+            placeholder="+7 700 000 0000"
+            inputmode="numeric"
+            pattern="\+7 \d{3} \d{3} \d{4}"
+          />
+        </label>
 
-      <label>Дата заселения:</label>
-      <div class="date-picker-wrapper">
-        <input type="text" id="inputMoveInDate" required />
-      </div>
-
-      <label>Срок аренды (в мес):</label>
-      <div class="custom-select-wrapper">
-        <div class="custom-select" id="displayRentalPeriod">Выберите срок</div>
-        <div class="custom-options" id="optionsRentalPeriod">
-          <div data-value="">Выберите срок</div>
-          <div data-value="1">1</div>
-          <div data-value="2">2</div>
-          <div data-value="3">3</div>
-          <div data-value="4">4</div>
-          <div data-value="5">5</div>
-          <div data-value="6">6</div>
-          <div data-value="7">7</div>
-          <div data-value="8">8</div>
-          <div data-value="9">9</div>
-          <div data-value="10">10</div>
-          <div data-value="11">11</div>
-          <div data-value="12">12</div>
-        </div>
-        <select id="inputRentalPeriod" name="rentalPeriod" style="display: none;">
-          <option value="">Выберите срок</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-          <option value="9">9</option>
-          <option value="10">10</option>
-          <option value="11">11</option>
-          <option value="12">12</option>
-        </select>
-      </div>
-      <div id="calculatedPaymentWrapper" style="display: none; transition: all 0.3s ease; margin-top: 10px;">
-        <label>Сумма оплаты:
-          <div class="currency-input">
-            <input type="text" id="calculatedPayment" readonly />
-            <span class="tenge-symbol">₸</span>
+        <label>Место обучения:</label>
+        <div class="custom-select-wrapper">
+          <div class="custom-select" id="displayUniversity">
+            Выберите место обучения
           </div>
+          <div class="custom-options" id="optionsUniversity">
+            <div data-value="">Выберите место обучения</div>
+            <div
+              data-value="ГККП «Строительно-технический колледж» акимата г. Астана"
+            >
+              ГККП «Строительно-технический колледж» акимата г. Астана
+            </div>
+            <div
+              data-value="ГККП «Колледж общественного питания и сервиса» акимата г. Астана"
+            >
+              ГККП «Колледж общественного питания и сервиса» акимата г. Астана
+            </div>
+            <div data-value="ГККП «Технологический колледж» акимата г. Астана">
+              ГККП «Технологический колледж» акимата г. Астана
+            </div>
+            <div data-value="ГККП «Технический колледж» акимата г. Астана">
+              ГККП «Технический колледж» акимата г. Астана
+            </div>
+            <div
+              data-value="ГККП «Колледж энергетики и связи» акимата г. Астана"
+            >
+              ГККП «Колледж энергетики и связи» акимата г. Астана
+            </div>
+            <div
+              data-value="ГККП «Профессионально-технический колледж» акимата г. Астана"
+            >
+              ГККП «Профессионально-технический колледж» акимата г. Астана
+            </div>
+            <div data-value="ГККП «Многопрофильный колледж» акимата г. Астана">
+              ГККП «Многопрофильный колледж» акимата г. Астана
+            </div>
+            <div
+              data-value="ГККП «Гуманитарный колледж» Управления образования г. Астана"
+            >
+              ГККП «Гуманитарный колледж» Управления образования г. Астана
+            </div>
+            <div
+              data-value="ГККП «Политехнический колледж» Управления образования г. Астана"
+            >
+              ГККП «Политехнический колледж» Управления образования г. Астана
+            </div>
+            <div
+              data-value="ГКП на ПХВ  «Высший колледж транспорта и коммуникаций» акимата г. Астана"
+            >
+              ГКП на ПХВ «Высший колледж транспорта и коммуникаций» акимата г.
+              Астана
+            </div>
+            <div
+              data-value="ГККП «Колледж экономики, технологии и стандартизации пищевых производств» Управления образования Г. Астана"
+            >
+              ГККП «Колледж экономики, технологии и стандартизации пищевых
+              производств» Управления образования Г. Астана
+            </div>
+            <div
+              data-value="Колледж - ГКП на ПХВ «Высший медицинский колледж» акимата Г. Астана"
+            >
+              Колледж - ГКП на ПХВ «Высший медицинский колледж» акимата Г.
+              Астана
+            </div>
+            <div
+              data-value="Учреждение «Высший Торгово-экнонмический колледж Казпотребсоюза"
+            >
+              Учреждение «Высший Торгово-экнонмический колледж Казпотребсоюза
+            </div>
+            <div data-value="ТОО «Колледж Управления»">
+              ТОО «Колледж Управления»
+            </div>
+            <div data-value="Колледж иностранных языков «Лингва»">
+              Колледж иностранных языков «Лингва»
+            </div>
+            <div data-value="ТОО «Медико-технический колледж»">
+              ТОО «Медико-технический колледж»
+            </div>
+            <div data-value="Колледж «Даналық»">Колледж «Даналық»</div>
+            <div data-value="Международный колледж имени Магжана Жумабаева">
+              Международный колледж имени Магжана Жумабаева
+            </div>
+            <div data-value="Колледж «Туран»">Колледж «Туран»</div>
+            <div data-value="Учреждение «Колледж им.Д.А. Куанева в г. Астана">
+              Учреждение «Колледж им.Д.А. Куанева в г. Астана
+            </div>
+            <div data-value="ТОО Гуманитарно-технический колледж «АСУ»">
+              ТОО Гуманитарно-технический колледж «АСУ»
+            </div>
+            <div
+              data-value="ТОО «Индустриальный инженерно-экономический колледж»"
+            >
+              ТОО «Индустриальный инженерно-экономический колледж»
+            </div>
+            <div data-value="ТОО «Астанинский технико-экономический колледж»">
+              ТОО «Астанинский технико-экономический колледж»
+            </div>
+            <div
+              data-value="Колледж АО «Казахский университет технологий и безнеса»"
+            >
+              Колледж АО «Казахский университет технологий и безнеса»
+            </div>
+            <div
+              data-value="ТОО «Акмолинский колледж АО Казахская академия транспорта и коммуникаций им. Тынышпаева»"
+            >
+              ТОО «Акмолинский колледж АО Казахская академия транспорта и
+              коммуникаций им. Тынышпаева»
+            </div>
+            <div
+              data-value="Учреждение «Колледж Евразийского гуманитарного института»"
+            >
+              Учреждение «Колледж Евразийского гуманитарного института»
+            </div>
+            <div data-value="Многопрофильный колледж «Паразат»">
+              Многопрофильный колледж «Паразат»
+            </div>
+            <div data-value="ТОО Колледж менендмента и бизнеса»">
+              ТОО Колледж менендмента и бизнеса»
+            </div>
+            <div data-value="Колледж АО «Финансовая академия»">
+              Колледж АО «Финансовая академия»
+            </div>
+            <div
+              data-value="Учреждение «Колледж городского хозяйства «Туран-Профи»"
+            >
+              Учреждение «Колледж городского хозяйства «Туран-Профи»
+            </div>
+            <div data-value="Учреждение медицинский колледж «Шипагер»">
+              Учреждение медицинский колледж «Шипагер»
+            </div>
+            <div data-value="Экономико-юридический колледж">
+              Экономико-юридический колледж
+            </div>
+            <div
+              data-value="Казахстанский международный лингвистический колледж"
+            >
+              Казахстанский международный лингвистический колледж
+            </div>
+            <div data-value="ТОО «Республиканская медицинская академия»">
+              ТОО «Республиканская медицинская академия»
+            </div>
+            <div data-value="Гуманитарно-юридический колледж КАЗГЮУ">
+              Гуманитарно-юридический колледж КАЗГЮУ
+            </div>
+            <div data-value="ГКП на ПХВ «Колледж сервиса и туризма»">
+              ГКП на ПХВ «Колледж сервиса и туризма»
+            </div>
+            <div data-value="ТОО Медицинский колледж «Томирис»">
+              ТОО Медицинский колледж «Томирис»
+            </div>
+            <div
+              data-value="Педагогический колледж Международного университета Астаны"
+            >
+              Педагогический колледж Международного университета Астаны
+            </div>
+            <div data-value="ЧУ «Коллдеж медресе Астана»">
+              ЧУ «Коллдеж медресе Астана»
+            </div>
+            <div data-value="Казахский Швейцарско-Американский колледж">
+              Казахский Швейцарско-Американский колледж
+            </div>
+            <div
+              data-value="Учреждение «Колледж городского хозяйства «Астана Профи»"
+            >
+              Учреждение «Колледж городского хозяйства «Астана Профи»
+            </div>
+            <div data-value="Учреждение Университет Есиль">
+              Учреждение Университет Есиль
+            </div>
+            <div
+              data-value="Евразийский национальный университет им. Л.Н. Гумилева"
+            >
+              Евразийский национальный университет им. Л.Н. Гумилева
+            </div>
+            <div
+              data-value="Казахский агротехнический университет имени С. Сейфуллина"
+            >
+              Казахский агротехнический университет имени С. Сейфуллина
+            </div>
+            <div data-value="Университет КАЗГЮУ имени М. Нарикбаева">
+              Университет КАЗГЮУ имени М. Нарикбаева
+            </div>
+            <div data-value="Медицинский университет Астана">
+              Медицинский университет Астана
+            </div>
+            <div data-value="Евразийский гуманитарный институт">
+              Евразийский гуманитарный институт
+            </div>
+            <div data-value="Казахский университет технологии и бизнеса">
+              Казахский университет технологии и бизнеса
+            </div>
+            <div
+              data-value="Казахский университет экономики, финансов и международной торговли"
+            >
+              Казахский университет экономики, финансов и международной торговли
+            </div>
+            <div data-value="Университет «Астана»">Университет «Астана»</div>
+            <div data-value="Универистет «Туран-Астана»">
+              Универистет «Туран-Астана»
+            </div>
+            <div
+              data-value="Академия государственного управления при Президенте Республики Казахстан"
+            >
+              Академия государственного управления при Президенте Республики
+              Казахстан
+            </div>
+            <div data-value="Казахская национальная акаедмия хореграфии">
+              Казахская национальная акаедмия хореграфии
+            </div>
+            <div data-value="Международный универсистет Астана">
+              Международный универсистет Астана
+            </div>
+            <div data-value="Astana IT University">Astana IT University</div>
+            <div data-value="Назарбаев Университет">Назарбаев Университет</div>
+            <div data-value="Академия физической культуры и массового спорта">
+              Академия физической культуры и массового спорта
+            </div>
+            <div
+              data-value="Казахский национальный педагогический университет имени Абая (Филиал)"
+            >
+              Казахский национальный педагогический университет имени Абая
+              (Филиал)
+            </div>
+            <div
+              data-value="Казахский национальный университет имени аль-Фараби"
+            >
+              Казахский национальный университет имени аль-Фараби
+            </div>
+            <div
+              data-value="Казахский национальный технический университет имени К. И. Сатпаева"
+            >
+              Казахский национальный технический университет имени К. И.
+              Сатпаева
+            </div>
+            <div
+              data-value="Казахский национальный медицинский университет имени С. Д. Асфендиярова"
+            >
+              Казахский национальный медицинский университет имени С. Д.
+              Асфендиярова
+            </div>
+            <div data-value="Казахский национальный аграрный университет">
+              Казахский национальный аграрный университет
+            </div>
+            <div
+              data-value="Карагандинский государственный университет имени Е. А. Букетова"
+            >
+              Карагандинский государственный университет имени Е. А. Букетова
+            </div>
+            <div
+              data-value="Костанайский государственный университет имени А. Байтурсынова"
+            >
+              Костанайский государственный университет имени А. Байтурсынова
+            </div>
+            <div
+              data-value="Павлодарский государственный университет имени С. Торайгырова"
+            >
+              Павлодарский государственный университет имени С. Торайгырова
+            </div>
+            <div
+              data-value="Южно-Казахстанский государственный университет имени М. Ауэзова"
+            >
+              Южно-Казахстанский государственный университет имени М. Ауэзова
+            </div>
+            <div
+              data-value="Западно-Казахстанский аграрно-технический университет имени Жангир хана"
+            >
+              Западно-Казахстанский аграрно-технический университет имени Жангир
+              хана
+            </div>
+          </div>
+          <select id="inputUniversity" name="university" style="display: none">
+            <option value="">Выберите университет</option>
+            <option
+              value="ГККП «Строительно-технический колледж» акимата г. Астана"
+            >
+              ГККП «Строительно-технический колледж» акимата г. Астана
+            </option>
+            <option
+              value="ГККП «Колледж общественного питания и сервиса» акимата г. Астана"
+            >
+              ГККП «Колледж общественного питания и сервиса» акимата г. Астана
+            </option>
+            <option value="ГККП «Технологический колледж» акимата г. Астана">
+              ГККП «Технологический колледж» акимата г. Астана
+            </option>
+            <option value="ГККП «Технический колледж» акимата г. Астана">
+              ГККП «Технический колледж» акимата г. Астана
+            </option>
+            <option value="ГККП «Колледж энергетики и связи» акимата г. Астана">
+              ГККП «Колледж энергетики и связи» акимата г. Астана
+            </option>
+            <option
+              value="ГККП «Профессионально-технический колледж» акимата г. Астана"
+            >
+              ГККП «Профессионально-технический колледж» акимата г. Астана
+            </option>
+            <option value="ГККП «Многопрофильный колледж» акимата г. Астана">
+              ГККП «Многопрофильный колледж» акимата г. Астана
+            </option>
+            <option
+              value="ГККП «Гуманитарный колледж» Управления образования г. Астана"
+            >
+              ГККП «Гуманитарный колледж» Управления образования г. Астана
+            </option>
+            <option
+              value="ГККП «Политехнический колледж» Управления образования г. Астана"
+            >
+              ГККП «Политехнический колледж» Управления образования г. Астана
+            </option>
+            <option
+              value="ГКП на ПХВ  «Высший колледж транспорта и коммуникаций» акимата г. Астана"
+            >
+              ГКП на ПХВ «Высший колледж транспорта и коммуникаций» акимата г.
+              Астана
+            </option>
+            <option
+              value="ГККП «Колледж экономики, технологии и стандартизации пищевых производств» Управления образования Г. Астана"
+            >
+              ГККП «Колледж экономики, технологии и стандартизации пищевых
+              производств» Управления образования Г. Астана
+            </option>
+            <option
+              value="Колледж - ГКП на ПХВ «Высший медицинский колледж» акимата Г. Астана"
+            >
+              Колледж - ГКП на ПХВ «Высший медицинский колледж» акимата Г.
+              Астана
+            </option>
+            <option
+              value="Учреждение «Высший Торгово-экнонмический колледж Казпотребсоюза"
+            >
+              Учреждение «Высший Торгово-экнонмический колледж Казпотребсоюза
+            </option>
+            <option value="ТОО «Колледж Управления»">
+              ТОО «Колледж Управления»
+            </option>
+            <option value="Колледж иностранных языков «Лингва»">
+              Колледж иностранных языков «Лингва»
+            </option>
+            <option value="ТОО «Медико-технический колледж»">
+              ТОО «Медико-технический колледж»
+            </option>
+            <option value="Колледж «Даналық»">Колледж «Даналық»</option>
+            <option value="Международный колледж имени Магжана Жумабаева">
+              Международный колледж имени Магжана Жумабаева
+            </option>
+            <option value="Колледж «Туран»">Колледж «Туран»</option>
+            <option value="Учреждение «Колледж им.Д.А. Куанева в г. Астана">
+              Учреждение «Колледж им.Д.А. Куанева в г. Астана
+            </option>
+            <option value="ТОО Гуманитарно-технический колледж «АСУ»">
+              ТОО Гуманитарно-технический колледж «АСУ»
+            </option>
+            <option
+              value="ТОО «Индустриальный инженерно-экономический колледж»"
+            >
+              ТОО «Индустриальный инженерно-экономический колледж»
+            </option>
+            <option value="ТОО «Астанинский технико-экономический колледж»">
+              ТОО «Астанинский технико-экономический колледж»
+            </option>
+            <option
+              value="Колледж АО «Казахский университет технологий и безнеса»"
+            >
+              Колледж АО «Казахский университет технологий и безнеса»
+            </option>
+            <option
+              value="ТОО «Акмолинский колледж АО Казахская академия транспорта и коммуникаций им. Тынышпаева»"
+            >
+              ТОО «Акмолинский колледж АО Казахская академия транспорта и
+              коммуникаций им. Тынышпаева»
+            </option>
+            <option
+              value="Учреждение «Колледж Евразийского гуманитарного института»"
+            >
+              Учреждение «Колледж Евразийского гуманитарного института»
+            </option>
+            <option value="Многопрофильный колледж «Паразат»">
+              Многопрофильный колледж «Паразат»
+            </option>
+            <option value="ТОО Колледж менендмента и бизнеса»">
+              ТОО Колледж менендмента и бизнеса»
+            </option>
+            <option value="Колледж АО «Финансовая академия»">
+              Колледж АО «Финансовая академия»
+            </option>
+            <option
+              value="Учреждение «Колледж городского хозяйства «Туран-Профи»"
+            >
+              Учреждение «Колледж городского хозяйства «Туран-Профи»
+            </option>
+            <option value="Учреждение медицинский колледж «Шипагер»">
+              Учреждение медицинский колледж «Шипагер»
+            </option>
+            <option value="Экономико-юридический колледж">
+              Экономико-юридический колледж
+            </option>
+            <option value="Казахстанский международный лингвистический колледж">
+              Казахстанский международный лингвистический колледж
+            </option>
+            <option value="ТОО «Республиканская медицинская академия»">
+              ТОО «Республиканская медицинская академия»
+            </option>
+            <option value="Гуманитарно-юридический колледж КАЗГЮУ">
+              Гуманитарно-юридический колледж КАЗГЮУ
+            </option>
+            <option value="ГКП на ПХВ «Колледж сервиса и туризма»">
+              ГКП на ПХВ «Колледж сервиса и туризма»
+            </option>
+            <option value="ТОО Медицинский колледж «Томирис»">
+              ТОО Медицинский колледж «Томирис»
+            </option>
+            <option
+              value="Педагогический колледж Международного университета Астаны"
+            >
+              Педагогический колледж Международного университета Астаны
+            </option>
+            <option value="ЧУ «Коллдеж медресе Астана»">
+              ЧУ «Коллдеж медресе Астана»
+            </option>
+            <option value="Казахский Швейцарско-Американский колледж">
+              Казахский Швейцарско-Американский колледж
+            </option>
+            <option
+              value="Учреждение «Колледж городского хозяйства «Астана Профи»"
+            >
+              Учреждение «Колледж городского хозяйства «Астана Профи»
+            </option>
+            <option value="Учреждение Университет Есиль">
+              Учреждение Университет Есиль
+            </option>
+            <option
+              value="Евразийский национальный университет им. Л.Н. Гумилева"
+            >
+              Евразийский национальный университет им. Л.Н. Гумилева
+            </option>
+            <option
+              value="Казахский агротехнический университет имени С. Сейфуллина"
+            >
+              Казахский агротехнический университет имени С. Сейфуллина
+            </option>
+            <option value="Университет КАЗГЮУ имени М. Нарикбаева">
+              Университет КАЗГЮУ имени М. Нарикбаева
+            </option>
+            <option value="Медицинский университет Астана">
+              Медицинский университет Астана
+            </option>
+            <option value="Евразийский гуманитарный институт">
+              Евразийский гуманитарный институт
+            </option>
+            <option value="Казахский университет технологии и бизнеса">
+              Казахский университет технологии и бизнеса
+            </option>
+            <option
+              value="Казахский университет экономики, финансов и международной торговли"
+            >
+              Казахский университет экономики, финансов и международной торговли
+            </option>
+            <option value="Университет «Астана»">Университет «Астана»</option>
+            <option value="Универистет «Туран-Астана»">
+              Универистет «Туран-Астана»
+            </option>
+            <option
+              value="Академия государственного управления при Президенте Республики Казахстан"
+            >
+              Академия государственного управления при Президенте Республики
+              Казахстан
+            </option>
+            <option value="Казахская национальная акаедмия хореграфии">
+              Казахская национальная акаедмия хореграфии
+            </option>
+            <option value="Международный универсистет Астана">
+              Международный универсистет Астана
+            </option>
+            <option value="Astana IT University">Astana IT University</option>
+            <option value="Назарбаев Университет">Назарбаев Университет</option>
+            <option value="Академия физической культуры и массового спорта">
+              Академия физической культуры и массового спорта
+            </option>
+            <option
+              value="Казахский национальный педагогический университет имени Абая (Филиал)"
+            >
+              Казахский национальный педагогический университет имени Абая
+              (Филиал)
+            </option>
+            <option value="Казахский национальный университет имени аль-Фараби">
+              Казахский национальный университет имени аль-Фараби
+            </option>
+            <option
+              value="Казахский национальный технический университет имени К. И. Сатпаева"
+            >
+              Казахский национальный технический университет имени К. И.
+              Сатпаева
+            </option>
+            <option
+              value="Казахский национальный медицинский университет имени С. Д. Асфендиярова"
+            >
+              Казахский национальный медицинский университет имени С. Д.
+              Асфендиярова
+            </option>
+            <option value="Казахский национальный аграрный университет">
+              Казахский национальный аграрный университет
+            </option>
+            <option
+              value="Карагандинский государственный университет имени Е. А. Букетова"
+            >
+              Карагандинский государственный университет имени Е. А. Букетова
+            </option>
+            <option
+              value="Костанайский государственный университет имени А. Байтурсынова"
+            >
+              Костанайский государственный университет имени А. Байтурсынова
+            </option>
+            <option
+              value="Павлодарский государственный университет имени С. Торайгырова"
+            >
+              Павлодарский государственный университет имени С. Торайгырова
+            </option>
+            <option
+              value="Южно-Казахстанский государственный университет имени М. Ауэзова"
+            >
+              Южно-Казахстанский государственный университет имени М. Ауэзова
+            </option>
+            <option
+              value="Западно-Казахстанский аграрно-технический университет имени Жангир хана"
+            >
+              Западно-Казахстанский аграрно-технический университет имени Жангир
+              хана
+            </option>
+          </select>
+        </div>
+
+        <label>Родственник:</label>
+        <div class="custom-select-wrapper">
+          <div class="custom-select" id="displayRelative">
+            Выберите родственника
+          </div>
+          <div class="custom-options" id="optionsRelative">
+            <div data-value="">Выберите родственника</div>
+            <div data-value="Мама">Мама</div>
+            <div data-value="Отец">Отец</div>
+            <div data-value="Брат">Брат</div>
+            <div data-value="Сестра">Сестра</div>
+          </div>
+          <select id="inputRelative" name="relative" style="display: none">
+            <option value="">Выберите родственника</option>
+            <option value="Мама">Мама</option>
+            <option value="Отец">Отец</option>
+            <option value="Брат">Брат</option>
+            <option value="Сестра">Сестра</option>
+          </select>
+        </div>
+
+        <label
+          >Номер телефона родственника:
+          <input
+            type="text"
+            id="inputRelativePhone"
+            required
+            placeholder="+7 700 000 0001"
+            inputmode="numeric"
+            pattern="\+7 \d{3} \d{3} \d{4}"
+          />
         </label>
-      </div>
-      <div style="margin-bottom: 16px;"></div>
 
+        <label>Дата заселения:</label>
+        <div class="date-picker-wrapper">
+          <input type="text" id="inputMoveInDate" required />
+        </div>
 
-      <button type="submit" class="btn btn-primary">
-        <span class="btn-label">Далее</span>
-        <span class="arrow">&#8594;</span>
-      </button>
-      <button type="button" class="btn btn-reset" id="resetButton">
-        <span class="btn-label">Сбросить данные</span>
-        <span class="arrow">&#128465;</span>
-      </button>
-    </form>
-  </div>
+        <label>Срок аренды (в мес):</label>
+        <div class="custom-select-wrapper">
+          <div class="custom-select" id="displayRentalPeriod">
+            Выберите срок
+          </div>
+          <div class="custom-options" id="optionsRentalPeriod">
+            <div data-value="">Выберите срок</div>
+            <div data-value="1">1</div>
+            <div data-value="2">2</div>
+            <div data-value="3">3</div>
+            <div data-value="4">4</div>
+            <div data-value="5">5</div>
+            <div data-value="6">6</div>
+            <div data-value="7">7</div>
+            <div data-value="8">8</div>
+            <div data-value="9">9</div>
+            <div data-value="10">10</div>
+            <div data-value="11">11</div>
+            <div data-value="12">12</div>
+          </div>
+          <select
+            id="inputRentalPeriod"
+            name="rentalPeriod"
+            style="display: none"
+          >
+            <option value="">Выберите срок</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+          </select>
+        </div>
+        <div
+          id="calculatedPaymentWrapper"
+          style="display: none; transition: all 0.3s ease; margin-top: 10px"
+        >
+          <label
+            >Сумма оплаты:
+            <div class="currency-input">
+              <input type="text" id="calculatedPayment" readonly />
+              <span class="tenge-symbol">₸</span>
+            </div>
+          </label>
+        </div>
+        <div style="margin-bottom: 16px"></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
-  <script>
+        <button type="submit" class="btn btn-primary">
+          <span class="btn-label">Далее</span>
+          <span class="arrow">&#8594;</span>
+        </button>
+        <button type="button" class="btn btn-reset" id="resetButton">
+          <span class="btn-label">Сбросить данные</span>
+          <span class="arrow">&#128465;</span>
+        </button>
+      </form>
+    </div>
 
-    const phoneInput = document.getElementById("inputPhone");
-    const relativePhoneInput = document.getElementById("inputRelativePhone");
-    const iinInput = document.getElementById("inputIin");
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
+    <script>
+      const phoneInput = document.getElementById("inputPhone");
+      const relativePhoneInput = document.getElementById("inputRelativePhone");
+      const iinInput = document.getElementById("inputIin");
 
-    function sanitizeIinInput(event) {
-      event.target.value = event.target.value.replace(/\D/g, "").slice(0, 12);
-    }
-    iinInput.addEventListener("input", sanitizeIinInput);
+      function sanitizeIinInput(event) {
+        event.target.value = event.target.value.replace(/\D/g, "").slice(0, 12);
+      }
+      iinInput.addEventListener("input", sanitizeIinInput);
 
-    const lastName = document.getElementById("inputLastName");
-    const firstName = document.getElementById("inputFirstName");
-    const middleName = document.getElementById("inputMiddleName");
+      const lastName = document.getElementById("inputLastName");
+      const firstName = document.getElementById("inputFirstName");
+      const middleName = document.getElementById("inputMiddleName");
 
-    function sanitizeNameInput(event) {
-      let input = event.target.value;
-      input = input.replace(/[^А-Яа-яЁёA-Za-zӘәӨөҚқҮүҰұІіҢң\s]/g, "");
-      event.target.value = input;
-    }
+      function sanitizeNameInput(event) {
+        let input = event.target.value;
+        input = input.replace(/[^А-Яа-яЁёA-Za-zӘәӨөҚқҮүҰұІіҢң\s]/g, "");
+        event.target.value = input;
+      }
 
-    lastName.addEventListener("input", sanitizeNameInput);
-    firstName.addEventListener("input", sanitizeNameInput);
-    middleName.addEventListener("input", sanitizeNameInput);
+      lastName.addEventListener("input", sanitizeNameInput);
+      firstName.addEventListener("input", sanitizeNameInput);
+      middleName.addEventListener("input", sanitizeNameInput);
 
-    function formatPhoneInput(event) {
-      let input = event.target.value.replace(/\D/g, "");
-      if (input.startsWith("7")) input = input.slice(1);
-      input = input.slice(0, 10);
-      let formatted = "+7 ";
-      if (input.length > 0) formatted += input.substring(0, 3);
-      if (input.length >= 4) formatted += " " + input.substring(3, 6);
-      if (input.length >= 7) formatted += " " + input.substring(6, 10);
-      event.target.value = formatted.trim();
-    }
+      function formatPhoneInput(event) {
+        let input = event.target.value.replace(/\D/g, "");
+        if (input.startsWith("7")) input = input.slice(1);
+        input = input.slice(0, 10);
+        let formatted = "+7 ";
+        if (input.length > 0) formatted += input.substring(0, 3);
+        if (input.length >= 4) formatted += " " + input.substring(3, 6);
+        if (input.length >= 7) formatted += " " + input.substring(6, 10);
+        event.target.value = formatted.trim();
+      }
 
-    phoneInput.addEventListener("input", formatPhoneInput);
-    relativePhoneInput.addEventListener("input", formatPhoneInput);
+      phoneInput.addEventListener("input", formatPhoneInput);
+      relativePhoneInput.addEventListener("input", formatPhoneInput);
 
-    function showError(el, message) {
-      removeError(el);
-      // Gender radio group special handling
-      if (el.name === "gender") {
-        const genderError = document.querySelector(".gender-selection + .field-error");
-        if (!genderError) {
-          const error = document.createElement("div");
-          error.className = "field-error";
-          error.textContent = message;
-          document.querySelector(".gender-selection").after(error);
-        }
-        document.getElementById("genderLabel")?.classList.add("field-error");
-        document.querySelectorAll(".gender-card").forEach(card => {
-          card.classList.add("field-error-input");
-        });
-      } else {
-        // For selects, place error after the custom select display
-        if (el.tagName === "SELECT" && el.id === "inputUniversity") {
-          const display = document.getElementById("displayUniversity");
-          const error = document.createElement("div");
-          error.className = "field-error";
-          error.textContent = message;
-          display.insertAdjacentElement("afterend", error);
-          display.classList.add("field-error-input");
-        } else if (el.tagName === "SELECT" && el.id === "inputRelative") {
-          const display = document.getElementById("displayRelative");
-          const error = document.createElement("div");
-          error.className = "field-error";
-          error.textContent = message;
-          display.insertAdjacentElement("afterend", error);
-          display.classList.add("field-error-input");
-        } else if (el.tagName === "SELECT" && el.id === "inputRentalPeriod") {
-          const display = document.getElementById("displayRentalPeriod");
-          const error = document.createElement("div");
-          error.className = "field-error";
-          error.textContent = message;
-          display.insertAdjacentElement("afterend", error);
-          display.classList.add("field-error-input");
-        } else if (el.id === "inputMoveInDate") {
-          // Date input: place error after date-picker-wrapper
-          const wrapper = el.closest(".date-picker-wrapper");
-          if (wrapper) {
+      function showError(el, message) {
+        removeError(el);
+        // Gender radio group special handling
+        if (el.name === "gender") {
+          const genderError = document.querySelector(
+            ".gender-selection + .field-error"
+          );
+          if (!genderError) {
             const error = document.createElement("div");
             error.className = "field-error";
             error.textContent = message;
-            wrapper.insertAdjacentElement("afterend", error);
+            document.querySelector(".gender-selection").after(error);
+          }
+          document.getElementById("genderLabel")?.classList.add("field-error");
+          document.querySelectorAll(".gender-card").forEach((card) => {
+            card.classList.add("field-error-input");
+          });
+        } else {
+          // For selects, place error after the custom select display
+          if (el.tagName === "SELECT" && el.id === "inputUniversity") {
+            const display = document.getElementById("displayUniversity");
+            const error = document.createElement("div");
+            error.className = "field-error";
+            error.textContent = message;
+            display.insertAdjacentElement("afterend", error);
+            display.classList.add("field-error-input");
+          } else if (el.tagName === "SELECT" && el.id === "inputRelative") {
+            const display = document.getElementById("displayRelative");
+            const error = document.createElement("div");
+            error.className = "field-error";
+            error.textContent = message;
+            display.insertAdjacentElement("afterend", error);
+            display.classList.add("field-error-input");
+          } else if (el.tagName === "SELECT" && el.id === "inputRentalPeriod") {
+            const display = document.getElementById("displayRentalPeriod");
+            const error = document.createElement("div");
+            error.className = "field-error";
+            error.textContent = message;
+            display.insertAdjacentElement("afterend", error);
+            display.classList.add("field-error-input");
+          } else if (el.id === "inputMoveInDate") {
+            // Date input: place error after date-picker-wrapper
+            const wrapper = el.closest(".date-picker-wrapper");
+            if (wrapper) {
+              const error = document.createElement("div");
+              error.className = "field-error";
+              error.textContent = message;
+              wrapper.insertAdjacentElement("afterend", error);
+              el.classList.add("field-error-input");
+            }
+          } else {
+            // Default: after input
+            const error = document.createElement("div");
+            error.className = "field-error";
+            error.textContent = message;
+            el.insertAdjacentElement("afterend", error);
             el.classList.add("field-error-input");
           }
-        } else {
-          // Default: after input
-          const error = document.createElement("div");
-          error.className = "field-error";
-          error.textContent = message;
-          el.insertAdjacentElement("afterend", error);
-          el.classList.add("field-error-input");
         }
       }
-    }
 
-    function removeError(el) {
-      // Gender radio group special handling
-      if (el.name === "gender") {
-        document.getElementById("genderLabel")?.classList.remove("field-error");
-        document.querySelectorAll(".gender-card").forEach(card => {
-          card.classList.remove("field-error-input");
-        });
-        const genderError = document.querySelector(".gender-selection + .field-error");
-        if (genderError) genderError.remove();
-        return;
-      }
-      // For selects, error is after display
-      if (el.tagName === "SELECT" && el.id === "inputUniversity") {
-        const display = document.getElementById("displayUniversity");
-        const next = display.nextElementSibling;
-        if (next && next.classList.contains("field-error")) {
-          next.remove();
+      function removeError(el) {
+        // Gender radio group special handling
+        if (el.name === "gender") {
+          document
+            .getElementById("genderLabel")
+            ?.classList.remove("field-error");
+          document.querySelectorAll(".gender-card").forEach((card) => {
+            card.classList.remove("field-error-input");
+          });
+          const genderError = document.querySelector(
+            ".gender-selection + .field-error"
+          );
+          if (genderError) genderError.remove();
+          return;
         }
-        display.classList.remove("field-error-input");
-        return;
-      }
-      if (el.tagName === "SELECT" && el.id === "inputRelative") {
-        const display = document.getElementById("displayRelative");
-        const next = display.nextElementSibling;
-        if (next && next.classList.contains("field-error")) {
-          next.remove();
-        }
-        display.classList.remove("field-error-input");
-        return;
-      }
-      if (el.tagName === "SELECT" && el.id === "inputRentalPeriod") {
-        const display = document.getElementById("displayRentalPeriod");
-        const next = display.nextElementSibling;
-        if (next && next.classList.contains("field-error")) {
-          next.remove();
-        }
-        display.classList.remove("field-error-input");
-        return;
-      }
-      if (el.id === "inputMoveInDate") {
-        const wrapper = el.closest(".date-picker-wrapper");
-        if (wrapper) {
-          const next = wrapper.nextElementSibling;
+        // For selects, error is after display
+        if (el.tagName === "SELECT" && el.id === "inputUniversity") {
+          const display = document.getElementById("displayUniversity");
+          const next = display.nextElementSibling;
           if (next && next.classList.contains("field-error")) {
             next.remove();
           }
+          display.classList.remove("field-error-input");
+          return;
         }
-        el.classList.remove("field-error-input");
-        return;
-      }
-      // Default: after input
-      const next = el.nextElementSibling;
-      if (next && next.classList.contains("field-error")) {
-        next.remove();
-      }
-      el.classList.remove("field-error-input");
-    }
-
-    document.getElementById("addStudentForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-
-      const iin = iinInput;
-      const phone = phoneInput;
-      const rPhone = relativePhoneInput;
-      const university = document.getElementById("inputUniversity");
-      const relative = document.getElementById("inputRelative");
-      const moveInDate = document.getElementById("inputMoveInDate");
-      const rentalPeriod = document.getElementById("inputRentalPeriod");
-      const gender = document.querySelector('input[name="gender"]:checked');
-
-      // Remove all previous errors and borders
-      // For all required fields, also remove errors from custom select displays
-      [
-        lastName, firstName, iin, phone, rPhone, university, relative, moveInDate, rentalPeriod
-      ].forEach(el => removeError(el));
-      removeError(document.querySelector('input[name="gender"]'));
-
-      // Remove all .field-error for good measure
-      document.querySelectorAll(".field-error").forEach(e => e.remove());
-      document.querySelectorAll(".field-error-input").forEach(e => e.classList.remove("field-error-input"));
-
-      // Удаление выделения и повторное выделение выбранного пола
-      document.querySelectorAll(".gender-card").forEach(card => card.classList.remove("selected"));
-      if (gender) gender.parentElement.classList.add("selected");
-
-      const requiredFields = [
-        { el: lastName, name: "Фамилия" },
-        { el: firstName, name: "Имя" },
-        { el: iin, name: "ИИН" },
-        { el: phone, name: "Телефон номер студента" },
-        { el: rPhone, name: "Телефон номер родственника" },
-        { el: university, name: "Место обучения" },
-        { el: relative, name: "Родственник" },
-        { el: moveInDate, name: "Дата заселения" },
-        { el: rentalPeriod, name: "Срок аренды" }
-      ];
-      let isValid = true;
-
-      // Gender
-      if (!gender) {
-        showError(document.querySelector('input[name="gender"]'), "Пожалуйста, выберите пол");
-        isValid = false;
-      }
-
-      // Required
-      requiredFields.forEach(obj => {
-        const el = obj.el;
-        // For select, check value
-        if (!el || !el.value || !el.value.trim()) {
-          showError(el, "Поле обязательно");
-          isValid = false;
-        }
-      });
-
-      // IIN: 12 digits
-      if (iin.value && !/^\d{12}$/.test(iin.value)) {
-        showError(iin, "Введите ИИН из 12 цифр");
-        isValid = false;
-      }
-
-      // Phone pattern
-      const phonePattern = /^\+7 \d{3} \d{3} \d{4}$/;
-      if (phone.value && !phonePattern.test(phone.value)) {
-        showError(phone, "Введите телефон в формате +7 XXX XXX XXXX");
-        isValid = false;
-      }
-      if (rPhone.value && !phonePattern.test(rPhone.value)) {
-        showError(rPhone, "Введите телефон в формате +7 XXX XXX XXXX");
-        isValid = false;
-      }
-      // Phone numbers must not match
-      if (
-        phone.value &&
-        rPhone.value &&
-        phone.value === rPhone.value
-      ) {
-        showError(phone, "Номера студентов и родственников не должны совпадать");
-        showError(rPhone, "Номера студентов и родственников не должны совпадать");
-        isValid = false;
-      }
-
-      if (isValid) {
-        const submitBtn = document.querySelector("button[type='submit']");
-        submitBtn.innerHTML = 'Загрузка... <span class="loading-spinner"></span>';
-        submitBtn.disabled = true;
-
-        // Формируем объект studentData с нужными полями
-        const calculatedPayment = document.getElementById("calculatedPayment");
-        const studentData = {
-          lastName: lastName.value.trim(),
-          firstName: firstName.value.trim(),
-          middleName: middleName.value.trim(),
-          iin: iin.value.trim(),
-          phone: phone.value.trim(),
-          university: university.value,
-          relative: relative.value,
-          relativePhone: rPhone.value.trim(),
-          payment: calculatedPayment.value.trim(),
-          moveInDate: moveInDate.value.trim(),
-          rentalPeriod: rentalPeriod.value,
-          gender: gender.value
-        };
-
-        localStorage.setItem("studentFormData", JSON.stringify(studentData));
-        console.log("Форма прошла валидацию, данные сохранены, переходим далее.");
-        window.location.href = "form-documents.html";
-      } else {
-        console.log("Форма содержит ошибки. Проверьте ввод.");
-      }
-    });
-
-    // Обработка выбора пола (перекраска карточки)
-    document.querySelectorAll(".gender-card input").forEach(input => {
-      input.addEventListener("change", () => {
-        document.querySelectorAll(".gender-card").forEach(card => {
-          card.classList.remove("selected");
-        });
-        input.parentElement.classList.add("selected");
-        removeError(input);
-      });
-    });
-
-
-
-    function validateOnBlur(el, message, pattern = null) {
-      el.addEventListener("blur", () => {
-        removeError(el);
-        if (!el.value.trim()) {
-          showError(el, message);
-        } else if (pattern && !pattern.test(el.value.trim())) {
-          showError(el, message);
-        } else {
-          removeError(el);
-        }
-      });
-    }
-
-    validateOnBlur(lastName, "Введите фамилию");
-    validateOnBlur(firstName, "Введите имя");
-    validateOnBlur(iinInput, "Введите ИИН из 12 цифр", /^\d{12}$/);
-    validateOnBlur(phoneInput, "Введите телефон в формате +7 XXX XXX XXXX", /^\+7 \d{3} \d{3} \d{4}$/);
-    validateOnBlur(relativePhoneInput, "Введите телефон в формате +7 XXX XXX XXXX", /^\+7 \d{3} \d{3} \d{4}$/);
-
-    // University select blur
-    document.getElementById("displayUniversity").addEventListener("blur", function() {
-      const select = document.getElementById("inputUniversity");
-      removeError(select);
-      if (!select.value.trim()) {
-        showError(select, "Поле обязательно");
-      }
-    });
-    // Relative select blur
-    document.getElementById("displayRelative").addEventListener("blur", function() {
-      const select = document.getElementById("inputRelative");
-      removeError(select);
-      if (!select.value.trim()) {
-        showError(select, "Поле обязательно");
-      }
-    });
-    // RentalPeriod select blur
-    document.getElementById("displayRentalPeriod").addEventListener("blur", function() {
-      const select = document.getElementById("inputRentalPeriod");
-      removeError(select);
-      if (!select.value.trim()) {
-        showError(select, "Поле обязательно");
-      }
-    });
-    // MoveInDate blur
-    document.getElementById("inputMoveInDate").addEventListener("blur", function() {
-      const el = this;
-      removeError(el);
-      if (!el.value.trim()) {
-        showError(el, "Поле обязательно");
-      }
-    });
-
-    function checkPhonesMatch() {
-      removeError(phoneInput);
-      removeError(relativePhoneInput);
-      if (
-        phoneInput.value &&
-        relativePhoneInput.value &&
-        phoneInput.value === relativePhoneInput.value
-      ) {
-        showError(phoneInput, "Номера студентов и родственников не должны совпадать");
-        showError(relativePhoneInput, "Номера студентов и родственников не должны совпадать");
-      }
-    }
-
-    phoneInput.addEventListener("blur", checkPhonesMatch);
-    relativePhoneInput.addEventListener("blur", checkPhonesMatch);
-
-    // Всплывающее уведомление
-    function showToast(message) {
-      const toast = document.getElementById("toast");
-      toast.textContent = message;
-      toast.classList.remove("show"); // сброс перед повторной анимацией
-      void toast.offsetWidth; // принудительный рефлоу
-      toast.classList.add("show");
-      clearTimeout(toast.hideTimeout);
-      toast.hideTimeout = setTimeout(() => {
-        toast.classList.remove("show");
-      }, 3000);
-    }
-
-    // Объединённый обработчик pageshow для восстановления состояния
-    window.addEventListener("pageshow", () => {
-      // Восстановить кнопку "Далее"
-      const submitBtn = document.querySelector("button[type='submit']");
-      let savedData = {};
-      try {
-        savedData = JSON.parse(localStorage.getItem("studentFormData")) || {};
-      } catch (e) {
-        console.warn("Повреждённые данные в localStorage", e);
-        localStorage.removeItem("studentFormData");
-      }
-      if (savedData) {
-        lastName.value = savedData.lastName || "";
-        firstName.value = savedData.firstName || "";
-        middleName.value = savedData.middleName || "";
-        iinInput.value = savedData.iin || "";
-        phoneInput.value = savedData.phone || "";
-        relativePhoneInput.value = savedData.relativePhone || "";
-
-        // Восстановление select-элементов
-        const university = document.getElementById("inputUniversity");
-        const relative = document.getElementById("inputRelative");
-        const rentalPeriod = document.getElementById("inputRentalPeriod");
-
-        if (savedData.university) {
-          university.value = savedData.university;
-          // Обновление кастомного select для университета
-          document.getElementById("displayUniversity").textContent = university.options[university.selectedIndex].textContent;
-          document.getElementById("optionsUniversity").querySelectorAll("div").forEach(opt => {
-            opt.classList.toggle("selected", opt.getAttribute("data-value") === university.value);
-          });
-        }
-        if (savedData.relative) {
-          relative.value = savedData.relative;
-          // Обновление кастомного select для relative
-          document.getElementById("displayRelative").textContent = relative.options[relative.selectedIndex].textContent;
-          document.getElementById("optionsRelative").querySelectorAll("div").forEach(opt => {
-            opt.classList.toggle("selected", opt.getAttribute("data-value") === relative.value);
-          });
-        }
-        if (savedData.rentalPeriod) {
-          rentalPeriod.value = savedData.rentalPeriod.toString();
-          // Обновление кастомного select для rentalPeriod
-          document.getElementById("displayRentalPeriod").textContent = rentalPeriod.options[rentalPeriod.selectedIndex].textContent;
-          document.getElementById("optionsRentalPeriod").querySelectorAll("div").forEach(opt => {
-            opt.classList.toggle("selected", opt.getAttribute("data-value") === rentalPeriod.value);
-          });
-        }
-
-        // Восстановление суммы оплаты
-        if (savedData.payment) {
-          const calculatedPayment = document.getElementById("calculatedPayment");
-          const calculatedPaymentWrapper = document.getElementById("calculatedPaymentWrapper");
-          calculatedPayment.value = savedData.payment;
-          calculatedPaymentWrapper.style.display = "block";
-          calculatedPaymentWrapper.style.opacity = 1;
-        }
-
-        // Восстановление пола
-        if (savedData.gender) {
-          const genderInput = document.querySelector(`input[name="gender"][value="${savedData.gender}"]`);
-          if (genderInput) {
-            genderInput.checked = true;
-            genderInput.parentElement.classList.add("selected");
+        if (el.tagName === "SELECT" && el.id === "inputRelative") {
+          const display = document.getElementById("displayRelative");
+          const next = display.nextElementSibling;
+          if (next && next.classList.contains("field-error")) {
+            next.remove();
           }
+          display.classList.remove("field-error-input");
+          return;
         }
-      }
-      submitBtn.innerHTML = 'Далее <span class="arrow">&#8594;</span>';
-      submitBtn.disabled = false;
-
-      // Повторно привязать обработчик сброса
-      const resetBtn = document.getElementById("resetButton");
-      if (resetBtn) {
-        resetBtn.onclick = function () {
-          document.getElementById("addStudentForm").reset();
-          document.querySelectorAll(".field-error").forEach(e => e.remove());
-          document.querySelectorAll("input, select").forEach(el => el.style.border = "");
-          document.querySelectorAll(".gender-card").forEach(card => card.classList.remove("selected"));
-          localStorage.removeItem("studentFormData");
-          console.log("localStorage очищен");
-          // Сброс кастомных селектов
-          document.getElementById("displayUniversity").textContent = "Выберите университет";
-          document.querySelectorAll("#optionsUniversity div").forEach(opt => opt.classList.remove("selected"));
-
-          document.getElementById("displayRelative").textContent = "Выберите";
-          document.querySelectorAll("#optionsRelative div").forEach(opt => opt.classList.remove("selected"));
-
-          document.getElementById("displayRentalPeriod").textContent = "Выберите срок";
-          document.querySelectorAll("#optionsRentalPeriod div").forEach(opt => opt.classList.remove("selected"));
-
-          // Скрыть сумму оплаты
-          const calculatedPaymentWrapper = document.getElementById("calculatedPaymentWrapper");
-          const calculatedPayment = document.getElementById("calculatedPayment");
-          if (calculatedPaymentWrapper) calculatedPaymentWrapper.style.display = "none";
-          if (calculatedPayment) calculatedPayment.value = "";
-
-          showToast("Данные сброшены");
-        };
-      }
-
-      // Обновить flatpickr
-      flatpickr("#inputMoveInDate", {
-        dateFormat: "Y-m-d",
-        defaultDate: savedData?.moveInDate || null,
-        locale: "ru"
-      });
-      // Установить плейсхолдер для поля даты на сегодняшнюю дату
-      document.getElementById("inputMoveInDate").placeholder = new Date().toISOString().split("T")[0];
-    });
-    ["University", "Relative", "RentalPeriod"].forEach(id => {
-      const display = document.getElementById(`display${id}`);
-      const options = document.getElementById(`options${id}`);
-      const select = document.getElementById(`input${id}`);
-
-      display.addEventListener("click", () => {
-        removeError(select);
-        const isOpen = options.style.display === "block";
-        document.querySelectorAll(".custom-options").forEach(o => o.style.display = "none");
-        document.querySelectorAll(".custom-select").forEach(d => d.classList.remove("active"));
-        if (!isOpen) {
-          options.style.display = "block";
-          display.classList.add("active");
+        if (el.tagName === "SELECT" && el.id === "inputRentalPeriod") {
+          const display = document.getElementById("displayRentalPeriod");
+          const next = display.nextElementSibling;
+          if (next && next.classList.contains("field-error")) {
+            next.remove();
+          }
+          display.classList.remove("field-error-input");
+          return;
         }
-      });
-
-      options.querySelectorAll("div").forEach(opt => {
-        opt.addEventListener("click", () => {
-          const val = opt.getAttribute("data-value");
-          select.value = val;
-          display.textContent = opt.textContent;
-          options.querySelectorAll("div").forEach(d => d.classList.remove("selected"));
-          opt.classList.add("selected");
-          options.style.display = "none";
-
-          // Добавлено: вычисление суммы оплаты после выбора срока аренды
-          if (id === "RentalPeriod") {
-            const rentValue = parseInt(val);
-            const paymentBlock = document.getElementById("calculatedPaymentWrapper");
-            const paymentInput = document.getElementById("calculatedPayment");
-
-            if (!isNaN(rentValue)) {
-              const total = rentValue * 30000;
-              paymentInput.value = total.toLocaleString("ru-RU");
-              paymentBlock.style.display = "block";
-              paymentBlock.style.opacity = 0;
-              setTimeout(() => paymentBlock.style.opacity = 1, 50);
-            } else {
-              paymentBlock.style.display = "none";
+        if (el.id === "inputMoveInDate") {
+          const wrapper = el.closest(".date-picker-wrapper");
+          if (wrapper) {
+            const next = wrapper.nextElementSibling;
+            if (next && next.classList.contains("field-error")) {
+              next.remove();
             }
           }
+          el.classList.remove("field-error-input");
+          return;
+        }
+        // Default: after input
+        const next = el.nextElementSibling;
+        if (next && next.classList.contains("field-error")) {
+          next.remove();
+        }
+        el.classList.remove("field-error-input");
+      }
+
+      document
+        .getElementById("addStudentForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const iin = iinInput;
+          const phone = phoneInput;
+          const rPhone = relativePhoneInput;
+          const university = document.getElementById("inputUniversity");
+          const relative = document.getElementById("inputRelative");
+          const moveInDate = document.getElementById("inputMoveInDate");
+          const rentalPeriod = document.getElementById("inputRentalPeriod");
+          const gender = document.querySelector('input[name="gender"]:checked');
+
+          // Remove all previous errors and borders
+          // For all required fields, also remove errors from custom select displays
+          [
+            lastName,
+            firstName,
+            iin,
+            phone,
+            rPhone,
+            university,
+            relative,
+            moveInDate,
+            rentalPeriod,
+          ].forEach((el) => removeError(el));
+          removeError(document.querySelector('input[name="gender"]'));
+
+          // Remove all .field-error for good measure
+          document.querySelectorAll(".field-error").forEach((e) => e.remove());
+          document
+            .querySelectorAll(".field-error-input")
+            .forEach((e) => e.classList.remove("field-error-input"));
+
+          // Удаление выделения и повторное выделение выбранного пола
+          document
+            .querySelectorAll(".gender-card")
+            .forEach((card) => card.classList.remove("selected"));
+          if (gender) gender.parentElement.classList.add("selected");
+
+          const requiredFields = [
+            { el: lastName, name: "Фамилия" },
+            { el: firstName, name: "Имя" },
+            { el: iin, name: "ИИН" },
+            { el: phone, name: "Номер телефона студента" },
+            { el: rPhone, name: "Номер телефона родственника" },
+            { el: university, name: "Место обучения" },
+            { el: relative, name: "Родственник" },
+            { el: moveInDate, name: "Дата заселения" },
+            { el: rentalPeriod, name: "Срок аренды" },
+          ];
+          let isValid = true;
+
+          // Gender
+          if (!gender) {
+            showError(
+              document.querySelector('input[name="gender"]'),
+              "Пожалуйста, выберите пол"
+            );
+            isValid = false;
+          }
+
+          // Required
+          requiredFields.forEach((obj) => {
+            const el = obj.el;
+            // For select, check value
+            if (!el || !el.value || !el.value.trim()) {
+              showError(el, "Обязательное поле");
+              isValid = false;
+            }
+          });
+
+          // IIN: 12 digits
+          if (iin.value && !/^\d{12}$/.test(iin.value)) {
+            showError(iin, "Введите ИИН из 12 цифр");
+            isValid = false;
+          }
+
+          // Phone pattern
+          const phonePattern = /^\+7 \d{3} \d{3} \d{4}$/;
+          if (phone.value && !phonePattern.test(phone.value)) {
+            showError(phone, "Введите номер в формате +7 XXX XXX XXXX");
+            isValid = false;
+          }
+          if (rPhone.value && !phonePattern.test(rPhone.value)) {
+            showError(rPhone, "Введите номер в формате +7 XXX XXX XXXX");
+            isValid = false;
+          }
+          // Phone numbers must not match
+          if (phone.value && rPhone.value && phone.value === rPhone.value) {
+            showError(
+              phone,
+              "Номера телефонов студента и родственника не должны совпадать"
+            );
+            showError(
+              rPhone,
+              "Номера телефонов студента и родственника не должны совпадать"
+            );
+            isValid = false;
+          }
+
+          if (isValid) {
+            const submitBtn = document.querySelector("button[type='submit']");
+            submitBtn.innerHTML =
+              'Загрузка... <span class="loading-spinner"></span>';
+            submitBtn.disabled = true;
+
+            // Формируем объект studentData с нужными полями
+            const calculatedPayment =
+              document.getElementById("calculatedPayment");
+            const studentData = {
+              lastName: lastName.value.trim(),
+              firstName: firstName.value.trim(),
+              middleName: middleName.value.trim(),
+              iin: iin.value.trim(),
+              phone: phone.value.trim(),
+              university: university.value,
+              relative: relative.value,
+              relativePhone: rPhone.value.trim(),
+              payment: calculatedPayment.value.trim(),
+              moveInDate: moveInDate.value.trim(),
+              rentalPeriod: rentalPeriod.value,
+              gender: gender.value,
+            };
+
+            localStorage.setItem(
+              "studentFormData",
+              JSON.stringify(studentData)
+            );
+            console.log(
+              "Форма успешно проверена. Данные сохранены, переход к следующему этапу."
+            );
+            window.location.href = "form-documents.html";
+          } else {
+            console.log(
+              "Форма содержит ошибки. Пожалуйста, проверьте введённые данные."
+            );
+          }
+        });
+
+      // Обработка выбора пола (перекраска карточки)
+      document.querySelectorAll(".gender-card input").forEach((input) => {
+        input.addEventListener("change", () => {
+          document.querySelectorAll(".gender-card").forEach((card) => {
+            card.classList.remove("selected");
+          });
+          input.parentElement.classList.add("selected");
+          removeError(input);
         });
       });
-    });
 
-    // Добавить обработчик focus для всех input и select в форме: при фокусе удалять ошибку
-    document.querySelectorAll("#addStudentForm input, #addStudentForm select").forEach(el => {
-      el.addEventListener("focus", () => removeError(el));
-    });
-    // Принудительно для телефонов, так как inputmode может мешать focus
-    phoneInput.addEventListener("focus", () => removeError(phoneInput));
-    relativePhoneInput.addEventListener("focus", () => removeError(relativePhoneInput));
-
-    // Добавить обработчик focus для кастомных radio (пол)
-    document.querySelectorAll(".gender-card input").forEach(input => {
-      input.addEventListener("focus", () => removeError(input));
-    });
-
-    window.addEventListener("click", (e) => {
-      if (!e.target.closest(".custom-select-wrapper")) {
-        document.querySelectorAll(".custom-options").forEach(o => o.style.display = "none");
-        document.querySelectorAll(".custom-select").forEach(d => d.classList.remove("active"));
+      function validateOnBlur(el, message, pattern = null) {
+        el.addEventListener("blur", () => {
+          removeError(el);
+          if (!el.value.trim()) {
+            showError(el, message);
+          } else if (pattern && !pattern.test(el.value.trim())) {
+            showError(el, message);
+          } else {
+            removeError(el);
+          }
+        });
       }
-    });
-  </script>
-</body>
+
+      validateOnBlur(lastName, "Введите фамилию");
+      validateOnBlur(firstName, "Введите имя");
+      validateOnBlur(iinInput, "Введите ИИН из 12 цифр", /^\d{12}$/);
+      validateOnBlur(
+        phoneInput,
+        "Введите номер в формате +7 XXX XXX XXXX",
+        /^\+7 \d{3} \d{3} \d{4}$/
+      );
+      validateOnBlur(
+        relativePhoneInput,
+        "Введите номер в формате +7 XXX XXX XXXX",
+        /^\+7 \d{3} \d{3} \d{4}$/
+      );
+
+      // University select blur
+      document
+        .getElementById("displayUniversity")
+        .addEventListener("blur", function () {
+          const select = document.getElementById("inputUniversity");
+          removeError(select);
+          if (!select.value.trim()) {
+            showError(select, "Обязательное поле");
+          }
+        });
+      // Relative select blur
+      document
+        .getElementById("displayRelative")
+        .addEventListener("blur", function () {
+          const select = document.getElementById("inputRelative");
+          removeError(select);
+          if (!select.value.trim()) {
+            showError(select, "Обязательное поле");
+          }
+        });
+      // RentalPeriod select blur
+      document
+        .getElementById("displayRentalPeriod")
+        .addEventListener("blur", function () {
+          const select = document.getElementById("inputRentalPeriod");
+          removeError(select);
+          if (!select.value.trim()) {
+            showError(select, "Обязательное поле");
+          }
+        });
+      // MoveInDate blur
+      document
+        .getElementById("inputMoveInDate")
+        .addEventListener("blur", function () {
+          const el = this;
+          removeError(el);
+          if (!el.value.trim()) {
+            showError(el, "Обязательное поле");
+          }
+        });
+
+      function checkPhonesMatch() {
+        removeError(phoneInput);
+        removeError(relativePhoneInput);
+        if (
+          phoneInput.value &&
+          relativePhoneInput.value &&
+          phoneInput.value === relativePhoneInput.value
+        ) {
+          showError(
+            phoneInput,
+            "Номера телефонов студента и родственника не должны совпадать"
+          );
+          showError(
+            relativePhoneInput,
+            "Номера телефонов студента и родственника не должны совпадать"
+          );
+        }
+      }
+
+      phoneInput.addEventListener("blur", checkPhonesMatch);
+      relativePhoneInput.addEventListener("blur", checkPhonesMatch);
+
+      // Всплывающее уведомление
+      function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.classList.remove("show"); // сброс перед повторной анимацией
+        void toast.offsetWidth; // принудительный рефлоу
+        toast.classList.add("show");
+        clearTimeout(toast.hideTimeout);
+        toast.hideTimeout = setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+
+      // Объединённый обработчик pageshow для восстановления состояния
+      window.addEventListener("pageshow", () => {
+        // Восстановить кнопку "Далее"
+        const submitBtn = document.querySelector("button[type='submit']");
+        let savedData = {};
+        try {
+          savedData = JSON.parse(localStorage.getItem("studentFormData")) || {};
+        } catch (e) {
+          console.warn("Повреждённые данные в localStorage", e);
+          localStorage.removeItem("studentFormData");
+        }
+        if (savedData) {
+          lastName.value = savedData.lastName || "";
+          firstName.value = savedData.firstName || "";
+          middleName.value = savedData.middleName || "";
+          iinInput.value = savedData.iin || "";
+          phoneInput.value = savedData.phone || "";
+          relativePhoneInput.value = savedData.relativePhone || "";
+
+          // Восстановление select-элементов
+          const university = document.getElementById("inputUniversity");
+          const relative = document.getElementById("inputRelative");
+          const rentalPeriod = document.getElementById("inputRentalPeriod");
+
+          if (savedData.university) {
+            university.value = savedData.university;
+            // Обновление кастомного select для университета
+            document.getElementById("displayUniversity").textContent =
+              university.options[university.selectedIndex].textContent;
+            document
+              .getElementById("optionsUniversity")
+              .querySelectorAll("div")
+              .forEach((opt) => {
+                opt.classList.toggle(
+                  "selected",
+                  opt.getAttribute("data-value") === university.value
+                );
+              });
+          }
+          if (savedData.relative) {
+            relative.value = savedData.relative;
+            // Обновление кастомного select для relative
+            document.getElementById("displayRelative").textContent =
+              relative.options[relative.selectedIndex].textContent;
+            document
+              .getElementById("optionsRelative")
+              .querySelectorAll("div")
+              .forEach((opt) => {
+                opt.classList.toggle(
+                  "selected",
+                  opt.getAttribute("data-value") === relative.value
+                );
+              });
+          }
+          if (savedData.rentalPeriod) {
+            rentalPeriod.value = savedData.rentalPeriod.toString();
+            // Обновление кастомного select для rentalPeriod
+            document.getElementById("displayRentalPeriod").textContent =
+              rentalPeriod.options[rentalPeriod.selectedIndex].textContent;
+            document
+              .getElementById("optionsRentalPeriod")
+              .querySelectorAll("div")
+              .forEach((opt) => {
+                opt.classList.toggle(
+                  "selected",
+                  opt.getAttribute("data-value") === rentalPeriod.value
+                );
+              });
+          }
+
+          // Восстановление суммы оплаты
+          if (savedData.payment) {
+            const calculatedPayment =
+              document.getElementById("calculatedPayment");
+            const calculatedPaymentWrapper = document.getElementById(
+              "calculatedPaymentWrapper"
+            );
+            calculatedPayment.value = savedData.payment;
+            calculatedPaymentWrapper.style.display = "block";
+            calculatedPaymentWrapper.style.opacity = 1;
+          }
+
+          // Восстановление пола
+          if (savedData.gender) {
+            const genderInput = document.querySelector(
+              `input[name="gender"][value="${savedData.gender}"]`
+            );
+            if (genderInput) {
+              genderInput.checked = true;
+              genderInput.parentElement.classList.add("selected");
+            }
+          }
+        }
+        submitBtn.innerHTML = 'Далее <span class="arrow">&#8594;</span>';
+        submitBtn.disabled = false;
+
+        // Повторно привязать обработчик сброса
+        const resetBtn = document.getElementById("resetButton");
+        if (resetBtn) {
+          resetBtn.onclick = function () {
+            document.getElementById("addStudentForm").reset();
+            document
+              .querySelectorAll(".field-error")
+              .forEach((e) => e.remove());
+            document
+              .querySelectorAll("input, select")
+              .forEach((el) => (el.style.border = ""));
+            document
+              .querySelectorAll(".gender-card")
+              .forEach((card) => card.classList.remove("selected"));
+            localStorage.removeItem("studentFormData");
+            console.log("localStorage очищен");
+            // Сброс кастомных селектов
+            document.getElementById("displayUniversity").textContent =
+              "Выберите университет";
+            document
+              .querySelectorAll("#optionsUniversity div")
+              .forEach((opt) => opt.classList.remove("selected"));
+
+            document.getElementById("displayRelative").textContent =
+              "Выберите родственника";
+            document
+              .querySelectorAll("#optionsRelative div")
+              .forEach((opt) => opt.classList.remove("selected"));
+
+            document.getElementById("displayRentalPeriod").textContent =
+              "Выберите срок";
+            document
+              .querySelectorAll("#optionsRentalPeriod div")
+              .forEach((opt) => opt.classList.remove("selected"));
+
+            // Скрыть сумму оплаты
+            const calculatedPaymentWrapper = document.getElementById(
+              "calculatedPaymentWrapper"
+            );
+            const calculatedPayment =
+              document.getElementById("calculatedPayment");
+            if (calculatedPaymentWrapper)
+              calculatedPaymentWrapper.style.display = "none";
+            if (calculatedPayment) calculatedPayment.value = "";
+
+            showToast("Введённые данные были сброшены");
+          };
+        }
+
+        // Обновить flatpickr
+        flatpickr("#inputMoveInDate", {
+          dateFormat: "Y-m-d",
+          defaultDate: savedData?.moveInDate || null,
+          locale: "ru",
+        });
+        // Установить плейсхолдер для поля даты на сегодняшнюю дату
+        document.getElementById("inputMoveInDate").placeholder = new Date()
+          .toISOString()
+          .split("T")[0];
+      });
+      ["University", "Relative", "RentalPeriod"].forEach((id) => {
+        const display = document.getElementById(`display${id}`);
+        const options = document.getElementById(`options${id}`);
+        const select = document.getElementById(`input${id}`);
+
+        display.addEventListener("click", () => {
+          removeError(select);
+          const isOpen = options.style.display === "block";
+          document
+            .querySelectorAll(".custom-options")
+            .forEach((o) => (o.style.display = "none"));
+          document
+            .querySelectorAll(".custom-select")
+            .forEach((d) => d.classList.remove("active"));
+          if (!isOpen) {
+            options.style.display = "block";
+            display.classList.add("active");
+          }
+        });
+
+        options.querySelectorAll("div").forEach((opt) => {
+          opt.addEventListener("click", () => {
+            const val = opt.getAttribute("data-value");
+            select.value = val;
+            display.textContent = opt.textContent;
+            options
+              .querySelectorAll("div")
+              .forEach((d) => d.classList.remove("selected"));
+            opt.classList.add("selected");
+            options.style.display = "none";
+
+            // Добавлено: вычисление суммы оплаты после выбора срока аренды
+            if (id === "RentalPeriod") {
+              const rentValue = parseInt(val);
+              const paymentBlock = document.getElementById(
+                "calculatedPaymentWrapper"
+              );
+              const paymentInput = document.getElementById("calculatedPayment");
+
+              if (!isNaN(rentValue)) {
+                const total = rentValue * 30000;
+                paymentInput.value = total.toLocaleString("ru-RU");
+                paymentBlock.style.display = "block";
+                paymentBlock.style.opacity = 0;
+                setTimeout(() => (paymentBlock.style.opacity = 1), 50);
+              } else {
+                paymentBlock.style.display = "none";
+              }
+            }
+          });
+        });
+      });
+
+      // Добавить обработчик focus для всех input и select в форме: при фокусе удалять ошибку
+      document
+        .querySelectorAll("#addStudentForm input, #addStudentForm select")
+        .forEach((el) => {
+          el.addEventListener("focus", () => removeError(el));
+        });
+      // Принудительно для телефонов, так как inputmode может мешать focus
+      phoneInput.addEventListener("focus", () => removeError(phoneInput));
+      relativePhoneInput.addEventListener("focus", () =>
+        removeError(relativePhoneInput)
+      );
+
+      // Добавить обработчик focus для кастомных radio (пол)
+      document.querySelectorAll(".gender-card input").forEach((input) => {
+        input.addEventListener("focus", () => removeError(input));
+      });
+
+      window.addEventListener("click", (e) => {
+        if (!e.target.closest(".custom-select-wrapper")) {
+          document
+            .querySelectorAll(".custom-options")
+            .forEach((o) => (o.style.display = "none"));
+          document
+            .querySelectorAll(".custom-select")
+            .forEach((d) => d.classList.remove("active"));
+        }
+      });
+    </script>
+  </body>
+</html>
