@@ -1,0 +1,774 @@
+.highlighted-entry {
+  background-color: #d4edda !important;
+  border: 2px solid #28a745 !important;
+  animation: fadeHighlight 1s ease-in-out 3;
+}
+
+@keyframes fadeHighlight {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.student-entry p {
+  margin-bottom: 8px;
+}
+input.valid {
+  border: 2px solid #28a745 !important;
+}
+.tooltip {
+  display: inline-block;
+  position: relative;
+}
+.tooltip:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: -24px;
+  left: 0;
+  background: #333;
+  color: white;
+  padding: 4px 8px;
+  font-size: 0.75em;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 10;
+}
+.field-error {
+  color: red;
+  margin-top: -6px;
+  margin-bottom: 8px;
+  font-size: 0.85em;
+}
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 10px;
+  background-color: #f0f2f5;
+  font-size: 14px;
+}
+header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+header h1 {
+  margin: 0;
+  padding: 10px;
+  color: #004d99;
+  font-size: 1.5em;
+}
+#searchInput {
+  width: 100%;
+  max-width: 300px;
+  padding: 8px;
+  margin: 10px auto;
+  display: block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+button.header-btn {
+  display: inline-block;
+  margin: 5px 5px 15px;
+  padding: 6px 12px;
+  background-color: #004d99;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+button.header-btn:hover {
+  background-color: #003366;
+}
+#notificationsBtn {
+  background-color: #d9534f;
+}
+#notificationsBtn:hover {
+  background-color: #c9302c;
+}
+.stats-global {
+  text-align: center;
+  font-size: 0.9em;
+  margin-bottom: 10px;
+}
+.blocks-container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 10px;
+  height: calc(100vh - 180px);
+  overflow: hidden;
+  padding-bottom: 30px; /* ⬅ добавлен отступ снизу */
+  box-sizing: border-box;
+}
+.block-column {
+  background-color: #fff;
+  padding: 10px;
+  margin: 5px 5px 20px;
+  flex: 1 1 300px;
+  min-width: 250px;
+  max-height: 100%;
+  overflow-y: auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+.block-column h2 {
+  text-align: center;
+  margin-bottom: 5px;
+  color: #333;
+  font-size: 1.1em;
+}
+.block-stats {
+  text-align: center;
+  font-size: 0.8em;
+  color: #555;
+  margin-bottom: 5px;
+}
+.floor {
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.floor h3 {
+  margin: 0;
+  padding: 5px 8px;
+  background-color: #e9ecef;
+  cursor: pointer;
+  font-size: 1em;
+  color: #555;
+}
+.room-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: none;
+}
+.room-list li {
+  padding: 5px 8px;
+  border-bottom: 1px solid #ddd;
+  background-color: #fafafa;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.9em;
+  margin-bottom: 4px; /* ✅ добавлен отступ снизу */
+}
+.fade-in {
+  animation: fadeInScale 0.3s ease-in-out;
+}
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.room-list li:last-child {
+  border-bottom: none;
+}
+.room-list li span {
+  margin-right: 5px;
+}
+.occupied {
+  color: #d9534f;
+}
+.free {
+  color: #5cb85c;
+}
+.btn {
+  padding: 4px 8px;
+  background-color: #004d99;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8em;
+  margin: 2px;
+}
+.btn:hover {
+  background-color: #003366;
+}
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-content {
+  background-color: #fff;
+  padding: 0; /* убираем лишний padding, он уже есть в header/body */
+  border-radius: 4px;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* скрываем лишнее */
+}
+
+.modal-header {
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  z-index: 1;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+}
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.1em;
+}
+.close {
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 10px 15px;
+  overflow-y: auto;
+  max-height: calc(90vh - 60px); /* 60px — высота header */
+}
+
+form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+form input,
+form select {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 6px;
+  margin-top: 3px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+@media (max-width: 400px) {
+  form input,
+  form select,
+  .btn {
+    font-size: 0.85em;
+    padding: 5px;
+  }
+
+  .modal-content {
+    width: 95%;
+    max-width: none;
+  }
+
+  .btn {
+    width: 100%;
+    max-width: 200px;
+    margin: 10px auto;
+  }
+  .student-entry p {
+    font-size: 0.9em;
+  }
+  .student-entry .btn {
+    width: 100%;
+    margin-top: 6px;
+  }
+}
+
+@media (max-width: 768px) {
+  .blocks-container {
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+
+  .block-column {
+    max-height: none;
+    overflow: visible;
+    margin-bottom: 15px;
+  }
+
+  .room-list li {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn {
+    font-size: 0.9em;
+    padding: 6px 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+html,
+body {
+  height: auto;
+  min-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.currency-input {
+  position: relative;
+}
+.currency-input input {
+  padding-right: 24px;
+}
+.tenge-symbol {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #555;
+  pointer-events: none;
+}
+
+input[type="date"],
+.flatpickr-input {
+  height: 42px;
+  font-size: 1rem;
+}
+
+.flatpickr-calendar {
+  font-size: 1.3rem;
+  z-index: 9999 !important;
+  width: 360px !important;
+  padding: 16px !important;
+  line-height: 1.6;
+}
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.selected:hover {
+  background: #004d99 !important;
+  border-color: #004d99 !important;
+}
+.toast {
+  background-color: #333;
+  color: white;
+  padding: 10px 16px;
+  margin-top: 10px;
+  border-radius: 6px;
+  font-size: 0.9em;
+  min-width: 220px;
+  max-width: 300px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  animation: fadeInOut 2.3s forwards;
+  opacity: 0;
+  word-break: break-word;
+}
+
+.toast.success {
+  background-color: #28a745; /* Зеленый */
+}
+
+.toast.error {
+  background-color: #dc3545; /* Красный */
+}
+
+.toast.info {
+  background-color: #004d99; /* темно-синий */
+}
+
+.toast.warning {
+  background-color: #ffc107; /* Желтый */
+  color: #333;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  10% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  90% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+#toastContainer {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: none; /* уведомления не мешают нажимать на элементы сайта */
+}
+.soon-warning {
+  background-color: #fff3cd !important;
+  border-left: 4px solid #ffc107;
+  transition: background-color 0.3s ease;
+}
+
+.highlighted-entry {
+  background-color: #f0f8ff !important;
+  outline: 2px solid #3399ff;
+  outline-offset: -2px;
+  border-radius: 8px;
+  animation: fadeHighlight 2s ease-in-out 1;
+}
+
+@keyframes fadeHighlight {
+  0% {
+    opacity: 0.4;
+    transform: scale(0.99);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@media (max-width: 600px) {
+  .block-column {
+    width: 100%;
+    padding: 0 10px;
+    box-sizing: border-box;
+  }
+
+  .room-list li {
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 0.85em;
+    padding: 6px;
+  }
+
+  .room-status {
+    margin-top: 4px;
+  }
+
+  .block-stats {
+    font-size: 0.85em;
+    margin-bottom: 8px;
+  }
+}
+.notifications-tabs {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px;
+  background: #f9f9f9;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.95em;
+}
+
+.tab-btn.active {
+  border-bottom: 2px solid #004d99;
+  background: white;
+  color: #004d99;
+}
+
+.notifications-tab-content {
+  margin-top: 10px;
+}
+.highlighted-room {
+  background-color: #d6eaff !important;
+}
+.btn-danger {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-danger:hover {
+  background-color: #c9302c;
+}
+
+/* Подсветка комнаты при поиске */
+.highlight-room {
+  background-color: #d4eaff !important;
+  transition: background-color 0.3s ease;
+}
+/* Старый класс для совместимости, можно удалить после полной миграции */
+.highlighted-room {
+  background-color: #d4eaff !important;
+  transition: background-color 0.3s ease;
+}
+/* Новая анимированная подсветка для найденной комнаты */
+.highlighted {
+  animation: flashHighlight 1.5s ease-in-out;
+}
+@keyframes flashHighlight {
+  0% {
+    background-color: #ffff99;
+  }
+  50% {
+    background-color: #ffec80;
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+/* Модалка продления аренды */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 10000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  min-width: 420px;
+  max-width: 560px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+/* Кастомный селект для продления аренды */
+.custom-select-wrapper {
+  position: relative;
+  user-select: none;
+  margin-top: 8px;
+}
+.custom-select {
+  background-color: #fff;
+  border: 2px solid #ccc;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.3s;
+  position: relative;
+}
+.custom-select::after {
+  content: "▾";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #004d99;
+  font-size: 14px;
+  pointer-events: none;
+}
+.custom-select.active,
+.custom-select:hover {
+  border-color: #004d99;
+}
+.custom-options {
+  position: absolute;
+  background-color: #fff;
+  border: 2px solid #ccc;
+  border-top: none;
+  width: 100%;
+  max-height: 250px;
+  overflow-y: auto;
+  display: none;
+  z-index: 9999;
+}
+.custom-options div {
+  padding: 10px;
+  cursor: pointer;
+}
+.custom-options div:hover,
+.custom-options div.selected {
+  background-color: #004d99;
+  color: white;
+}
+
+/* Подсветка комнаты при поиске */
+.highlight-room {
+  background-color: #d4eaff !important;
+  transition: background-color 0.3s ease;
+}
+/* Старый класс для совместимости, можно удалить после полной миграции */
+.highlighted-room {
+  background-color: #d4eaff !important;
+  transition: background-color 0.3s ease;
+}
+/* Новая анимированная подсветка для найденной комнаты */
+.highlighted {
+  animation: flashHighlight 1.5s ease-in-out;
+}
+@keyframes flashHighlight {
+  0% {
+    background-color: #ffff99;
+  }
+  50% {
+    background-color: #ffec80;
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+/* Модалка продления аренды */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 10000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  min-width: 420px;
+  max-width: 560px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+/* Кастомный селект для продления аренды */
+.custom-select-wrapper {
+  position: relative;
+  user-select: none;
+  margin-top: 8px;
+}
+.custom-select {
+  background-color: #fff;
+  border: 2px solid #ccc;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.3s;
+  position: relative;
+}
+.custom-select::after {
+  content: "▾";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #004d99;
+  font-size: 14px;
+  pointer-events: none;
+}
+.custom-select.active,
+.custom-select:hover {
+  border-color: #004d99;
+}
+.custom-options {
+  position: absolute;
+  background-color: #fff;
+  border: 2px solid #ccc;
+  border-top: none;
+  width: 100%;
+  max-height: 250px;
+  overflow-y: auto;
+  display: none;
+  z-index: 9999;
+}
+.custom-options div {
+  padding: 10px;
+  cursor: pointer;
+}
+.custom-options div:hover,
+.custom-options div.selected {
+  background-color: #004d99;
+  color: white;
+}
+
+/* Подсветка студента при переходе по ИИН */
+.highlighted-entry {
+  background: #ffe48a !important;
+  animation: highlightFade 2.5s;
+  transition: background 0.5s;
+}
+@keyframes highlightFade {
+  0% {
+    background: #ffe48a;
+  }
+  80% {
+    background: #ffe48a;
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+.accounting-tabs {
+  display: flex;
+  border-bottom: 2px solid #ccc;
+  margin-bottom: 10px;
+}
+
+.accounting-tabs .tab-btn {
+  flex: 1;
+  padding: 10px 15px;
+  background: #f4f4f4;
+  border: none;
+  border-right: 1px solid #ccc;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.accounting-tabs .tab-btn:last-child {
+  border-right: none;
+}
+
+.accounting-tabs .tab-btn:hover {
+  background: #e0e0e0;
+}
+
+.accounting-tabs .tab-btn.active {
+  background: #fff;
+  border-bottom: 2px solid #007bff;
+  color: #007bff;
+}
+
+.tab-panels .tab-content {
+  padding: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+
+#accountingContentDetails div,
+#accountingContentMonthly div {
+  padding: 6px 0;
+  border-bottom: 1px dashed #ddd;
+}

@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "docx": "^9.5.1",
+    "docxtemplater": "^3.65.2",
+    "exceljs": "^4.4.0",
+    "multer": "^2.0.1",
+    "node-cron": "^4.2.1",
+    "pizzip": "^3.2.0",
+    "winston": "^3.17.0"
+  }
+}

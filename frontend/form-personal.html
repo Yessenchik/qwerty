@@ -9,6 +9,16 @@
       href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
     />
     <style>
+      .welcome-banner {
+        background-color: #e6f0fa;
+        border-left: 4px solid #004d99;
+        padding: 12px 16px;
+        margin-bottom: 24px;
+        border-radius: 6px;
+        font-size: 14px;
+        color: #003366;
+        line-height: 1.5;
+      }
       .loading-spinner {
         border: 4px solid #f3f3f3;
         border-top: 4px solid #004d99;
@@ -336,11 +346,41 @@
         background-color: #004d99;
         color: white;
       }
+      .custom-placeholder-wrapper {
+        position: relative;
+      }
+
+      .custom-placeholder-wrapper input {
+        position: relative;
+        z-index: 2;
+        background-color: transparent;
+      }
+
+      .custom-placeholder {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #999;
+        pointer-events: none;
+        z-index: 1;
+        font-size: 14px;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .custom-placeholder-hidden {
+        display: none;
+      }
     </style>
   </head>
   <body>
     <div id="toast" class="toast">Уведомление</div>
     <div class="form-wrapper">
+      <div class="welcome-banner">
+        <strong>Добро пожаловать в наше Общежитие!</strong><br />
+        Пожалуйста, внимательно заполните форму. Все данные используются исключительно для оформления проживания.
+      </div>
       <h2>Личные данные</h2>
       <form id="addStudentForm" novalidate>
         <label
@@ -403,530 +443,8 @@
           <div class="custom-select" id="displayUniversity">
             Выберите место обучения
           </div>
-          <div class="custom-options" id="optionsUniversity">
-            <div data-value="">Выберите место обучения</div>
-            <div
-              data-value="ГККП «Строительно-технический колледж» акимата г. Астана"
-            >
-              ГККП «Строительно-технический колледж» акимата г. Астана
-            </div>
-            <div
-              data-value="ГККП «Колледж общественного питания и сервиса» акимата г. Астана"
-            >
-              ГККП «Колледж общественного питания и сервиса» акимата г. Астана
-            </div>
-            <div data-value="ГККП «Технологический колледж» акимата г. Астана">
-              ГККП «Технологический колледж» акимата г. Астана
-            </div>
-            <div data-value="ГККП «Технический колледж» акимата г. Астана">
-              ГККП «Технический колледж» акимата г. Астана
-            </div>
-            <div
-              data-value="ГККП «Колледж энергетики и связи» акимата г. Астана"
-            >
-              ГККП «Колледж энергетики и связи» акимата г. Астана
-            </div>
-            <div
-              data-value="ГККП «Профессионально-технический колледж» акимата г. Астана"
-            >
-              ГККП «Профессионально-технический колледж» акимата г. Астана
-            </div>
-            <div data-value="ГККП «Многопрофильный колледж» акимата г. Астана">
-              ГККП «Многопрофильный колледж» акимата г. Астана
-            </div>
-            <div
-              data-value="ГККП «Гуманитарный колледж» Управления образования г. Астана"
-            >
-              ГККП «Гуманитарный колледж» Управления образования г. Астана
-            </div>
-            <div
-              data-value="ГККП «Политехнический колледж» Управления образования г. Астана"
-            >
-              ГККП «Политехнический колледж» Управления образования г. Астана
-            </div>
-            <div
-              data-value="ГКП на ПХВ  «Высший колледж транспорта и коммуникаций» акимата г. Астана"
-            >
-              ГКП на ПХВ «Высший колледж транспорта и коммуникаций» акимата г.
-              Астана
-            </div>
-            <div
-              data-value="ГККП «Колледж экономики, технологии и стандартизации пищевых производств» Управления образования Г. Астана"
-            >
-              ГККП «Колледж экономики, технологии и стандартизации пищевых
-              производств» Управления образования Г. Астана
-            </div>
-            <div
-              data-value="Колледж - ГКП на ПХВ «Высший медицинский колледж» акимата Г. Астана"
-            >
-              Колледж - ГКП на ПХВ «Высший медицинский колледж» акимата Г.
-              Астана
-            </div>
-            <div
-              data-value="Учреждение «Высший Торгово-экнонмический колледж Казпотребсоюза"
-            >
-              Учреждение «Высший Торгово-экнонмический колледж Казпотребсоюза
-            </div>
-            <div data-value="ТОО «Колледж Управления»">
-              ТОО «Колледж Управления»
-            </div>
-            <div data-value="Колледж иностранных языков «Лингва»">
-              Колледж иностранных языков «Лингва»
-            </div>
-            <div data-value="ТОО «Медико-технический колледж»">
-              ТОО «Медико-технический колледж»
-            </div>
-            <div data-value="Колледж «Даналық»">Колледж «Даналық»</div>
-            <div data-value="Международный колледж имени Магжана Жумабаева">
-              Международный колледж имени Магжана Жумабаева
-            </div>
-            <div data-value="Колледж «Туран»">Колледж «Туран»</div>
-            <div data-value="Учреждение «Колледж им.Д.А. Куанева в г. Астана">
-              Учреждение «Колледж им.Д.А. Куанева в г. Астана
-            </div>
-            <div data-value="ТОО Гуманитарно-технический колледж «АСУ»">
-              ТОО Гуманитарно-технический колледж «АСУ»
-            </div>
-            <div
-              data-value="ТОО «Индустриальный инженерно-экономический колледж»"
-            >
-              ТОО «Индустриальный инженерно-экономический колледж»
-            </div>
-            <div data-value="ТОО «Астанинский технико-экономический колледж»">
-              ТОО «Астанинский технико-экономический колледж»
-            </div>
-            <div
-              data-value="Колледж АО «Казахский университет технологий и безнеса»"
-            >
-              Колледж АО «Казахский университет технологий и безнеса»
-            </div>
-            <div
-              data-value="ТОО «Акмолинский колледж АО Казахская академия транспорта и коммуникаций им. Тынышпаева»"
-            >
-              ТОО «Акмолинский колледж АО Казахская академия транспорта и
-              коммуникаций им. Тынышпаева»
-            </div>
-            <div
-              data-value="Учреждение «Колледж Евразийского гуманитарного института»"
-            >
-              Учреждение «Колледж Евразийского гуманитарного института»
-            </div>
-            <div data-value="Многопрофильный колледж «Паразат»">
-              Многопрофильный колледж «Паразат»
-            </div>
-            <div data-value="ТОО Колледж менендмента и бизнеса»">
-              ТОО Колледж менендмента и бизнеса»
-            </div>
-            <div data-value="Колледж АО «Финансовая академия»">
-              Колледж АО «Финансовая академия»
-            </div>
-            <div
-              data-value="Учреждение «Колледж городского хозяйства «Туран-Профи»"
-            >
-              Учреждение «Колледж городского хозяйства «Туран-Профи»
-            </div>
-            <div data-value="Учреждение медицинский колледж «Шипагер»">
-              Учреждение медицинский колледж «Шипагер»
-            </div>
-            <div data-value="Экономико-юридический колледж">
-              Экономико-юридический колледж
-            </div>
-            <div
-              data-value="Казахстанский международный лингвистический колледж"
-            >
-              Казахстанский международный лингвистический колледж
-            </div>
-            <div data-value="ТОО «Республиканская медицинская академия»">
-              ТОО «Республиканская медицинская академия»
-            </div>
-            <div data-value="Гуманитарно-юридический колледж КАЗГЮУ">
-              Гуманитарно-юридический колледж КАЗГЮУ
-            </div>
-            <div data-value="ГКП на ПХВ «Колледж сервиса и туризма»">
-              ГКП на ПХВ «Колледж сервиса и туризма»
-            </div>
-            <div data-value="ТОО Медицинский колледж «Томирис»">
-              ТОО Медицинский колледж «Томирис»
-            </div>
-            <div
-              data-value="Педагогический колледж Международного университета Астаны"
-            >
-              Педагогический колледж Международного университета Астаны
-            </div>
-            <div data-value="ЧУ «Коллдеж медресе Астана»">
-              ЧУ «Коллдеж медресе Астана»
-            </div>
-            <div data-value="Казахский Швейцарско-Американский колледж">
-              Казахский Швейцарско-Американский колледж
-            </div>
-            <div
-              data-value="Учреждение «Колледж городского хозяйства «Астана Профи»"
-            >
-              Учреждение «Колледж городского хозяйства «Астана Профи»
-            </div>
-            <div data-value="Учреждение Университет Есиль">
-              Учреждение Университет Есиль
-            </div>
-            <div
-              data-value="Евразийский национальный университет им. Л.Н. Гумилева"
-            >
-              Евразийский национальный университет им. Л.Н. Гумилева
-            </div>
-            <div
-              data-value="Казахский агротехнический университет имени С. Сейфуллина"
-            >
-              Казахский агротехнический университет имени С. Сейфуллина
-            </div>
-            <div data-value="Университет КАЗГЮУ имени М. Нарикбаева">
-              Университет КАЗГЮУ имени М. Нарикбаева
-            </div>
-            <div data-value="Медицинский университет Астана">
-              Медицинский университет Астана
-            </div>
-            <div data-value="Евразийский гуманитарный институт">
-              Евразийский гуманитарный институт
-            </div>
-            <div data-value="Казахский университет технологии и бизнеса">
-              Казахский университет технологии и бизнеса
-            </div>
-            <div
-              data-value="Казахский университет экономики, финансов и международной торговли"
-            >
-              Казахский университет экономики, финансов и международной торговли
-            </div>
-            <div data-value="Университет «Астана»">Университет «Астана»</div>
-            <div data-value="Универистет «Туран-Астана»">
-              Универистет «Туран-Астана»
-            </div>
-            <div
-              data-value="Академия государственного управления при Президенте Республики Казахстан"
-            >
-              Академия государственного управления при Президенте Республики
-              Казахстан
-            </div>
-            <div data-value="Казахская национальная акаедмия хореграфии">
-              Казахская национальная акаедмия хореграфии
-            </div>
-            <div data-value="Международный универсистет Астана">
-              Международный универсистет Астана
-            </div>
-            <div data-value="Astana IT University">Astana IT University</div>
-            <div data-value="Назарбаев Университет">Назарбаев Университет</div>
-            <div data-value="Академия физической культуры и массового спорта">
-              Академия физической культуры и массового спорта
-            </div>
-            <div
-              data-value="Казахский национальный педагогический университет имени Абая (Филиал)"
-            >
-              Казахский национальный педагогический университет имени Абая
-              (Филиал)
-            </div>
-            <div
-              data-value="Казахский национальный университет имени аль-Фараби"
-            >
-              Казахский национальный университет имени аль-Фараби
-            </div>
-            <div
-              data-value="Казахский национальный технический университет имени К. И. Сатпаева"
-            >
-              Казахский национальный технический университет имени К. И.
-              Сатпаева
-            </div>
-            <div
-              data-value="Казахский национальный медицинский университет имени С. Д. Асфендиярова"
-            >
-              Казахский национальный медицинский университет имени С. Д.
-              Асфендиярова
-            </div>
-            <div data-value="Казахский национальный аграрный университет">
-              Казахский национальный аграрный университет
-            </div>
-            <div
-              data-value="Карагандинский государственный университет имени Е. А. Букетова"
-            >
-              Карагандинский государственный университет имени Е. А. Букетова
-            </div>
-            <div
-              data-value="Костанайский государственный университет имени А. Байтурсынова"
-            >
-              Костанайский государственный университет имени А. Байтурсынова
-            </div>
-            <div
-              data-value="Павлодарский государственный университет имени С. Торайгырова"
-            >
-              Павлодарский государственный университет имени С. Торайгырова
-            </div>
-            <div
-              data-value="Южно-Казахстанский государственный университет имени М. Ауэзова"
-            >
-              Южно-Казахстанский государственный университет имени М. Ауэзова
-            </div>
-            <div
-              data-value="Западно-Казахстанский аграрно-технический университет имени Жангир хана"
-            >
-              Западно-Казахстанский аграрно-технический университет имени Жангир
-              хана
-            </div>
-          </div>
-          <select id="inputUniversity" name="university" style="display: none">
-            <option value="">Выберите университет</option>
-            <option
-              value="ГККП «Строительно-технический колледж» акимата г. Астана"
-            >
-              ГККП «Строительно-технический колледж» акимата г. Астана
-            </option>
-            <option
-              value="ГККП «Колледж общественного питания и сервиса» акимата г. Астана"
-            >
-              ГККП «Колледж общественного питания и сервиса» акимата г. Астана
-            </option>
-            <option value="ГККП «Технологический колледж» акимата г. Астана">
-              ГККП «Технологический колледж» акимата г. Астана
-            </option>
-            <option value="ГККП «Технический колледж» акимата г. Астана">
-              ГККП «Технический колледж» акимата г. Астана
-            </option>
-            <option value="ГККП «Колледж энергетики и связи» акимата г. Астана">
-              ГККП «Колледж энергетики и связи» акимата г. Астана
-            </option>
-            <option
-              value="ГККП «Профессионально-технический колледж» акимата г. Астана"
-            >
-              ГККП «Профессионально-технический колледж» акимата г. Астана
-            </option>
-            <option value="ГККП «Многопрофильный колледж» акимата г. Астана">
-              ГККП «Многопрофильный колледж» акимата г. Астана
-            </option>
-            <option
-              value="ГККП «Гуманитарный колледж» Управления образования г. Астана"
-            >
-              ГККП «Гуманитарный колледж» Управления образования г. Астана
-            </option>
-            <option
-              value="ГККП «Политехнический колледж» Управления образования г. Астана"
-            >
-              ГККП «Политехнический колледж» Управления образования г. Астана
-            </option>
-            <option
-              value="ГКП на ПХВ  «Высший колледж транспорта и коммуникаций» акимата г. Астана"
-            >
-              ГКП на ПХВ «Высший колледж транспорта и коммуникаций» акимата г.
-              Астана
-            </option>
-            <option
-              value="ГККП «Колледж экономики, технологии и стандартизации пищевых производств» Управления образования Г. Астана"
-            >
-              ГККП «Колледж экономики, технологии и стандартизации пищевых
-              производств» Управления образования Г. Астана
-            </option>
-            <option
-              value="Колледж - ГКП на ПХВ «Высший медицинский колледж» акимата Г. Астана"
-            >
-              Колледж - ГКП на ПХВ «Высший медицинский колледж» акимата Г.
-              Астана
-            </option>
-            <option
-              value="Учреждение «Высший Торгово-экнонмический колледж Казпотребсоюза"
-            >
-              Учреждение «Высший Торгово-экнонмический колледж Казпотребсоюза
-            </option>
-            <option value="ТОО «Колледж Управления»">
-              ТОО «Колледж Управления»
-            </option>
-            <option value="Колледж иностранных языков «Лингва»">
-              Колледж иностранных языков «Лингва»
-            </option>
-            <option value="ТОО «Медико-технический колледж»">
-              ТОО «Медико-технический колледж»
-            </option>
-            <option value="Колледж «Даналық»">Колледж «Даналық»</option>
-            <option value="Международный колледж имени Магжана Жумабаева">
-              Международный колледж имени Магжана Жумабаева
-            </option>
-            <option value="Колледж «Туран»">Колледж «Туран»</option>
-            <option value="Учреждение «Колледж им.Д.А. Куанева в г. Астана">
-              Учреждение «Колледж им.Д.А. Куанева в г. Астана
-            </option>
-            <option value="ТОО Гуманитарно-технический колледж «АСУ»">
-              ТОО Гуманитарно-технический колледж «АСУ»
-            </option>
-            <option
-              value="ТОО «Индустриальный инженерно-экономический колледж»"
-            >
-              ТОО «Индустриальный инженерно-экономический колледж»
-            </option>
-            <option value="ТОО «Астанинский технико-экономический колледж»">
-              ТОО «Астанинский технико-экономический колледж»
-            </option>
-            <option
-              value="Колледж АО «Казахский университет технологий и безнеса»"
-            >
-              Колледж АО «Казахский университет технологий и безнеса»
-            </option>
-            <option
-              value="ТОО «Акмолинский колледж АО Казахская академия транспорта и коммуникаций им. Тынышпаева»"
-            >
-              ТОО «Акмолинский колледж АО Казахская академия транспорта и
-              коммуникаций им. Тынышпаева»
-            </option>
-            <option
-              value="Учреждение «Колледж Евразийского гуманитарного института»"
-            >
-              Учреждение «Колледж Евразийского гуманитарного института»
-            </option>
-            <option value="Многопрофильный колледж «Паразат»">
-              Многопрофильный колледж «Паразат»
-            </option>
-            <option value="ТОО Колледж менендмента и бизнеса»">
-              ТОО Колледж менендмента и бизнеса»
-            </option>
-            <option value="Колледж АО «Финансовая академия»">
-              Колледж АО «Финансовая академия»
-            </option>
-            <option
-              value="Учреждение «Колледж городского хозяйства «Туран-Профи»"
-            >
-              Учреждение «Колледж городского хозяйства «Туран-Профи»
-            </option>
-            <option value="Учреждение медицинский колледж «Шипагер»">
-              Учреждение медицинский колледж «Шипагер»
-            </option>
-            <option value="Экономико-юридический колледж">
-              Экономико-юридический колледж
-            </option>
-            <option value="Казахстанский международный лингвистический колледж">
-              Казахстанский международный лингвистический колледж
-            </option>
-            <option value="ТОО «Республиканская медицинская академия»">
-              ТОО «Республиканская медицинская академия»
-            </option>
-            <option value="Гуманитарно-юридический колледж КАЗГЮУ">
-              Гуманитарно-юридический колледж КАЗГЮУ
-            </option>
-            <option value="ГКП на ПХВ «Колледж сервиса и туризма»">
-              ГКП на ПХВ «Колледж сервиса и туризма»
-            </option>
-            <option value="ТОО Медицинский колледж «Томирис»">
-              ТОО Медицинский колледж «Томирис»
-            </option>
-            <option
-              value="Педагогический колледж Международного университета Астаны"
-            >
-              Педагогический колледж Международного университета Астаны
-            </option>
-            <option value="ЧУ «Коллдеж медресе Астана»">
-              ЧУ «Коллдеж медресе Астана»
-            </option>
-            <option value="Казахский Швейцарско-Американский колледж">
-              Казахский Швейцарско-Американский колледж
-            </option>
-            <option
-              value="Учреждение «Колледж городского хозяйства «Астана Профи»"
-            >
-              Учреждение «Колледж городского хозяйства «Астана Профи»
-            </option>
-            <option value="Учреждение Университет Есиль">
-              Учреждение Университет Есиль
-            </option>
-            <option
-              value="Евразийский национальный университет им. Л.Н. Гумилева"
-            >
-              Евразийский национальный университет им. Л.Н. Гумилева
-            </option>
-            <option
-              value="Казахский агротехнический университет имени С. Сейфуллина"
-            >
-              Казахский агротехнический университет имени С. Сейфуллина
-            </option>
-            <option value="Университет КАЗГЮУ имени М. Нарикбаева">
-              Университет КАЗГЮУ имени М. Нарикбаева
-            </option>
-            <option value="Медицинский университет Астана">
-              Медицинский университет Астана
-            </option>
-            <option value="Евразийский гуманитарный институт">
-              Евразийский гуманитарный институт
-            </option>
-            <option value="Казахский университет технологии и бизнеса">
-              Казахский университет технологии и бизнеса
-            </option>
-            <option
-              value="Казахский университет экономики, финансов и международной торговли"
-            >
-              Казахский университет экономики, финансов и международной торговли
-            </option>
-            <option value="Университет «Астана»">Университет «Астана»</option>
-            <option value="Универистет «Туран-Астана»">
-              Универистет «Туран-Астана»
-            </option>
-            <option
-              value="Академия государственного управления при Президенте Республики Казахстан"
-            >
-              Академия государственного управления при Президенте Республики
-              Казахстан
-            </option>
-            <option value="Казахская национальная акаедмия хореграфии">
-              Казахская национальная акаедмия хореграфии
-            </option>
-            <option value="Международный универсистет Астана">
-              Международный универсистет Астана
-            </option>
-            <option value="Astana IT University">Astana IT University</option>
-            <option value="Назарбаев Университет">Назарбаев Университет</option>
-            <option value="Академия физической культуры и массового спорта">
-              Академия физической культуры и массового спорта
-            </option>
-            <option
-              value="Казахский национальный педагогический университет имени Абая (Филиал)"
-            >
-              Казахский национальный педагогический университет имени Абая
-              (Филиал)
-            </option>
-            <option value="Казахский национальный университет имени аль-Фараби">
-              Казахский национальный университет имени аль-Фараби
-            </option>
-            <option
-              value="Казахский национальный технический университет имени К. И. Сатпаева"
-            >
-              Казахский национальный технический университет имени К. И.
-              Сатпаева
-            </option>
-            <option
-              value="Казахский национальный медицинский университет имени С. Д. Асфендиярова"
-            >
-              Казахский национальный медицинский университет имени С. Д.
-              Асфендиярова
-            </option>
-            <option value="Казахский национальный аграрный университет">
-              Казахский национальный аграрный университет
-            </option>
-            <option
-              value="Карагандинский государственный университет имени Е. А. Букетова"
-            >
-              Карагандинский государственный университет имени Е. А. Букетова
-            </option>
-            <option
-              value="Костанайский государственный университет имени А. Байтурсынова"
-            >
-              Костанайский государственный университет имени А. Байтурсынова
-            </option>
-            <option
-              value="Павлодарский государственный университет имени С. Торайгырова"
-            >
-              Павлодарский государственный университет имени С. Торайгырова
-            </option>
-            <option
-              value="Южно-Казахстанский государственный университет имени М. Ауэзова"
-            >
-              Южно-Казахстанский государственный университет имени М. Ауэзова
-            </option>
-            <option
-              value="Западно-Казахстанский аграрно-технический университет имени Жангир хана"
-            >
-              Западно-Казахстанский аграрно-технический университет имени Жангир
-              хана
-            </option>
-          </select>
+          <div class="custom-options" id="optionsUniversity"></div>
+          <select id="inputUniversity" name="university" style="display: none"></select>
         </div>
 
         <label>Родственник:</label>
@@ -963,8 +481,8 @@
         </label>
 
         <label>Дата заселения:</label>
-        <div class="date-picker-wrapper">
-          <input type="text" id="inputMoveInDate" required />
+        <div class="date-picker-wrapper custom-placeholder-wrapper">
+          <input type="text" id="inputMoveInDate" required placeholder="" />
         </div>
 
         <label>Срок аренды (в мес):</label>
@@ -974,17 +492,10 @@
           </div>
           <div class="custom-options" id="optionsRentalPeriod">
             <div data-value="">Выберите срок</div>
-            <div data-value="1">1</div>
-            <div data-value="2">2</div>
             <div data-value="3">3</div>
-            <div data-value="4">4</div>
-            <div data-value="5">5</div>
             <div data-value="6">6</div>
-            <div data-value="7">7</div>
-            <div data-value="8">8</div>
             <div data-value="9">9</div>
             <div data-value="10">10</div>
-            <div data-value="11">11</div>
             <div data-value="12">12</div>
           </div>
           <select
@@ -993,17 +504,10 @@
             style="display: none"
           >
             <option value="">Выберите срок</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
             <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
             <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
             <option value="9">9</option>
             <option value="10">10</option>
-            <option value="11">11</option>
             <option value="12">12</option>
           </select>
         </div>
@@ -1035,6 +539,57 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
     <script>
+      async function loadUniversityOptions() {
+        try {
+          const response = await fetch('data/universities.json');
+          const universities = await response.json();
+
+          const optionsContainer = document.getElementById("optionsUniversity");
+          const select = document.getElementById("inputUniversity");
+
+          optionsContainer.innerHTML = "";
+          select.innerHTML = "";
+
+          const placeholderOption = document.createElement("div");
+          placeholderOption.dataset.value = "";
+          placeholderOption.textContent = "Выберите место обучения";
+          optionsContainer.appendChild(placeholderOption);
+
+          const selectPlaceholder = document.createElement("option");
+          selectPlaceholder.value = "";
+          selectPlaceholder.textContent = "Выберите университет";
+          select.appendChild(selectPlaceholder);
+
+          universities.forEach((university) => {
+            const divOption = document.createElement("div");
+            divOption.dataset.value = university;
+            divOption.textContent = university;
+            optionsContainer.appendChild(divOption);
+
+            const selectOption = document.createElement("option");
+            selectOption.value = university;
+            selectOption.textContent = university;
+            select.appendChild(selectOption);
+          });
+
+          // Обновляем обработчики кликов и выбранный элемент
+          optionsContainer.querySelectorAll("div").forEach((opt) => {
+            opt.addEventListener("click", () => {
+              const val = opt.getAttribute("data-value");
+              select.value = val;
+              document.getElementById("displayUniversity").textContent =
+                opt.textContent;
+              optionsContainer
+                .querySelectorAll("div")
+                .forEach((d) => d.classList.remove("selected"));
+              opt.classList.add("selected");
+              optionsContainer.style.display = "none";
+            });
+          });
+        } catch (err) {
+          console.error("Ошибка при загрузке списка университетов:", err);
+        }
+      }
       const phoneInput = document.getElementById("inputPhone");
       const relativePhoneInput = document.getElementById("inputRelativePhone");
       const iinInput = document.getElementById("inputIin");
@@ -1050,7 +605,7 @@
 
       function sanitizeNameInput(event) {
         let input = event.target.value;
-        input = input.replace(/[^А-Яа-яЁёA-Za-zӘәӨөҚқҮүҰұІіҢң\s]/g, "");
+        input = input.replace(/[^А-Яа-яЁёҒғҚқҢңҮүҰұӨөҺһІіӘәA-Za-z\s]/g, "");
         event.target.value = input;
       }
 
@@ -1131,6 +686,11 @@
             el.classList.add("field-error-input");
           }
         }
+        // --- scroll to first error if not already scrolled
+        if (!document.querySelector(".scrolled-to-error")) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          el.classList.add("scrolled-to-error");
+        }
       }
 
       function removeError(el) {
@@ -1197,8 +757,13 @@
 
       document
         .getElementById("addStudentForm")
-        .addEventListener("submit", function (e) {
+        .addEventListener("submit", async function (e) {
           e.preventDefault();
+
+          // Remove scroll-to-error highlight before validation
+          document
+            .querySelectorAll(".scrolled-to-error")
+            .forEach((el) => el.classList.remove("scrolled-to-error"));
 
           const iin = iinInput;
           const phone = phoneInput;
@@ -1297,19 +862,44 @@
             isValid = false;
           }
 
+          // Проверка существования ИИН
+          const currentIin = iin.value.trim();
+          console.log("Проверка ИИН:", currentIin);
+          const iinExists = await checkIinExists(currentIin);
+          if (iinExists) {
+            console.log("❌ ИИН уже существует в базе:", currentIin);
+            showError(iin, "Такой ИИН уже существует");
+            isValid = false;
+          } else {
+            console.log("✅ ИИН свободен:", currentIin);
+          }
+
           if (isValid) {
             const submitBtn = document.querySelector("button[type='submit']");
             submitBtn.innerHTML =
               'Загрузка... <span class="loading-spinner"></span>';
             submitBtn.disabled = true;
 
+            // Капитализация ФИО перед сохранением
+            function capitalize(str) {
+              return str
+                .trim()
+                .split(/\s+/)
+                .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+                .join(" ");
+            }
+
+            const formattedLastName = capitalize(lastName.value);
+            const formattedFirstName = capitalize(firstName.value);
+            const formattedMiddleName = capitalize(middleName.value);
+
             // Формируем объект studentData с нужными полями
             const calculatedPayment =
               document.getElementById("calculatedPayment");
             const studentData = {
-              lastName: lastName.value.trim(),
-              firstName: firstName.value.trim(),
-              middleName: middleName.value.trim(),
+              lastName: formattedLastName,
+              firstName: formattedFirstName,
+              middleName: formattedMiddleName,
               iin: iin.value.trim(),
               phone: phone.value.trim(),
               university: university.value,
@@ -1450,8 +1040,21 @@
         }, 3000);
       }
 
+      // Проверка существования ИИН через API
+      async function checkIinExists(iin) {
+        try {
+          const response = await fetch(`/api/check-iin?iin=${iin}`);
+          const data = await response.json();
+          return data.exists;
+        } catch (error) {
+          console.error("Ошибка при проверке ИИН:", error);
+          return false;
+        }
+      }
+
       // Объединённый обработчик pageshow для восстановления состояния
-      window.addEventListener("pageshow", () => {
+      window.addEventListener("pageshow", async () => {
+        await loadUniversityOptions();
         // Восстановить кнопку "Далее"
         const submitBtn = document.querySelector("button[type='submit']");
         let savedData = {};
@@ -1600,11 +1203,15 @@
           dateFormat: "Y-m-d",
           defaultDate: savedData?.moveInDate || null,
           locale: "ru",
+          allowInput: true,
+          onReady: function (_, __, instance) {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, "0");
+            const dd = String(today.getDate()).padStart(2, "0");
+            instance.input.placeholder = `${yyyy}-${mm}-${dd}`;
+          },
         });
-        // Установить плейсхолдер для поля даты на сегодняшнюю дату
-        document.getElementById("inputMoveInDate").placeholder = new Date()
-          .toISOString()
-          .split("T")[0];
       });
       ["University", "Relative", "RentalPeriod"].forEach((id) => {
         const display = document.getElementById(`display${id}`);

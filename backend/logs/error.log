@@ -1,0 +1,1213 @@
+[2025-06-03 21:03:09] ERROR: ❌ SQL Error: column "room_number" does not exist
+Запрос: SELECT room_number FROM rooms WHERE id = $1
+[2025-06-03 21:03:09] ERROR: ❌ Ошибка при добавлении данных студента: column "room_number" does not exist
+[2025-06-03 21:04:00] ERROR: ❌ SQL Error: duplicate key value violates unique constraint "students_iin_key"
+Запрос: INSERT INTO students (fio, iin, gender, phone, university, relative_type, relative_phone)
+       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *
+[2025-06-03 21:04:00] ERROR: ❌ Ошибка при добавлении данных студента: duplicate key value violates unique constraint "students_iin_key"
+[2025-06-04 11:18:27] ERROR: ❌ SQL Error: column "room_number" does not exist
+Запрос: SELECT room_number FROM rooms WHERE id = $1
+[2025-06-04 11:18:27] ERROR: ❌ Ошибка при добавлении данных студента: column "room_number" does not exist
+[2025-06-04 11:30:37] ERROR: ❌ SQL Error: column "room_number" does not exist
+Запрос: SELECT room_number FROM rooms WHERE id = $1
+[2025-06-04 11:30:37] ERROR: ❌ Ошибка при добавлении данных студента: column "room_number" does not exist
+[2025-06-04 11:36:15] ERROR: ❌ SQL Error: column "room_number" does not exist
+Запрос: SELECT room_number FROM rooms WHERE id = $1
+[2025-06-04 11:36:15] ERROR: ❌ Ошибка при добавлении данных студента: column "room_number" does not exist
+[2025-06-04 11:48:28] ERROR: ❌ SQL Error: new row for relation "accommodation" violates check constraint "accommodation_payment_check"
+Запрос: INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, added_by, has_left, left_date)
+       VALUES ($1, CURRENT_DATE, $2, $3, $4, false, null)
+[2025-06-04 11:48:28] ERROR: ❌ Ошибка при добавлении данных студента: new row for relation "accommodation" violates check constraint "accommodation_payment_check"
+[2025-06-04 12:02:59] ERROR: ❌ SQL Error: column "room_number" does not exist
+Запрос: SELECT room_number FROM rooms WHERE id = $1
+[2025-06-04 12:02:59] ERROR: ❌ Ошибка при добавлении данных студента: column "room_number" does not exist
+[2025-06-04 12:10:07] ERROR: ❌ SQL Error: duplicate key value violates unique constraint "students_iin_key"
+Запрос: INSERT INTO students (fio, iin, gender, phone, university, relative_type, relative_phone)
+       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *
+[2025-06-04 12:10:07] ERROR: ❌ Ошибка при добавлении данных студента: duplicate key value violates unique constraint "students_iin_key"
+[2025-06-04 13:19:18] ERROR: ❌ SQL Error: inconsistent types deduced for parameter $2
+Запрос: INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, added_by, has_left, left_date)
+       VALUES (
+         $1,
+         CURRENT_DATE,
+         $2,
+         $3,
+         $4,
+         false,
+         CURRENT_DATE + ($2 || ' month')::interval
+       )
+[2025-06-04 13:19:18] ERROR: ❌ Ошибка при добавлении данных студента: inconsistent types deduced for parameter $2
+[2025-06-04 13:33:58] ERROR: ❌ SQL Error: duplicate key value violates unique constraint "students_iin_key"
+Запрос: INSERT INTO students (fio, iin, gender, phone, university, relative_type, relative_phone)
+       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *
+[2025-06-04 13:33:58] ERROR: ❌ Ошибка при добавлении данных студента: duplicate key value violates unique constraint "students_iin_key"
+[2025-06-04 13:34:17] ERROR: ❌ SQL Error: inconsistent types deduced for parameter $3
+Запрос: INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, added_by, has_left, left_date)
+       VALUES (
+         $1,
+         $2,
+         $3,
+         $4,
+         $5,
+         false,
+         $2::date + ($3 * interval '1 month')
+       )
+[2025-06-04 13:34:17] ERROR: ❌ Ошибка при добавлении данных студента: inconsistent types deduced for parameter $3
+[2025-06-04 13:38:00] ERROR: ❌ SQL Error: duplicate key value violates unique constraint "students_iin_key"
+Запрос: INSERT INTO students (fio, iin, gender, phone, university, relative_type, relative_phone)
+       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *
+[2025-06-04 13:38:00] ERROR: ❌ Ошибка при добавлении данных студента: duplicate key value violates unique constraint "students_iin_key"
+[2025-06-04 14:41:30] ERROR: ❌ SQL Error: inconsistent types deduced for parameter $2
+Запрос: INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, added_by, has_left, left_date)
+       VALUES (
+         $1,
+         $2,
+         $3,
+         $4,
+         $5,
+         false,
+         $2 + ($6 * interval '1 month')
+       )
+[2025-06-04 14:41:30] ERROR: ❌ Ошибка при добавлении данных студента: inconsistent types deduced for parameter $2
+[2025-06-04 14:43:18] ERROR: ❌ SQL Error: duplicate key value violates unique constraint "students_iin_key"
+Запрос: INSERT INTO students (fio, iin, gender, phone, university, relative_type, relative_phone)
+       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *
+[2025-06-04 14:43:18] ERROR: ❌ Ошибка при добавлении данных студента: duplicate key value violates unique constraint "students_iin_key"
+[2025-06-04 14:43:47] ERROR: ❌ SQL Error: inconsistent types deduced for parameter $2
+Запрос: INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, added_by, has_left, left_date)
+       VALUES (
+         $1,
+         $2,
+         $3,
+         $4,
+         $5,
+         false,
+         $2 + ($6 * interval '1 month')
+       )
+[2025-06-04 14:43:47] ERROR: ❌ Ошибка при добавлении данных студента: inconsistent types deduced for parameter $2
+[2025-06-04 14:46:08] ERROR: ❌ SQL Error: duplicate key value violates unique constraint "students_iin_key"
+Запрос: INSERT INTO students (fio, iin, gender, phone, university, relative_type, relative_phone)
+       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *
+[2025-06-04 14:46:08] ERROR: ❌ Ошибка при добавлении данных студента: duplicate key value violates unique constraint "students_iin_key"
+[2025-06-04 14:46:51] ERROR: ❌ SQL Error: null value in column "move_in_date" of relation "accommodation" violates not-null constraint
+Запрос: INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, added_by, has_left, left_date)
+       VALUES (
+         $1,
+         $2::date,
+         $3,
+         $4,
+         $5,
+         false,
+         $2::date + ($6 * interval '1 month')
+       )
+[2025-06-04 14:46:51] ERROR: ❌ Ошибка при добавлении данных студента: null value in column "move_in_date" of relation "accommodation" violates not-null constraint
+[2025-06-04 14:47:30] ERROR: ❌ SQL Error: null value in column "move_in_date" of relation "accommodation" violates not-null constraint
+Запрос: INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, added_by, has_left, left_date)
+       VALUES (
+         $1,
+         $2::date,
+         $3,
+         $4,
+         $5,
+         false,
+         $2::date + ($6 * interval '1 month')
+       )
+[2025-06-04 14:47:30] ERROR: ❌ Ошибка при добавлении данных студента: null value in column "move_in_date" of relation "accommodation" violates not-null constraint
+[2025-06-04 14:58:16] ERROR: ❌ SQL Error: inconsistent types deduced for parameter $3
+Запрос: INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, added_by, has_left, left_date)
+       VALUES (
+         $1,
+         $2,
+         $3,
+         $4,
+         $5,
+         false,
+         $2::date + ($3 * interval '1 month')
+       )
+[2025-06-04 14:58:16] ERROR: ❌ Ошибка при добавлении данных студента: inconsistent types deduced for parameter $3
+[2025-06-04 15:01:19] ERROR: ❌ SQL Error: duplicate key value violates unique constraint "students_iin_key"
+Запрос: INSERT INTO students (fio, iin, gender, phone, university, relative_type, relative_phone)
+       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *
+[2025-06-04 15:01:19] ERROR: ❌ Ошибка при добавлении данных студента: duplicate key value violates unique constraint "students_iin_key"
+[2025-06-04 15:01:34] ERROR: ❌ SQL Error: null value in column "move_in_date" of relation "accommodation" violates not-null constraint
+Запрос: INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, added_by, has_left, left_date)
+       VALUES (
+         $1,
+         $2,
+         $3,
+         $4,
+         $5,
+         false,
+         $2::date + (CAST($3 AS INT) * interval '1 month')
+       )
+[2025-06-04 15:01:34] ERROR: ❌ Ошибка при добавлении данных студента: null value in column "move_in_date" of relation "accommodation" violates not-null constraint
+[2025-06-04 15:11:54] ERROR: ❌ SQL Error: null value in column "move_in_date" of relation "accommodation" violates not-null constraint
+Запрос: INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, added_by, has_left, left_date)
+       VALUES (
+         $1,
+         $2,
+         $3,
+         $4,
+         $5,
+         false,
+         $2::date + (CAST($3 AS INT) * interval '1 month')
+       )
+[2025-06-04 15:11:54] ERROR: ❌ Ошибка при добавлении данных студента: null value in column "move_in_date" of relation "accommodation" violates not-null constraint
+[2025-06-04 15:12:08] ERROR: ❌ SQL Error: null value in column "move_in_date" of relation "accommodation" violates not-null constraint
+Запрос: INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, added_by, has_left, left_date)
+       VALUES (
+         $1,
+         $2,
+         $3,
+         $4,
+         $5,
+         false,
+         $2::date + (CAST($3 AS INT) * interval '1 month')
+       )
+[2025-06-04 15:12:08] ERROR: ❌ Ошибка при добавлении данных студента: null value in column "move_in_date" of relation "accommodation" violates not-null constraint
+[2025-06-04 15:12:47] ERROR: ❌ SQL Error: duplicate key value violates unique constraint "students_iin_key"
+Запрос: INSERT INTO students (fio, iin, gender, phone, university, relative_type, relative_phone)
+       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *
+[2025-06-04 15:12:47] ERROR: ❌ Ошибка при добавлении данных студента: duplicate key value violates unique constraint "students_iin_key"
+[2025-06-04 15:12:59] ERROR: ❌ SQL Error: null value in column "move_in_date" of relation "accommodation" violates not-null constraint
+Запрос: INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, added_by, has_left, left_date)
+       VALUES (
+         $1,
+         $2,
+         $3,
+         $4,
+         $5,
+         false,
+         $2::date + (CAST($3 AS INT) * interval '1 month')
+       )
+[2025-06-04 15:12:59] ERROR: ❌ Ошибка при добавлении данных студента: null value in column "move_in_date" of relation "accommodation" violates not-null constraint
+[2025-06-04 16:36:01] ERROR: ❌ SQL Error: duplicate key value violates unique constraint "students_iin_key"
+Запрос: INSERT INTO students (fio, iin, gender, phone, university, relative_type, relative_phone)
+       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *
+[2025-06-04 16:36:01] ERROR: ❌ Ошибка при добавлении данных студента: duplicate key value violates unique constraint "students_iin_key"
+[2025-06-07 22:18:34] ERROR: ❌ SQL Error: column "number" does not exist
+Запрос: SELECT CONCAT(block, '-', number) AS id FROM rooms WHERE id = $1
+[2025-06-07 22:18:34] ERROR: ❌ Ошибка при добавлении данных студента: column "number" does not exist
+[2025-06-08 13:19:57] ERROR: ❌ Не удалось получить статус комнаты:
+[2025-06-08 13:19:57] ERROR: ❌ Не удалось получить статус комнаты:
+[2025-06-08 13:25:12] ERROR: ❌ Не удалось получить статус комнаты:
+[2025-06-08 13:25:12] ERROR: ❌ Не удалось получить статус комнаты:
+[2025-06-09 15:28:18] ERROR: ❌ Не удалось получить статус комнаты:
+[2025-06-09 15:28:18] ERROR: ❌ Не удалось получить статус комнаты:
+[2025-06-09 17:25:51] ERROR: ❌ Не удалось получить статус комнаты:
+[2025-06-09 17:25:51] ERROR: ❌ Не удалось получить статус комнаты:
+[2025-06-10 18:37:35] ERROR: ❌ Не удалось получить статус комнаты:
+[2025-06-10 18:37:35] ERROR: ❌ Не удалось получить статус комнаты:
+[2025-06-11 23:38:46] ERROR: ❌ SQL Error: column "room_id" does not exist
+Запрос: SELECT * FROM students WHERE room_id = $1
+[2025-06-11 23:38:46] ERROR: ❌ SQL Error: column "room_id" does not exist
+Запрос: SELECT * FROM students WHERE room_id = $1
+[2025-06-12 14:48:35] ERROR: ❌ Ошибка при добавлении данных студента: rentalPeriod is not defined
+[2025-06-29 23:51:22] ERROR: ❌ SQL Error: inconsistent types deduced for parameter $3
+Запрос: INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, added_by, has_left, left_date)
+       VALUES ($1, $2, $3, $4, 'system', false, $2::date + ($3 || ' month')::interval)
+[2025-06-30 08:04:53] ERROR: ❌ SQL Error: inconsistent types deduced for parameter $3
+Запрос: INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, added_by, has_left, left_date)
+       VALUES ($1, $2, $3, $4, 'system', false, $2::date + ($3 || ' month')::interval)
+[2025-06-30 08:46:58] ERROR: Ошибка при добавлении студента: broadcastGlobalUpdate is not a function
+[2025-06-30 08:56:09] ERROR: ❌ SQL Error: duplicate key value violates unique constraint "students_iin_key"
+Запрос: INSERT INTO students (fio, iin, gender, phone, university, relative_type, relative_phone)
+       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id
+[2025-06-30 08:56:09] ERROR: Ошибка при добавлении студента: duplicate key value violates unique constraint "students_iin_key"
+[2025-07-01 12:39:01] ERROR: Ошибка при получении студентов: Cannot read properties of undefined (reading 'replace')
+[2025-07-01 12:44:05] ERROR: Ошибка при получении студентов: Cannot read properties of undefined (reading 'replace')
+[2025-07-01 12:46:16] ERROR: Ошибка при получении студентов: Cannot read properties of undefined (reading 'replace')
+[2025-07-12 00:37:01] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE "left_date" <= CURRENT_DATE AND has_left = false
+[2025-07-12 00:39:11] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE public.accommodation AS a
+      SET has_left = true
+      WHERE a.left_date <= CURRENT_DATE AND a.has_left = false
+    
+[2025-07-12 00:40:13] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation AS a
+      SET has_left = true
+      WHERE a.left_date <= CURRENT_DATE AND a.has_left = false
+    
+[2025-07-12 00:41:47] ERROR: ❌ SQL Error: column a.room_id does not exist
+Запрос: 
+      UPDATE accommodation AS a
+      SET has_left = true
+      FROM rooms AS r
+      WHERE a.left_date <= CURRENT_DATE
+        AND a.has_left = false
+        AND a.room_id = r.id
+    
+[2025-07-12 00:45:15] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date <= CURRENT_DATE
+        AND has_left = false
+    
+[2025-07-12 00:46:39] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date <= CURRENT_DATE
+        AND has_left = false;
+    
+[2025-07-12 00:47:00] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date <= CURRENT_DATE
+    
+[2025-07-12 00:50:43] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date <= CURRENT_DATE AND has_left = false
+    
+[2025-07-13 00:14:30] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 00:29:12] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 00:46:42] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 01:01:51] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 01:18:09] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 01:33:16] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 01:44:02] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 02:00:34] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 02:18:06] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 02:33:26] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 02:49:27] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 03:06:45] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 03:24:37] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 03:41:32] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 03:57:50] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 04:14:19] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 04:36:40] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 04:52:52] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 05:12:15] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 05:29:06] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 05:45:03] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 06:00:30] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 06:15:51] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 06:35:21] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 06:50:34] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 07:06:37] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 07:21:10] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 07:38:13] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 07:55:57] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 08:10:59] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 08:22:10] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 08:38:14] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 08:54:46] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 09:12:26] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 09:23:10] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 09:40:18] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 09:58:02] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 10:13:47] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 10:25:12] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 10:41:52] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 10:59:19] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 11:24:03] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 11:40:22] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 11:57:06] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 12:14:06] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 12:25:03] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 12:42:15] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 12:58:38] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 13:10:06] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 13:26:04] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 13:43:30] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 13:59:59] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 14:15:09] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 14:27:04] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 14:44:15] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 15:00:37] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 15:18:01] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 15:28:04] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 15:43:40] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 15:58:43] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 16:16:42] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 16:29:04] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 16:44:43] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 17:02:08] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 17:19:25] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 17:30:03] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 17:45:56] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 18:03:09] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 18:19:50] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 18:31:03] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 18:46:46] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 19:08:12] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 19:24:06] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 19:47:57] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 20:03:48] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 20:13:48] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 20:32:54] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 20:48:59] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 21:06:16] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 21:23:07] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 21:33:54] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 21:50:18] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 22:08:19] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 22:25:38] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 22:50:03] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 23:01:04] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 23:15:45] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 23:34:46] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-13 23:53:08] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 00:10:15] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 00:26:39] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 00:36:56] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 00:54:21] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 01:11:32] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 01:27:09] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 01:47:44] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 02:04:39] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 02:22:10] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 02:40:03] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 02:57:06] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 03:14:00] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 03:30:20] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 03:47:50] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 04:05:22] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 04:22:20] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 04:45:24] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 05:03:16] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 05:19:36] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 05:34:44] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 05:54:30] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 06:11:55] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 06:27:45] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 06:48:06] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 07:04:34] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 07:21:10] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 07:31:14] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 07:47:24] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 08:04:20] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 08:18:00] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 08:32:14] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 08:48:25] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 09:05:34] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 09:16:39] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 09:33:14] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 09:46:09] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 09:57:35] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 10:08:01] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 10:30:44] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 10:34:36] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 10:44:36] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 10:49:10] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 10:59:10] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 11:09:10] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 11:19:09] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 11:29:09] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 11:39:09] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 11:49:09] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-14 11:59:09] ERROR: ❌ SQL Error: column reference "room_id" is ambiguous
+Запрос: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-07-15 11:39:54] ERROR: ❌ SQL Error: null value in column "relative_type" of relation "students" violates not-null constraint
+Запрос: INSERT INTO students (fio, iin, gender, phone, university, relative_type, relative_phone)
+       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id
+[2025-07-15 11:39:54] ERROR: Ошибка при добавлении студента: null value in column "relative_type" of relation "students" violates not-null constraint
+[2025-07-15 11:41:41] ERROR: ❌ SQL Error: null value in column "relative_type" of relation "students" violates not-null constraint
+Запрос: INSERT INTO students (fio, iin, gender, phone, university, relative_type, relative_phone)
+       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id
+[2025-07-15 11:41:41] ERROR: Ошибка при добавлении студента: null value in column "relative_type" of relation "students" violates not-null constraint
+[2025-07-15 11:41:48] ERROR: ❌ SQL Error: null value in column "relative_phone" of relation "students" violates not-null constraint
+Запрос: INSERT INTO students (fio, iin, gender, phone, university, relative_type, relative_phone)
+       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id
+[2025-07-15 11:41:48] ERROR: Ошибка при добавлении студента: null value in column "relative_phone" of relation "students" violates not-null constraint
+[2025-07-15 11:42:18] ERROR: ❌ SQL Error: null value in column "relative_phone" of relation "students" violates not-null constraint
+Запрос: INSERT INTO students (fio, iin, gender, phone, university, relative_type, relative_phone)
+       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id
+[2025-07-15 11:42:18] ERROR: Ошибка при добавлении студента: null value in column "relative_phone" of relation "students" violates not-null constraint
+[2025-07-15 11:54:57] ERROR: ❌ SQL Error: null value in column "document_number" of relation "documents" violates not-null constraint
+Запрос: INSERT INTO documents (
+        student_id, document_number, document_issue_date, document_issuer, is_graduate, has_disability,
+        email, registration_city, registration_address
+      )
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+[2025-07-15 11:54:57] ERROR: Ошибка при добавлении студента: null value in column "document_number" of relation "documents" violates not-null constraint
+[2025-07-15 11:56:34] ERROR: ❌ SQL Error: duplicate key value violates unique constraint "students_iin_key"
+Запрос: INSERT INTO students (fio, iin, gender, phone, university, relative_type, relative_phone)
+       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id
+[2025-07-15 11:56:34] ERROR: Ошибка при добавлении студента: duplicate key value violates unique constraint "students_iin_key"
+[2025-07-23 10:29:20] ERROR: ❌ SQL Error: column s.block does not exist
+Запрос: 
+      SELECT 
+        s.fio, s.iin, s.phone, s.university,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability,
+        d.email, d.registration_address,
+        sel.room_id,
+        s.block
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+      WHERE s.iin = $1
+    
+[2025-07-24 13:19:20] ERROR: ❌ SQL Error: function date_part(unknown, integer) does not exist
+Запрос: 
+            UPDATE accommodation
+            SET has_left = true,
+                left_date = CURRENT_DATE,
+                payment = LEAST(
+                  GREATEST(DATE_PART('day', CURRENT_DATE - move_in_date), 1) * 1000,
+                  payment
+                )
+            WHERE student_id = (SELECT id FROM students WHERE iin = $1)
+            RETURNING student_id
+          
+[2025-07-24 13:19:20] ERROR: ❌ Ошибка при обработке markAsLeft по WebSocket: function date_part(unknown, integer) does not exist
+[2025-07-24 13:23:25] ERROR: ❌ SQL Error: function date_part(unknown, integer) does not exist
+Запрос: 
+            UPDATE accommodation
+            SET has_left = true,
+                left_date = CURRENT_DATE,
+                payment = LEAST(
+                  GREATEST(DATE_PART('day', CURRENT_DATE - move_in_date), 1) * 1000,
+                  payment
+                )
+            WHERE student_id = (SELECT id FROM students WHERE iin = $1)
+            RETURNING student_id
+          
+[2025-07-24 13:23:25] ERROR: ❌ Ошибка при обработке markAsLeft по WebSocket: function date_part(unknown, integer) does not exist
+[2025-07-24 13:24:04] ERROR: ❌ SQL Error: function date_part(unknown, integer) does not exist
+Запрос: 
+            UPDATE accommodation
+            SET has_left = true,
+                left_date = CURRENT_DATE,
+                payment = LEAST(
+                  GREATEST(DATE_PART('day', CURRENT_DATE - move_in_date), 1) * 1000,
+                  payment
+                )
+            WHERE student_id = (SELECT id FROM students WHERE iin = $1)
+            RETURNING student_id
+          
+[2025-07-24 13:24:04] ERROR: ❌ Ошибка при обработке markAsLeft по WebSocket: function date_part(unknown, integer) does not exist
+[2025-07-24 13:25:26] ERROR: ❌ SQL Error: function date_part(unknown, integer) does not exist
+Запрос: 
+            UPDATE accommodation
+            SET has_left = true,
+                left_date = CURRENT_DATE,
+                payment = LEAST(
+                  GREATEST(DATE_PART('day', CURRENT_DATE - move_in_date), 1) * 1000,
+                  payment
+                )
+            WHERE student_id = (SELECT id FROM students WHERE iin = $1)
+            RETURNING student_id
+          
+[2025-07-24 13:25:26] ERROR: ❌ Ошибка при обработке markAsLeft по WebSocket: function date_part(unknown, integer) does not exist
+[2025-07-24 13:26:33] ERROR: ❌ SQL Error: function date_part(unknown, integer) does not exist
+Запрос: 
+            UPDATE accommodation
+            SET has_left = true,
+                left_date = CURRENT_DATE,
+                payment = LEAST(
+                  GREATEST(DATE_PART('day', CURRENT_DATE - move_in_date), 1) * 1000,
+                  payment
+                )
+            WHERE student_id = (SELECT id FROM students WHERE iin = $1)
+            RETURNING student_id
+          
+[2025-07-24 13:26:33] ERROR: ❌ Ошибка при обработке markAsLeft по WebSocket: function date_part(unknown, integer) does not exist
+[2025-07-28 10:37:40] ERROR: ❌ SQL Error: null value in column "rental_period" of relation "accommodation" violates not-null constraint
+Запрос: 
+      UPDATE accommodation
+      SET rental_period = $1,
+          left_date = move_in_date + make_interval(months => $1)
+      WHERE student_id = (SELECT id FROM students WHERE iin = $2)
+      RETURNING student_id
+    
+[2025-07-28 10:37:40] ERROR: ❌ Ошибка при обновлении срока аренды: null value in column "rental_period" of relation "accommodation" violates not-null constraint
