@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
   <head>
@@ -68,6 +69,16 @@
         font-family: "Segoe UI", sans-serif;
         font-size: 14px;
         height: auto;
+      }
+      .selfie-wrapper input[type="file"].field-error-input {
+        border-color: red !important;
+        box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2);
+      }
+      .selfie-wrapper.field-error-input {
+        border: 1px solid red !important;
+        border-radius: 6px;
+        padding: 10px;
+        box-sizing: border-box;
       }
       .btn {
         font-family: "Segoe UI", sans-serif;
@@ -192,12 +203,41 @@
         background-color: #004d99;
         color: white;
       }
+
+#uploadOverlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.85);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-size: 16px;
+  font-family: "Segoe UI", sans-serif;
+}
+.loader {
+  border: 6px solid #ccc;
+  border-top: 6px solid #004d99;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 12px;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
     </style>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
     />
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
   </head>
   <body>
     <div id="toast" class="toast">Уведомление</div>
@@ -228,38 +268,39 @@
           />
         </label>
 
-        <label>Фотография (селфи) с камерой устройства:</label>
-        <div id="mobileSelfie" style="display: none">
-          <input
-            type="file"
-            id="selfieUpload"
-            accept="image/*"
-            capture="user"
+        <label>
+          Снимок флюрографии:
+          <input type="file" id="fluorographyScan" accept="image/*,application/pdf" />
+          <img
+            id="fluorographyPreview"
+            alt="Предпросмотр флюорографии"
+            style="display: none; max-height: 150px; margin-top: 10px"
           />
-        </div>
-        <div id="desktopSelfie">
-          <button
-            type="button"
-            class="btn btn-primary"
-            onclick="captureSelfie()"
-          >
-            <span class="btn-label">Сделать селфи</span>
-          </button>
-          <video
-            id="video"
-            autoplay
-            playsinline
-            muted
-            width="100%"
-            style="display: none"
-          ></video>
-          <canvas id="canvas" style="display: none"></canvas>
-        </div>
+        </label>
+
+        <label>
+          Снимок камеры (селфи):
+          <input type="file" id="selfieUpload" accept="image/*" />
+          <img
+            id="selfiePreview"
+            alt="Предпросмотр селфи"
+            style="display: none; max-height: 150px; margin-top: 10px"
+          />
+        </label>
 
         <div style="margin-top: 20px">
           <h2 style="text-align: center; margin-bottom: 20px; font-size: 20px">
             Дополнительные данные
           </h2>
+
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" placeholder="example@mail.com" required />
+
+          <label for="registrationCity">Город регистрации:</label>
+          <input type="text" id="registrationCity" name="registrationCity" placeholder="Астана" required />
+
+          <label for="registrationAddress">Адрес регистрации (улица, дом, кв):</label>
+          <input type="text" id="registrationAddress" name="registrationAddress" placeholder="ул. Мира, д. 30, кв. 15" required />
 
           <label
             >Номер удостоверения личности:
@@ -282,7 +323,7 @@
 
           <label
             >Орган, выдавший документ:
-            <input type="text" id="documentIssuer" />
+            <input type="text" id="documentIssuer" placeholder="ҚР ІШКІ ІСТЕР МИНИСТРЛІГІ"/>
           </label>
 
           <label>Являетесь ли Вы магистрантом?</label>
@@ -339,17 +380,34 @@
 
     <script>
       const form = document.getElementById("documentForm");
+      function dataURLtoBlob(dataurl) {
+        const arr = dataurl.split(',');
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], { type: mime });
+      }
       const idCardInput = document.getElementById("idCard");
+      const fluorographyInput = document.getElementById("fluorographyScan");
+      const fluorographyPreview = document.getElementById("fluorographyPreview");
+      const selfieInput = document.getElementById("selfieUpload");
+      const selfiePreview = document.getElementById("selfiePreview");
+      // Превью для fluorography
+      fluorographyInput.addEventListener("change", () => {
+        previewFile(fluorographyInput, fluorographyPreview);
+      });
+      selfieInput.addEventListener("change", () => {
+        previewFile(selfieInput, selfiePreview);
+      });
       const universityProofInput = document.getElementById("universityProof");
-      const selfieUpload = document.getElementById("selfieUpload");
       const idCardPreview = document.getElementById("idCardPreview");
       const universityProofPreview = document.getElementById(
         "universityProofPreview"
       );
-      const canvas = document.getElementById("canvas");
-      const video = document.getElementById("video");
-      const mobileSelfieDiv = document.getElementById("mobileSelfie");
-      const desktopSelfieDiv = document.getElementById("desktopSelfie");
       const documentNumberInput = document.getElementById("documentNumber");
       // Автоматическая очистка от нецифровых символов
       documentNumberInput.addEventListener("input", () => {
@@ -365,15 +423,6 @@
       const backButton = document.getElementById("backButton");
       const nextButton = document.getElementById("nextButton");
 
-      // Показать нужную версию селфи
-      const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-      if (isMobile) {
-        mobileSelfieDiv.style.display = "block";
-        desktopSelfieDiv.style.display = "none";
-      } else {
-        mobileSelfieDiv.style.display = "none";
-        desktopSelfieDiv.style.display = "block";
-      }
 
       // Превью для idCard
       idCardInput.addEventListener("change", () => {
@@ -386,26 +435,7 @@
       });
 
       // Превью для selfieUpload (мобильное)
-      selfieUpload.addEventListener("change", () => {
-        if (selfieUpload.files.length) {
-          const reader = new FileReader();
-          reader.onload = function (e) {
-            const ctx = canvas.getContext("2d");
-            const img = new Image();
-            img.onload = function () {
-              canvas.width = img.width;
-              canvas.height = img.height;
-              ctx.clearRect(0, 0, canvas.width, canvas.height);
-              ctx.drawImage(img, 0, 0);
-              canvas.style.display = "block";
-            };
-            img.src = e.target.result;
-          };
-          reader.readAsDataURL(selfieUpload.files[0]);
-        } else {
-          clearCanvas();
-        }
-      });
+      // (canvas больше не используется, превью не делаем)
 
       function previewFile(inputElement, previewImg) {
         if (inputElement.files && inputElement.files[0]) {
@@ -427,21 +457,17 @@
         }
       }
 
-      function clearCanvas() {
-        const ctx = canvas.getContext("2d");
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        canvas.style.display = "none";
-      }
 
       // Сброс формы и очистка localStorage, preview, canvas и ошибок
       resetButton.onclick = function () {
         form.reset();
         localStorage.removeItem("studentDocuments");
-        clearCanvas();
         idCardPreview.src = "";
         idCardPreview.style.display = "none";
         universityProofPreview.src = "";
         universityProofPreview.style.display = "none";
+        fluorographyPreview.src = "";
+        fluorographyPreview.style.display = "none";
         document.querySelectorAll(".field-error").forEach((e) => e.remove());
         document.querySelectorAll(".field-error-input").forEach((el) => {
           el.classList.remove("field-error-input");
@@ -461,129 +487,25 @@
         // (end radio reset)
       };
 
-      // Функция для селфи через камеру (десктоп) с отсчётом
-      function captureSelfie() {
-        navigator.mediaDevices
-          .getUserMedia({ video: true })
-          .then((stream) => {
-            video.srcObject = stream;
-            video.style.display = "block";
-            video.onloadedmetadata = () => {
-              video.play();
-              // Отсчёт перед захватом
-              let countdown = 3;
-              const countdownElement = document.createElement("div");
-              countdownElement.id = "countdown-overlay";
-              // Новый стиль для countdownElement
-              countdownElement.style.position = "absolute";
-              countdownElement.style.top = video.offsetTop + 10 + "px";
-              countdownElement.style.left = video.offsetLeft + 10 + "px";
-              countdownElement.style.transform = "none";
-              countdownElement.style.fontSize = "2rem";
-              countdownElement.style.fontWeight = "bold";
-              countdownElement.style.color = "#004d99";
-              countdownElement.style.background = "rgba(255,255,255,0.8)";
-              countdownElement.style.padding = "10px 20px";
-              countdownElement.style.borderRadius = "8px";
-              countdownElement.style.zIndex = 1000;
-              countdownElement.textContent = countdown;
-              document.body.appendChild(countdownElement);
+      // captureSelfie больше не используется
 
-              const timer = setInterval(() => {
-                countdown--;
-                if (countdown > 0) {
-                  countdownElement.textContent = countdown;
-                } else {
-                  clearInterval(timer);
-                  countdownElement.remove();
-                  const context = canvas.getContext("2d");
-                  canvas.width = video.videoWidth;
-                  canvas.height = video.videoHeight;
-                  context.translate(canvas.width, 0);
-                  context.scale(-1, 1);
-                  context.drawImage(video, 0, 0);
-                  stream.getTracks().forEach((track) => track.stop());
-                  canvas.style.display = "block";
-                  video.style.display = "none";
-                }
-              }, 1000);
-            };
-          })
-          .catch((err) => alert("Ошибка доступа к камере: " + err));
-      }
-
-      // Функция сбора данных формы
+      // Функция сбора данных формы (без idCardPreview, universityProofPreview, selfieUploaded)
       function collectFormData() {
-        const idCardFile = idCardInput.files.length
-          ? idCardInput.files[0]
-          : null;
-        const universityProofFile = universityProofInput.files.length
-          ? universityProofInput.files[0]
-          : null;
-
-        const idCardBase64Promise = idCardFile
-          ? fileToBase64(idCardFile)
-          : Promise.resolve(idCardPreview.src || null);
-
-        const universityProofBase64Promise = universityProofFile
-          ? fileToBase64(universityProofFile)
-          : Promise.resolve(universityProofPreview.src || null);
-
         return new Promise((resolve) => {
-          Promise.all([idCardBase64Promise, universityProofBase64Promise]).then(
-            ([idCardBase64, universityProofBase64]) => {
-              let selfieData = null;
-              if (isMobile) {
-                if (selfieUpload.files.length) {
-                  fileToBase64(selfieUpload.files[0]).then((base64) => {
-                    selfieData =
-                      base64 ||
-                      (canvas.style.display !== "none"
-                        ? canvas.toDataURL()
-                        : null);
-                    resolve({
-                      documentNumber: documentNumberInput.value.trim(),
-                      documentIssueDate: documentIssueDateInput.value.trim(),
-                      documentIssuer: documentIssuerInput.value.trim(),
-                      selfieUploaded: selfieData,
-                      idCardPreview: idCardBase64,
-                      universityProofPreview: universityProofBase64,
-                      isGraduate:
-                        document.querySelector(
-                          'input[name="isGraduate"]:checked'
-                        )?.value || "",
-                      hasDisability:
-                        document.querySelector(
-                          'input[name="hasDisability"]:checked'
-                        )?.value || "",
-                    });
-                  });
-                  return;
-                } else {
-                  selfieData =
-                    canvas.style.display !== "none" ? canvas.toDataURL() : null;
-                }
-              } else {
-                selfieData =
-                  canvas.style.display !== "none" ? canvas.toDataURL() : null;
-              }
-
-              resolve({
-                documentNumber: documentNumberInput.value.trim(),
-                documentIssueDate: documentIssueDateInput.value.trim(),
-                documentIssuer: documentIssuerInput.value.trim(),
-                selfieUploaded: selfieData,
-                idCardPreview: idCardBase64,
-                universityProofPreview: universityProofBase64,
-                isGraduate:
-                  document.querySelector('input[name="isGraduate"]:checked')
-                    ?.value || "",
-                hasDisability:
-                  document.querySelector('input[name="hasDisability"]:checked')
-                    ?.value || "",
-              });
-            }
-          );
+          resolve({
+            email: document.getElementById("email").value.trim(),
+            registrationCity: document.getElementById("registrationCity").value.trim(),
+            registrationAddress: document.getElementById("registrationAddress").value.trim(),
+            documentNumber: documentNumberInput.value.trim(),
+            documentIssueDate: documentIssueDateInput.value.trim(),
+            documentIssuer: documentIssuerInput.value.trim(),
+            isGraduate:
+              document.querySelector('input[name="isGraduate"]:checked')?.value ||
+              "",
+            hasDisability:
+              document.querySelector('input[name="hasDisability"]:checked')
+                ?.value || "",
+          });
         });
       }
 
@@ -605,95 +527,89 @@
         });
       }
 
-      // Сохранение данных в localStorage
+      // Сохранение только текстовых данных в localStorage
       function saveToLocalStorage(data) {
-        localStorage.setItem("studentDocuments", JSON.stringify(data));
+        const capitalize = (str) =>
+          str
+            .trim()
+            .split(/\s+/)
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+            .join(" ");
+
+        const city = data.registrationCity.trim().replace(/^г\.\s*/i, "");
+        const formattedCity = "г." + capitalize(city);
+
+        const minimalData = {
+          email: data.email,
+          registrationCity: formattedCity,
+          registrationAddress: data.registrationAddress.trim(),
+          documentNumber: data.documentNumber,
+          documentIssueDate: data.documentIssueDate,
+          documentIssuer: data.documentIssuer.trim(),
+          isGraduate: data.isGraduate,
+          hasDisability: data.hasDisability,
+        };
+        localStorage.setItem("studentDocuments", JSON.stringify(minimalData));
       }
 
       // Загрузка данных из localStorage при загрузке страницы
       window.onload = function () {
+        const savedData = localStorage.getItem("studentDocuments");
+        let data = null;
+        if (savedData) {
+          try {
+            data = JSON.parse(savedData);
+          } catch {
+            data = null;
+          }
+        }
+        if (data) {
+          if (data.email) document.getElementById("email").value = data.email;
+          if (data.registrationCity) document.getElementById("registrationCity").value = data.registrationCity;
+          if (data.registrationAddress) document.getElementById("registrationAddress").value = data.registrationAddress;
+          if (data.documentNumber)
+            documentNumberInput.value = data.documentNumber;
+          if (data.documentIssueDate)
+            documentIssueDateInput.value = data.documentIssueDate;
+          if (data.documentIssuer)
+            documentIssuerInput.value = data.documentIssuer;
+          if (data.isGraduate) {
+            const input = document.querySelector(
+              `input[name="isGraduate"][value="${data.isGraduate}"]`
+            );
+            if (input) {
+              input.checked = true;
+              input.parentElement.classList.add("selected");
+            }
+          }
+          if (data.hasDisability) {
+            const input = document.querySelector(
+              `input[name="hasDisability"][value="${data.hasDisability}"]`
+            );
+            if (input) {
+              input.checked = true;
+              input.parentElement.classList.add("selected");
+            }
+          }
+        }
+        // Нет вставки превью и селфи
+        // clearCanvas(); // удалено
+        // flatpickr инициализация всегда, только выбор из календаря
         flatpickr("#documentIssueDate", {
           dateFormat: "Y-m-d",
-          locale: "ru",
+          locale: flatpickr.l10ns.ru,
+          allowInput: false, // отключаем ручной ввод
+          defaultDate: data?.documentIssueDate || null,
+          onChange: function (selectedDates, dateStr) {
+            documentIssueDateInput.value = dateStr;
+          }
         });
-
-        const savedData = localStorage.getItem("studentDocuments");
-        if (!savedData) return;
-        let data = null;
-        try {
-          data = JSON.parse(savedData);
-        } catch {
-          return;
-        }
-        if (!data) return;
-
-        if (data.documentNumber)
-          documentNumberInput.value = data.documentNumber;
-        if (data.documentIssueDate)
-          documentIssueDateInput.value = data.documentIssueDate;
-        if (data.documentIssuer)
-          documentIssuerInput.value = data.documentIssuer;
-        if (data.isGraduate) {
-          const input = document.querySelector(
-            `input[name="isGraduate"][value="${data.isGraduate}"]`
-          );
-          if (input) {
-            input.checked = true;
-            input.parentElement.classList.add("selected");
-          }
-        }
-        if (data.hasDisability) {
-          const input = document.querySelector(
-            `input[name="hasDisability"][value="${data.hasDisability}"]`
-          );
-          if (input) {
-            input.checked = true;
-            input.parentElement.classList.add("selected");
-          }
-        }
-
-        // Вставляем превью idCard
-        if (data.idCardPreview) {
-          idCardPreview.src = data.idCardPreview;
-          idCardPreview.style.display = "block";
-        } else {
-          idCardPreview.src = "";
-          idCardPreview.style.display = "none";
-        }
-
-        // Вставляем превью universityProof
-        if (data.universityProofPreview) {
-          universityProofPreview.src = data.universityProofPreview;
-          universityProofPreview.style.display = "block";
-        } else {
-          universityProofPreview.src = "";
-          universityProofPreview.style.display = "none";
-        }
-
-        // Отрисовываем селфи
-        if (data.selfieUploaded) {
-          const ctx = canvas.getContext("2d");
-          const img = new Image();
-          img.onload = function () {
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, 0, 0);
-            canvas.style.display = "block";
-            if (!isMobile) {
-              video.style.display = "none";
-            }
-          };
-          img.src = data.selfieUploaded;
-        } else {
-          clearCanvas();
-        }
       };
 
       // Обработчик кнопки "Назад"
       backButton.onclick = function () {
         collectFormData().then((data) => {
-          saveToLocalStorage(data);
+          saveToLocalStorage(data); // сохраняем даже без валидации
           window.location.href = "form-personal.html";
         });
       };
@@ -701,20 +617,21 @@
       // Создаем контейнер для ошибки селфи (один раз)
       let selfieErrorContainerEl = null;
       function getSelfieErrorContainer() {
+        const selfieUpload = document.getElementById("selfieUpload");
+
         if (selfieErrorContainerEl && selfieErrorContainerEl.parentNode)
           return selfieErrorContainerEl;
+
         selfieErrorContainerEl = document.createElement("div");
         selfieErrorContainerEl.className = "selfie-error-container";
-        if (isMobile) {
-          selfieUpload.insertAdjacentElement(
-            "afterend",
-            selfieErrorContainerEl
-          );
-        } else {
-          canvas.insertAdjacentElement("afterend", selfieErrorContainerEl);
-        }
+
+        selfieUpload.insertAdjacentElement("afterend", selfieErrorContainerEl);
+
         return selfieErrorContainerEl;
       }
+
+      // --- Определяем selfieUpload только после всех innerHTML ---
+      const selfieUpload = document.getElementById("selfieUpload");
 
       form.onsubmit = function (e) {
         e.preventDefault();
@@ -749,34 +666,52 @@
         const selfieErrorContainer = getSelfieErrorContainer();
         removeError(selfieErrorContainer);
 
-        // Validate document number
-        if (
-          !documentNumberInput.value.trim() ||
-          !/^\d+$/.test(documentNumberInput.value.trim())
-        ) {
-          showError(documentNumberInput, "Введите номер удостоверения");
+        // Новая валидация для email, registrationCity, registrationAddress
+        const emailInput = document.getElementById("email");
+        const registrationCityInput = document.getElementById("registrationCity");
+        const registrationAddressInput = document.getElementById("registrationAddress");
+
+        removeError(emailInput);
+        removeError(registrationCityInput);
+        removeError(registrationAddressInput);
+
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(emailInput.value.trim())) {
+          showError(emailInput, "Введите корректный email");
           hasErrors = true;
         }
-        // Validate issue date
-        if (!documentIssueDateInput.value.trim()) {
-          showError(documentIssueDateInput, "Выберите дату выдачи");
+        if (!registrationCityInput.value.trim()) {
+          showError(registrationCityInput, "Введите город регистрации");
           hasErrors = true;
         }
-        // Validate issuer
-        if (!documentIssuerInput.value.trim()) {
-          showError(documentIssuerInput, "Введите кем выдан документ");
+        if (!registrationAddressInput.value.trim()) {
+          showError(registrationAddressInput, "Введите адрес регистрации");
           hasErrors = true;
         }
 
-        // Validate file inputs (idCardInput and universityProofInput)
-        if (!idCardInput.files.length) {
-          showError(idCardInput, "Загрузите удостоверение личности");
+        // Validate document number (мягкая проверка: только цифры)
+        if (!/^\d+$/.test(documentNumberInput.value.trim())) {
+          showError(documentNumberInput, "Введите номер удостоверения");
           hasErrors = true;
         }
-        if (!universityProofInput.files.length) {
-          showError(universityProofInput, "Загрузите справку о месте обучения");
+        // Validate issue date (только на заполненность)
+        if (!documentIssueDateInput.value.trim()) {
+          showError(documentIssueDateInput, "Введите дату выдачи документа");
           hasErrors = true;
         }
+        // Validate issuer (только на заполненность)
+        if (!documentIssuerInput.value.trim()) {
+          showError(documentIssuerInput, "Введите, кем выдан документ");
+          hasErrors = true;
+        }
+
+        // --- LOG FILES BEFORE FILE VALIDATION ---
+        console.log("📄 Проверка файлов перед отправкой:");
+        console.log("🪪 Удостоверение личности:", idCardInput?.files?.[0]);
+        console.log("🏫 Справка с места учёбы:", universityProofInput?.files?.[0]);
+        console.log("🩻 Снимок флюрографии:", fluorographyInput?.files?.[0]);
+        console.log("📸 Селфи:", selfieUpload?.files?.[0]);
+
 
         // Validate radio buttons
         if (!isGraduateInput) {
@@ -794,21 +729,49 @@
           hasErrors = true;
         }
 
-        // Проверка селфи
-        let isSelfieProvided = false;
-        if (isMobile) {
-          isSelfieProvided = selfieUpload.files.length > 0;
-        } else {
-          isSelfieProvided = canvas && canvas.style.display !== "none";
+        // --- ДОБАВЛЕНА ВАЛИДАЦИЯ ФАЙЛОВ ---
+        // 1. fluorographyInput
+        if (!fluorographyInput.files.length) {
+          showError(fluorographyInput, "Загрузите снимок флюорографии");
+          hasErrors = true;
         }
-        if (!isSelfieProvided) {
-          showError(selfieErrorContainer, "Сделайте или загрузите селфи");
+        // 2. selfieUpload (селфи)
+        if (!selfieUpload.files.length) {
+          showError(getSelfieErrorContainer(), "Загрузите селфи");
+          hasErrors = true;
+        }
+        // 3. idCardInput
+        if (!idCardInput.files.length) {
+          showError(idCardInput, "Загрузите удостоверение личности");
+          hasErrors = true;
+        }
+        // 4. universityProofInput
+        if (!universityProofInput.files.length) {
+          showError(universityProofInput, "Загрузите справку с места учёбы");
           hasErrors = true;
         }
 
         if (hasErrors) {
           showToast("Пожалуйста, исправьте ошибки в форме");
           return;
+        } else {
+          // если ошибок нет — сохранить в localStorage
+          const documentData = {
+            email: emailInput.value.trim(),
+            registrationCity: registrationCityInput.value.trim(),
+            registrationAddress: registrationAddressInput.value.trim(),
+            documentNumber: documentNumberInput.value.trim(),
+            documentIssueDate: documentIssueDateInput.value.trim(),
+            documentIssuer: documentIssuerInput.value.trim(),
+            isGraduate: isGraduateInput?.value || "",
+            hasDisability: hasDisabilityInput?.value || ""
+          };
+          // Гарантируем сохранение registrationCity и registrationAddress
+          saveToLocalStorage({
+            ...documentData,
+            registrationCity: registrationCityInput.value.trim(),
+            registrationAddress: registrationAddressInput.value.trim()
+          });
         }
 
         // Проверка данных со страницы form-personal.html
@@ -847,10 +810,98 @@
           return;
         }
 
-        collectFormData().then((data) => {
-          saveToLocalStorage(data);
-          showToast("Данные сохранены");
-          window.location.href = "pick-room.html";
+        // --- Overlay show and disable nextButton ---
+        document.getElementById("uploadOverlay").style.display = "flex";
+        nextButton.disabled = true;
+
+        collectFormData().then((documentData) => {
+          // Проверка на пустое имя/фамилию
+          if (!personalData.firstName || !personalData.lastName) {
+            alert("❌ Имя и фамилия не найдены. Заполните форму с личными данными.");
+            return;
+          }
+          // Проверка на пустые файлы
+          if (
+            !idCardInput.files[0] ||
+            !universityProofInput.files[0] ||
+            !fluorographyInput.files[0] ||
+            !selfieUpload.files[0]
+          ) {
+            alert("❌ Один или несколько файлов отсутствуют. Загрузите все 4 документа.");
+            return;
+          }
+          const formData = new FormData();
+          // Добавляем ФИО из personalData
+          formData.append("firstName", personalData.firstName);
+          formData.append("lastName", personalData.lastName);
+          formData.append("middleName", personalData.middleName || "");
+          formData.append("idCard", idCardInput.files[0]);
+          formData.append("universityProof", universityProofInput.files[0]);
+          formData.append("fluorography", fluorographyInput.files[0]);
+          // Формируем selfieBlob и добавляем в formData
+          if (selfieUpload.files.length) {
+            const selfieFile = selfieUpload.files[0];
+            console.log("📤 SELFIE FILE:", selfieFile);
+            console.log("📤 SELFIE name:", selfieFile.name);
+            console.log("📤 SELFIE size:", selfieFile.size);
+            console.log("📤 SELFIE type:", selfieFile.type);
+            formData.append("selfie", selfieFile);
+            showToast("✅ Селфи выбрано: " + selfieFile.name);
+          } else {
+            console.warn("❌ Селфи не выбрано или не читается");
+            alert("❌ Селфи не выбрано или не читается — проверьте файл на телефоне.");
+          }
+
+          formData.append("documentNumber", documentNumberInput.value.trim());
+          formData.append("documentIssueDate", documentIssueDateInput.value.trim());
+          formData.append("documentIssuer", documentIssuerInput.value.trim());
+          formData.append("isGraduate", isGraduateInput.value);
+          formData.append("hasDisability", hasDisabilityInput.value);
+
+          // --- Добавляем поля из form-personal.html и form-documents.html ---
+          formData.append("iin", personalData.iin || "");
+          formData.append("phone", personalData.phone || "");
+          formData.append("email", documentData.email || "");
+          formData.append("university", personalData.university || "");
+          formData.append("registrationAddress", documentData.registrationAddress || "");
+          formData.append("room", personalData.room || "");
+          formData.append("block", personalData.block || "");
+
+          // Отправка на сервер
+          console.log("📤 Отправляем данные на сервер...");
+          const baseURL = location.origin;
+          console.log("🌐 fetch URL:", baseURL + "/api/upload");
+          fetch(baseURL + "/api/upload", {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => {
+              document.getElementById("uploadOverlay").style.display = "none";
+              nextButton.disabled = false;
+              if (!response.ok) throw new Error("Ошибка при загрузке");
+              return response.json();
+            })
+            .then((data) => {
+              document.getElementById("uploadOverlay").style.display = "none";
+              nextButton.disabled = false;
+              if (data.success) {
+                showToast("Документы успешно загружены");
+                window.location.href = "pick-room.html";
+              } else {
+                showToast(data.message || "Ошибка: документы не были загружены полностью");
+              }
+            })
+            .catch(async (error) => {
+              document.getElementById("uploadOverlay").style.display = "none";
+              nextButton.disabled = false;
+              console.error("❌ Ошибка загрузки:", error);
+              if (error.response) {
+                const errorText = await error.response.text();
+                console.error("📄 Ответ сервера:", errorText);
+              }
+              alert("❌ Ошибка загрузки: " + error.message);
+              showToast("Ошибка загрузки: " + error.message);
+            });
         });
       };
 
@@ -871,17 +922,30 @@
       function showError(el, message) {
         removeError(el);
         const error = document.createElement("div");
-        error.className = "field-error";
-        error.textContent = message;
-        // Если это контейнер для селфи-ошибки, просто append
+        // Если это контейнер для селфи-ошибки, просто append, но только если нет уже field-error
+        if (
+          el.classList && el.classList.contains("selfie-error-container") &&
+          el.querySelector(".field-error")
+        ) return;
         if (el.classList && el.classList.contains("selfie-error-container")) {
+          error.className = "field-error";
+          error.innerHTML = "<b>" + message + "</b>";
           el.appendChild(error);
+          const selfieInput = document.getElementById("selfieUpload");
+          selfieInput.classList.add("field-error-input");
+          // Удаляем добавление класса на родителя, чтобы не было двойной рамки
+          //selfieInput.parentElement?.classList.add("field-error-input");
+          selfieInput.style.border = "";
         } else if (el.type === "radio") {
           const group = document.querySelectorAll(`input[name="${el.name}"]`);
           const groupWrapper = group[0].closest(".gender-selection");
           group.forEach((input) => {
             input.classList.add("field-error-input");
-            input.parentElement.style.border = "2px solid red";
+            // Удаляем прямое добавление border, только класс
+            if (input.parentElement) {
+              input.parentElement.classList.add("field-error-input");
+              input.parentElement.style.border = ""; // remove direct style
+            }
           });
           if (
             groupWrapper &&
@@ -893,9 +957,22 @@
             groupWrapper.insertAdjacentElement("afterend", error);
           }
         } else {
-          el.insertAdjacentElement("afterend", error);
-          el.style.border = "2px solid red";
+          if (el.type === "file") {
+            error.className = "field-error";
+            error.innerHTML = "<b>" + message + "</b>";
+            const parentLabel = el.closest("label");
+            if (parentLabel && !parentLabel.querySelector(".field-error")) {
+              parentLabel.insertAdjacentElement("beforeend", error);
+            } else if (!parentLabel) {
+              el.insertAdjacentElement("afterend", error);
+            }
+          } else {
+            error.className = "field-error";
+            error.textContent = message;
+            el.insertAdjacentElement("afterend", error);
+          }
           el.classList.add("field-error-input");
+          el.style.border = ""; // remove direct style
         }
       }
 
@@ -905,11 +982,19 @@
           Array.from(el.querySelectorAll(".field-error")).forEach((e) =>
             e.remove()
           );
+          const selfieInput = document.getElementById("selfieUpload");
+          selfieInput.classList.remove("field-error-input");
+          selfieInput.parentElement?.classList.remove("field-error-input");
+          selfieInput.parentElement?.classList.remove("field-error-input");
+          selfieInput.style.border = "";
         } else if (el.type === "radio") {
           const group = document.querySelectorAll(`input[name="${el.name}"]`);
           group.forEach((input) => {
             input.classList.remove("field-error-input");
-            input.parentElement.style.border = "";
+            if (input.parentElement) {
+              input.parentElement.classList.remove("field-error-input");
+              input.parentElement.style.border = "";
+            }
           });
           // Также удалим ошибку после .gender-selection
           const groupWrapper = el.closest(".gender-selection");
@@ -922,8 +1007,8 @@
           if (next && next.classList.contains("field-error")) {
             next.remove();
           }
-          el.style.border = "";
           el.classList.remove("field-error-input");
+          el.style.border = "";
         }
       }
 
@@ -938,13 +1023,24 @@
         });
       }
 
+      // Мягкая проверка номера удостоверения на blur:
       validateOnBlur(
         documentNumberInput,
         "Введите номер удостоверения",
         /^\d+$/
       );
-      validateOnBlur(documentIssueDateInput, "Выберите дату выдачи");
-      validateOnBlur(documentIssuerInput, "Введите кем выдан документ");
+      validateOnBlur(
+        documentIssueDateInput,
+        "Введите дату выдачи документа"
+      );
+      validateOnBlur(
+        documentIssuerInput,
+        "Введите, кем выдан документ"
+      );
+      // Валидация на blur для email, registrationCity, registrationAddress
+      validateOnBlur(document.getElementById("email"), "Введите корректный email", /^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+      validateOnBlur(document.getElementById("registrationCity"), "Введите город регистрации");
+      validateOnBlur(document.getElementById("registrationAddress"), "Введите адрес регистрации");
 
       // Активация .selected у выбранной radio-кнопки
       document
@@ -972,5 +1068,9 @@
       //   localStorage.setItem("selectedRoom", JSON.stringify(room));
       // });
     </script>
+    <div id="uploadOverlay" style="display: none;">
+      <div class="loader"></div>
+      <div class="message">Загрузка документов...</div>
+    </div>
   </body>
 </html>

@@ -1,410 +1,34 @@
 <!DOCTYPE html>
 <html lang="ru">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Общежитие: Блоки, Комнаты, Студенты и Уведомления</title>
-    <style>
-      .student-entry p {
-        margin-bottom: 8px;
-      }
-      input.valid {
-        border: 2px solid #28a745 !important;
-      }
-      .tooltip {
-        display: inline-block;
-        position: relative;
-      }
-      .tooltip:hover::after {
-        content: attr(data-tooltip);
-        position: absolute;
-        bottom: -24px;
-        left: 0;
-        background: #333;
-        color: white;
-        padding: 4px 8px;
-        font-size: 0.75em;
-        border-radius: 4px;
-        white-space: nowrap;
-        z-index: 10;
-      }
-      .field-error {
-        color: red;
-        margin-top: -6px;
-        margin-bottom: 8px;
-        font-size: 0.85em;
-      }
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        margin: 0;
-        padding: 10px;
-        background-color: #f0f2f5;
-        font-size: 14px;
-      }
-      header {
-        text-align: center;
-        margin-bottom: 10px;
-      }
-      header h1 {
-        margin: 0;
-        padding: 10px;
-        color: #004d99;
-        font-size: 1.5em;
-      }
-      #searchInput {
-        width: 100%;
-        max-width: 300px;
-        padding: 8px;
-        margin: 10px auto;
-        display: block;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 14px;
-      }
-      button.header-btn {
-        display: inline-block;
-        margin: 5px 5px 15px;
-        padding: 6px 12px;
-        background-color: #004d99;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 0.9em;
-      }
-      button.header-btn:hover {
-        background-color: #003366;
-      }
-      #notificationsBtn {
-        background-color: #d9534f;
-      }
-      #notificationsBtn:hover {
-        background-color: #c9302c;
-      }
-      .stats-global {
-        text-align: center;
-        font-size: 0.9em;
-        margin-bottom: 10px;
-      }
-      .blocks-container {
-        display: flex;
-        justify-content: space-around;
-        flex-wrap: wrap;
-        gap: 10px;
-        height: calc(100vh - 180px);
-        overflow: hidden;
-      }
-      .block-column {
-        background-color: #fff;
-        padding: 10px;
-        margin: 5px;
-        flex: 1 1 300px;
-        min-width: 250px;
-        max-height: 100%;
-        overflow-y: auto;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        border-radius: 4px;
-      }
-      .block-column h2 {
-        text-align: center;
-        margin-bottom: 5px;
-        color: #333;
-        font-size: 1.1em;
-      }
-      .block-stats {
-        text-align: center;
-        font-size: 0.8em;
-        color: #555;
-        margin-bottom: 5px;
-      }
-      .floor {
-        margin-bottom: 10px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        overflow: hidden;
-      }
-      .floor h3 {
-        margin: 0;
-        padding: 5px 8px;
-        background-color: #e9ecef;
-        cursor: pointer;
-        font-size: 1em;
-        color: #555;
-      }
-      .room-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: none;
-      }
-      .room-list li {
-        padding: 5px 8px;
-        border-bottom: 1px solid #ddd;
-        background-color: #fafafa;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-        font-size: 0.9em;
-      }
-      .room-list li:last-child {
-        border-bottom: none;
-      }
-      .room-list li span {
-        margin-right: 5px;
-      }
-      .occupied {
-        color: #d9534f;
-      }
-      .free {
-        color: #5cb85c;
-      }
-      .btn {
-        padding: 4px 8px;
-        background-color: #004d99;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 0.8em;
-        margin: 2px;
-      }
-      .btn:hover {
-        background-color: #003366;
-      }
-      .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-      }
-      .modal-content {
-        background-color: #fff;
-        padding: 0; /* убираем лишний padding, он уже есть в header/body */
-        border-radius: 4px;
-        width: 90%;
-        max-width: 400px;
-        position: relative;
-        max-height: 90vh;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden; /* скрываем лишнее */
-      }
-
-      .modal-header {
-        position: sticky;
-        top: 0;
-        background-color: #fff;
-        z-index: 1;
-        border-bottom: 1px solid #ccc;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 15px;
-      }
-      .modal-header h2 {
-        margin: 0;
-        font-size: 1.1em;
-      }
-      .close {
-        font-size: 1.2em;
-        cursor: pointer;
-      }
-
-      .modal-body {
-        padding: 10px 15px;
-        overflow-y: auto;
-        max-height: calc(90vh - 60px); /* 60px — высота header */
-      }
-
-      form label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: bold;
-        margin-top: 10px;
-      }
-      form input,
-      form select {
-        box-sizing: border-box;
-        width: 100%;
-        padding: 6px;
-        margin-top: 3px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 0.9em;
-      }
-      @media (max-width: 400px) {
-        form input,
-        form select,
-        .btn {
-          font-size: 0.85em;
-          padding: 5px;
-        }
-
-        .modal-content {
-          width: 95%;
-          max-width: none;
-        }
-
-        .btn {
-          width: 100%;
-          max-width: 200px;
-          margin: 10px auto;
-        }
-        .student-entry p {
-          font-size: 0.9em;
-        }
-        .student-entry .btn {
-          width: 100%;
-          margin-top: 6px;
-        }
-      }
-
-      @media (max-width: 768px) {
-        .blocks-container {
-          flex-direction: column;
-          height: auto;
-          overflow: visible;
-        }
-
-        .block-column {
-          max-height: none;
-          overflow: visible;
-          margin-bottom: 15px;
-        }
-
-        .room-list li {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-
-        .btn {
-          font-size: 0.9em;
-          padding: 6px 10px;
-          width: 100%;
-          box-sizing: border-box;
-        }
-      }
-      html,
-      body {
-        height: auto;
-        min-height: 100%;
-        overflow-y: auto;
-        overflow-x: hidden;
-      }
-      .currency-input {
-        position: relative;
-      }
-      .currency-input input {
-        padding-right: 24px;
-      }
-      .tenge-symbol {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #555;
-        pointer-events: none;
-      }
-
-      input[type="date"],
-      .flatpickr-input {
-        height: 42px;
-        font-size: 1rem;
-      }
-
-      .flatpickr-calendar {
-        font-size: 1.3rem;
-        z-index: 9999 !important;
-        width: 360px !important;
-        padding: 16px !important;
-        line-height: 1.6;
-      }
-      .flatpickr-day.selected,
-      .flatpickr-day.startRange,
-      .flatpickr-day.endRange,
-      .flatpickr-day.selected:hover {
-        background: #004d99 !important;
-        border-color: #004d99 !important;
-      }
-      .toast {
-      background-color: #333;
-      color: white;
-      padding: 10px 16px;
-      margin-top: 10px;
-      border-radius: 6px;
-      font-size: 0.9em;
-      min-width: 220px;
-      max-width: 300px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      animation: fadeInOut 2.3s forwards;
-      opacity: 0;
-      word-break: break-word;
-    }
-
-    .toast.success {
-      background-color: #28a745; /* Зеленый */
-    }
-
-    .toast.error {
-      background-color: #dc3545; /* Красный */
-    }
-
-    .toast.info {
-      background-color: #004d99; /* темно-синий */
-    }
-
-    .toast.warning {
-      background-color: #ffc107; /* Желтый */
-      color: #333;
-    }
-
-    @keyframes fadeInOut {
-      0% { opacity: 0; transform: translateX(100%); }
-      10% { opacity: 1; transform: translateX(0); }
-      90% { opacity: 1; transform: translateX(0); }
-      100% { opacity: 0; transform: translateX(100%); }
-    }
-    #toastContainer {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 8px;
-      pointer-events: none; /* уведомления не мешают нажимать на элементы сайта */
-    }
-    .soon-warning {
-      background-color: #fff3cd !important;
-      border-left: 4px solid #ffc107;
-      transition: background-color 0.3s ease;
-}
-    </style>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
-    />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href='/css/statistics.css'>
+    <script></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
   </head>
-  <body>
-    <header>
+<body>
+    <header style="position: relative;">
       <h1>Государственный фонд "Астана-20"</h1>
 
       <input type="text" id="searchInput" placeholder="Поиск по ФИО или ИИН" />
+      <!-- Найдено: X — теперь отображается только при поиске -->
+      <div id="resultCount" style="margin-top: 4px; font-weight: bold;"></div>
 
       <button id="notificationsBtn" class="header-btn">Уведомления</button>
       <button id="archiveBtn" class="header-btn">Архив выбывших</button>
       <button id="todayAddedBtn" class="header-btn">Сегодня добавили</button>
+      <button id="accountingBtn" class="header-btn">Бухгалтерия</button>
+      <button id="logoutBtn" class="header-btn" style="background-color: #d9534f; color: white; position: absolute; top: 10px; right: 10px;">Выйти</button>
     </header>
 
+    <div id="loading" style="text-align: center; padding: 20px;">
+      <span>Загрузка данных...</span>
+    </div>
     <section class="stats-global" id="globalStats"></section>
 
     <div class="blocks-container" id="blocksContainer"></div>
@@ -412,7 +36,7 @@
     <div class="modal" id="dossierModal">
       <div class="modal-content">
         <div class="modal-header">
-          <h2>Досье (комната: <span id="dossierRoom"></span>)</h2>
+          <h2>Комната: <span id="dossierRoom"></span></h2>
           <span class="close" id="closeDossierModal">&times;</span>
         </div>
         <div class="modal-body">
@@ -421,171 +45,6 @@
       </div>
     </div>
 
-    <div class="modal" id="addStudentModal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2>Добавить студента (комната: <span id="addRoomLabel"></span>)</h2>
-          <span class="close" id="closeAddModal">&times;</span>
-        </div>
-        <div class="modal-body">
-          <form id="addStudentForm">
-            <div id="formErrorSummary" class="field-error" style="text-align:left; display:none;"></div>
-            <label>
-              Комната:
-              <input type="text" id="inputRoom" readonly />
-            </label>
-            <label>
-              ФИО:
-              <input
-                type="text"
-                id="inputFio"
-                placeholder="Иванов Иван Иванович"
-                required
-              />
-            </label>
-            <label>
-              ИИН:
-              <input
-                type="text"
-                id="inputIin"
-                inputmode="numeric"
-                maxlength="12"
-                pattern="\d{12}"
-                required
-              />
-            </label>
-            <label>
-              Телефон:
-              <div style="display: flex; align-items: center; gap: 8px">
-                <input
-                  type="text"
-                  id="inputPhone"
-                  inputmode="tel"
-                  placeholder="+7 700 000 0001"
-                  required
-                  style="flex: 1"
-                />
-                <button
-                  type="button"
-                  class="btn"
-                  onclick="copyPhone('inputPhone')"
-                >
-                  📋
-                </button>
-              </div>
-            </label>
-            <label>
-              Университет:
-              <select id="inputUniversity" required>
-                <option value="">Выберите университет</option>
-                <option value="AITU">AITU</option>
-                <option value="ENU">ENU</option>
-                <option value="NU">NU</option>
-                <option value="YESSENOV">YESSENOV</option>
-                <option value="MNU">MNU</option>
-                <option value="NARXOZ">NARXOZ</option>
-              </select>
-            </label>
-            <label>
-              Родственник:
-              <select id="inputRelative" required>
-                <option value="">Выберите тип</option>
-                <option value="Мама">Мама</option>
-                <option value="Папа">Папа</option>
-                <option value="Брат">Брат</option>
-                <option value="Сестра">Сестра</option>
-                <option value="Иное">Иное</option>
-              </select>
-            </label>
-            <label>
-              Телефон родственника:
-              <div style="display: flex; align-items: center; gap: 8px">
-                <input
-                  type="text"
-                  id="inputRelativePhone"
-                  inputmode="tel"
-                  placeholder="+7 700 000 0001"
-                  required
-                  style="flex: 1"
-                />
-                <button
-                  type="button"
-                  class="btn"
-                  onclick="copyPhone('inputRelativePhone')"
-                >
-                  📋
-                </button>
-              </div>
-            </label>
-            <label>
-              Сумма оплаты:
-              <div class="currency-input">
-                <input
-                  type="number"
-                  id="inputPayment"
-                  placeholder="Введите сумму"
-                  required
-                />
-                <span class="tenge-symbol">₸</span>
-              </div>
-            </label>
-            <label>
-              Дата заселения:
-              <div style="display: flex; align-items: center; gap: 8px">
-                <input
-                  type="text"
-                  id="inputMoveInDate"
-                  placeholder="Выберите дату"
-                  required
-                  style="flex: 1"
-                />
-                <button type="button" class="btn" onclick="copyMoveInDate()">
-                  📋
-                </button>
-              </div>
-            </label>
-            <label>
-              Срок аренды (в мес):
-              <select id="inputRentalPeriod" required>
-                <option value="">Выберите срок</option>
-                <!-- Опции от 1 до 12 -->
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-              </select>
-            </label>
-            <label>
-              Добавивший (ФИО):
-              <div style="display: flex; align-items: center; gap: 8px">
-                <select id="inputAddedBy" required style="flex: 1">
-                  <option value="">Выберите ФИО</option>
-                  <option value="Yessen Zhumagali">Yessen Zhumagali</option>
-                </select>
-                <button
-                  type="button"
-                  class="btn"
-                  onclick="copySelectValue('inputAddedBy')"
-                >
-                  📋
-                </button>
-              </div>
-            </label>
-            <div style="text-align: center">
-              <button type="submit" class="btn">Добавить</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
 
     <div class="modal" id="departedModal">
       <div class="modal-content">
@@ -606,7 +65,14 @@
           <span class="close" id="closeNotificationsModal">&times;</span>
         </div>
         <div class="modal-body">
-          <div id="notificationsContent"></div>
+          <div class="tabs">
+            <button id="expiredTab" class="tab-btn">Истекли</button>
+            <button id="expiringTab" class="tab-btn">Истекают</button>
+            <button id="noCardTab" class="tab-btn">Без карточки</button>
+          </div>
+          <div id="expiredContent" class="tab-content"></div>
+          <div id="expiringContent" class="tab-content" style="display: none;"></div>
+          <div id="noCardContent" class="tab-content" style="display: none;"></div>
         </div>
       </div>
     </div>
@@ -623,223 +89,100 @@
       </div>
     </div>
 
-    <!-- Модальное окно бухгалтера -->
-    <div class="modal" id="accountantModal">
+    <div class="modal" id="accountingModal">
       <div class="modal-content">
         <div class="modal-header">
-          <h2>Финансовая информация</h2>
-          <span class="close" id="closeAccountantModal">&times;</span>
+          <h2>Бухгалтерия</h2>
+          <span class="close" id="closeAccountingModal">&times;</span>
         </div>
         <div class="modal-body">
-          <form id="accountantForm">
-            <p><strong>ФИО:</strong> <span id="accFio"></span></p>
-            <p><strong>Комната:</strong> <span id="accRoom"></span></p>
-            <label>Сумма оплаты:
-              <div class="currency-input">
-                <input type="number" id="accPayment" placeholder="Введите сумму" required />
-                <span class="tenge-symbol">₸</span>
-              </div>
-            </label>
-            <label>Дата заселения:
-              <input type="text" id="accMoveInDate" placeholder="Выберите дату" required />
-            </label>
-            <label>Срок аренды (в мес):
-              <select id="accRentalPeriod" required>
-                <option value="">Выберите срок</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-              </select>
-            </label>
-            <div style="text-align: center; margin-top: 10px;">
-              <button type="submit" class="btn">Сохранить</button>
-            </div>
-          </form>
+          <button id="exportExcelBtn" style="
+  background-color: #217346;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  margin: 12px auto;
+  display: block;
+  cursor: pointer;
+">
+  Экспорт данных в Excel
+</button>
+          <div class="tabs accounting-tabs">
+            <button id="accountingTabDetails" class="tab-btn active">По студентам</button>
+            <button id="accountingTabMonthly" class="tab-btn">По месяцам</button>
+            <button id="accountingTabIncome" class="tab-btn">Поступления</button>
+          </div>
+          <div class="tab-panels">
+            <div id="accountingContentDetails" class="tab-content"></div>
+            <div id="accountingContentMonthly" class="tab-content" style="display: none;"></div>
+            <div id="accountingContentIncome" class="tab-content" style="display: none;"></div>
+          </div>
         </div>
       </div>
     </div>
 
-    <script>
-      const distribution = {
-        А: {
-          2: {
-            rooms: [
-              201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213,
-              214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226,
-              227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
-            ],
-            places: [
-              7, 6, 6, 7, 5, 7, 7, 7, 7, 5, 8, 4, 7, 7, 6, 6, 5, 7, 7, 7, 7, 5,
-              7, 7, 7, 7, 5, 6, 7, 5, 7, 7, 7, 7, 5, 7, 7, 6, 6,
-            ],
-          },
-          3: {
-            rooms: [
-              301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313,
-              314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326,
-              327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339,
-            ],
-            places: [
-              7, 6, 6, 7, 5, 7, 7, 7, 7, 5, 8, 4, 7, 7, 6, 6, 5, 7, 7, 7, 7, 5,
-              7, 7, 7, 7, 5, 6, 7, 5, 7, 7, 7, 7, 5, 7, 7, 6, 6,
-            ],
-          },
-          4: {
-            rooms: [
-              401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413,
-              414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426,
-              427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439,
-            ],
-            places: [
-              7, 6, 6, 7, 5, 7, 7, 7, 7, 5, 8, 4, 7, 7, 6, 6, 5, 7, 7, 7, 7, 5,
-              7, 7, 7, 7, 5, 6, 7, 5, 7, 7, 7, 7, 5, 7, 7, 6, 6,
-            ],
-          },
-          5: {
-            rooms: [
-              501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513,
-              514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526,
-              527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539,
-            ],
-            places: [
-              7, 6, 6, 7, 5, 7, 7, 7, 7, 5, 8, 4, 7, 7, 6, 6, 5, 7, 7, 7, 7, 5,
-              7, 7, 7, 7, 5, 6, 7, 5, 7, 7, 7, 7, 5, 7, 7, 6, 6,
-            ],
-          },
-        },
-        Б: {
-          2: {
-            rooms: [
-              201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213,
-              214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226,
-              227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
-            ],
-            places: [
-              7, 6, 6, 7, 5, 7, 7, 7, 7, 5, 8, 4, 7, 7, 6, 6, 5, 7, 7, 7, 7, 5,
-              7, 7, 7, 7, 5, 6, 7, 5, 7, 7, 7, 7, 5, 7, 7, 6, 6,
-            ],
-          },
-          3: {
-            rooms: [
-              301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313,
-              314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326,
-              327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339,
-            ],
-            places: [
-              7, 6, 6, 7, 5, 7, 7, 7, 7, 5, 8, 4, 7, 7, 6, 6, 5, 7, 7, 7, 7, 5,
-              7, 7, 7, 7, 5, 6, 7, 5, 7, 7, 7, 7, 5, 7, 7, 6, 6,
-            ],
-          },
-          4: {
-            rooms: [
-              401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413,
-              414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426,
-              427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439,
-            ],
-            places: [
-              7, 6, 6, 7, 5, 7, 7, 7, 7, 5, 8, 4, 7, 7, 6, 6, 5, 7, 7, 7, 7, 5,
-              7, 7, 7, 7, 5, 6, 7, 5, 7, 7, 7, 7, 5, 7, 7, 6, 6,
-            ],
-          },
-          5: {
-            rooms: [
-              501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513,
-              514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526,
-              527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539,
-            ],
-            places: [
-              7, 6, 6, 7, 5, 7, 7, 7, 7, 5, 8, 4, 7, 7, 6, 6, 5, 7, 7, 7, 7, 5,
-              7, 7, 7, 7, 5, 6, 7, 5, 7, 7, 7, 7, 5, 7, 7, 6, 6,
-            ],
-          },
-        },
-        В: {
-          2: {
-            rooms: [
-              201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213,
-              214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226,
-              227, 228,
-            ],
-            places: [
-              7, 6, 6, 7, 4, 6, 6, 4, 6, 6, 5, 5, 3, 7, 3, 7, 5, 7, 7, 6, 6, 3,
-              7, 5, 7, 7, 6, 6,
-            ],
-          },
-          3: {
-            rooms: [
-              301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313,
-              314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326,
-              327, 328,
-            ],
-            places: [
-              7, 6, 6, 7, 4, 6, 6, 4, 6, 6, 5, 5, 3, 7, 3, 7, 5, 7, 7, 6, 6, 3,
-              7, 5, 7, 7, 6, 6,
-            ],
-          },
-          4: {
-            rooms: [
-              401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413,
-              414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426,
-              427, 428,
-            ],
-            places: [
-              7, 6, 6, 7, 4, 6, 6, 4, 6, 6, 5, 5, 3, 7, 3, 7, 5, 7, 7, 6, 6, 3,
-              7, 5, 7, 7, 6, 6,
-            ],
-          },
-          5: {
-            rooms: [
-              501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513,
-              514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526,
-              527, 528,
-            ],
-            places: [
-              7, 6, 6, 7, 4, 6, 6, 4, 6, 6, 5, 5, 3, 7, 3, 7, 5, 7, 7, 6, 6, 3,
-              7, 5, 7, 7, 6, 6,
-            ],
-          },
-        },
-      };
 
-      const blocksData = {};
-      const roomCapacities = {};
+    
+    <!-- Модалка продления аренды -->
+    <div class="modal" id="extendRentalModal">
+      <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
+        <h3>Продлить аренду</h3>
+        <p>Выберите количество дополнительных месяцев:</p>
+        <div class="custom-select-wrapper" style="margin-top: 10px;">
+          <div class="custom-select" id="displayExtendRental">Выберите срок</div>
+          <div class="custom-options" id="optionsExtendRental">
+            <div data-value="1">1 месяц</div>
+            <div data-value="2">2 месяца</div>
+            <div data-value="3">3 месяца</div>
+            <div data-value="4">4 месяца</div>
+            <div data-value="5">5 месяцев</div>
+            <div data-value="6">6 месяцев</div>
+            <div data-value="7">7 месяцев</div>
+            <div data-value="8">8 месяцев</div>
+            <div data-value="9">9 месяцев</div>
+            <div data-value="10">10 месяцев</div>
+            <div data-value="11">11 месяцев</div>
+            <div data-value="12">12 месяцев</div>
+          </div>
+          <input type="hidden" id="extendRentalHidden" />
+        </div>
+        <div style="margin-top: 20px; text-align: right;">
+          <button class="btn btn-primary" onclick="confirmExtendRental()">Подтвердить</button>
+          <button class="btn btn-danger" onclick="closeExtendModal()">Отмена</button>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    if (localStorage.getItem('auth') !== 'ok') {
+      window.location.href = 'login.html';
+    }
+  </script>
+  <script>
+      // Вместимости комнат (заполняется из allRooms при загрузке)
+      let roomCapacities = {};
 
-      for (let block in distribution) {
-        blocksData[block] = {};
-        for (let floor in distribution[block]) {
-          const floorData = distribution[block][floor];
-          const roomsArray = floorData.rooms.map((roomNum, i) => {
-            const roomId = `${block}-${roomNum}`;
-            roomCapacities[roomId] = floorData.places[i];
-            return roomId;
-          });
-          blocksData[block][floor] = roomsArray;
-        }
-      }
-      let totalRooms = 0;
-      for (let block in blocksData) {
-        for (let floor in blocksData[block]) {
-          totalRooms += blocksData[block][floor].length;
-        }
-      }
-      console.log("Общее число комнат:", totalRooms);
+      // === Глобальная переменная для текущей комнаты (используется в модалках) ===
+      let currentRoom = "";
 
       // Данные будут загружены с сервера
       let students = {}; // Данные будут загружены с сервера
       let departedArchive = []; // Архив будет загружаться с сервера
 
 
-      let currentRoom = null;
-      let currentFiltered = null;
+      // --- Глобальное состояние ---
+      const state = {
+        currentRoom: null,
+        currentFiltered: null,
+        searchQuery: "",
+        modals: {
+          dossier: false,
+          departed: false,
+          notifications: false,
+          todayAdded: false
+        }
+      };
 
       function addMonths(date, months) {
         let d = new Date(date);
@@ -863,12 +206,12 @@
         const ul = document.createElement("ul");
         ul.classList.add("room-list");
         ul.style.display = "none";
-        ul.dataset.block = block;
+        ul.dataset.block = normalizeRoomId(block);
         ul.dataset.floor = floor;
         // Сохраняем массив комнат и вместимости в JSON в data-rooms
         ul.dataset.rooms = JSON.stringify(
           floorRooms.map(room => ({
-            room,
+            room: normalizeRoomId(room),
             capacity: roomCapacities[room] || 5
           }))
         );
@@ -883,14 +226,10 @@
       /**
        * Создаёт список комнат внутри ul на основании data-атрибутов и students.
        * Если уже создан, ничего не делает.
+       * Теперь всегда рендерит все комнаты и всех студентов, независимо от поиска.
        */
       function lazyLoadRooms(ul, stats) {
         if (ul.dataset.loaded === "true") return;
-        const searchQuery = document
-          .getElementById("searchInput")
-          .value.trim()
-          .toLowerCase();
-        const isSearching = searchQuery.length > 0;
         let rooms = [];
         try {
           rooms = JSON.parse(ul.dataset.rooms);
@@ -898,51 +237,22 @@
           return;
         }
         ul.innerHTML = "";
+        // Сортировка комнат по номеру (добавлено по инструкции)
+        rooms.sort((a, b) => {
+          const aNum = parseInt(a.room.split("-")[1]);
+          const bNum = parseInt(b.room.split("-")[1]);
+          return aNum - bNum;
+        });
         rooms.forEach(({ room, capacity }) => {
           const roomStudents = students[room] || [];
           const activeStudents = roomStudents.filter((s) => !s.left);
-          const leftStudents = roomStudents.filter((s) => s.left);
-          let filteredStudents = roomStudents;
-          if (isSearching) {
-            filteredStudents = roomStudents.filter(
-              (s) =>
-                s.fio.toLowerCase().includes(searchQuery) ||
-                s.iin.toLowerCase().includes(searchQuery)
-            );
-            if (filteredStudents.length === 0) return;
-          }
-          const displayCount = isSearching
-            ? filteredStudents.filter((s) => !s.left).length
-            : activeStudents.length;
+          // Всегда показываем всех студентов (активных)
+          const displayCount = activeStudents.length;
+          // Создание элемента комнаты
           const li = document.createElement("li");
-          li.innerHTML = `<span class="room-number">${room}</span>
-                            <span class="room-status ${
-                              displayCount > 0 ? "occupied" : "free"
-                            }">
-                              ${displayCount}/${capacity}
-                            </span>`;
-          if (activeStudents.length > 0 || isSearching) {
-            const viewBtn = document.createElement("button");
-            viewBtn.classList.add("btn");
-            viewBtn.textContent = "Просмотр";
-            viewBtn.addEventListener("click", () => {
-              const validList = isSearching ? filteredStudents : null;
-              openDossierModal(room, validList);
-            });
-            li.appendChild(viewBtn);
-          }
-          const addBtn = document.createElement("button");
-          addBtn.classList.add("btn");
-          addBtn.textContent = "Добавить";
-          if (activeStudents.length < capacity) {
-            addBtn.addEventListener("click", () => openAddModal(room));
-          } else {
-            addBtn.disabled = true;
-            addBtn.style.backgroundColor = "#ccc";
-            addBtn.style.cursor = "not-allowed";
-            addBtn.title = "Комната заполнена";
-          }
-          li.appendChild(addBtn);
+          li.classList.add("room");
+          li.innerHTML = createRoomStatusHTML({ id: room, occupied: displayCount, places: capacity });
+          li.appendChild(createViewButton(room));
           ul.appendChild(li);
         });
         ul.dataset.loaded = "true";
@@ -990,457 +300,675 @@
         });
       }
 
+      // --- Функции для отображения блоков и комнат в кириллице ---
+      function convertToCyrillic(letter) {
+        if (letter === 'A') return 'А';
+        if (letter === 'B') return 'Б';
+        if (letter === 'V') return 'В';
+        return letter;
+      }
+
+      function convertRoomIdToCyrillic(roomId) {
+        if (!roomId || typeof roomId !== 'string') return roomId;
+        const parts = roomId.split('-');
+        if (parts.length === 2) {
+          return convertToCyrillic(parts[0]) + '-' + parts[1];
+        }
+        return roomId;
+      }
+
+      // Новая реализация generateBlocks() — использует allRooms {id, block, floor, places, occupied}
       function generateBlocks() {
         const container = document.getElementById("blocksContainer");
         container.innerHTML = "";
 
-        const searchQuery = document
-          .getElementById("searchInput")
-          .value.trim()
-          .toLowerCase();
-        const isSearching = searchQuery.length > 0;
+        if (typeof allRooms === "undefined" || !Array.isArray(allRooms)) {
+          container.innerHTML = "<div style='color:red'>Нет данных о комнатах (allRooms не определён).</div>";
+          return;
+        }
+
+        const blocks = {};
+        allRooms.forEach(room => {
+          const displayBlock = convertToCyrillic(room.block);
+          if (!blocks[displayBlock]) blocks[displayBlock] = {};
+          if (!blocks[displayBlock][room.floor]) blocks[displayBlock][room.floor] = [];
+          blocks[displayBlock][room.floor].push(room);
+        });
 
         let globalCapacity = 0;
         let globalOccupied = 0;
-        let globalLeft = 0;
-        let globalMatches = 0;
 
-        for (let block in blocksData) {
-          let blockCapacity = 0;
-          let blockOccupied = 0;
-          let blockLeft = 0;
-          let blockMatches = 0;
-
+        for (let block in blocks) {
           const blockDiv = document.createElement("div");
           blockDiv.classList.add("block-column");
-          blockDiv.innerHTML = `<h2>Блок ${block}</h2>`;
+          blockDiv.innerHTML = `<h2>Блок ${convertToCyrillic(block)}</h2>`;
 
-          const floors = blocksData[block];
-          for (let floor in floors) {
-            // Считаем статистику этажа для data-attrs (не используется, но можно)
-            let floorStats = {};
-            const floorRooms = floors[floor];
-            floorStats.capacity = 0;
-            floorStats.occupied = 0;
-            floorStats.left = 0;
-            floorStats.matches = 0;
-            floorRooms.forEach(room => {
-              const roomCapacity = roomCapacities[room] || 5;
-              blockCapacity += roomCapacity;
-              globalCapacity += roomCapacity;
-              floorStats.capacity += roomCapacity;
-              const roomStudents = students[room] || [];
-              const activeStudents = roomStudents.filter((s) => !s.left);
-              const leftStudents = roomStudents.filter((s) => s.left);
-              let filteredStudents = roomStudents;
-              if (isSearching) {
-                filteredStudents = roomStudents.filter(
-                  (s) =>
-                    s.fio.toLowerCase().includes(searchQuery) ||
-                    s.iin.toLowerCase().includes(searchQuery)
-                );
-                if (filteredStudents.length === 0) return;
-              }
-              const displayCount = isSearching
-                ? filteredStudents.filter((s) => !s.left).length
-                : activeStudents.length;
-              blockOccupied += displayCount;
-              globalOccupied += displayCount;
-              blockLeft += leftStudents.length;
-              globalLeft += leftStudents.length;
-              floorStats.occupied += displayCount;
-              floorStats.left += leftStudents.length;
-              if (isSearching) {
-                blockMatches += filteredStudents.length;
-                globalMatches += filteredStudents.length;
-                floorStats.matches += filteredStudents.length;
+          let blockCapacity = 0;
+          let blockOccupied = 0;
+
+          for (let floor in blocks[block]) {
+            const floorDiv = document.createElement("div");
+            floorDiv.classList.add("floor");
+            const h3 = document.createElement("h3");
+            h3.textContent = `Этаж ${floor}`;
+            const ul = document.createElement("ul");
+            ul.classList.add("room-list");
+            ul.style.display = "none";
+            ul.dataset.block = normalizeRoomId(block);
+            ul.dataset.floor = floor;
+            ul.dataset.rooms = JSON.stringify(
+              blocks[block][floor].map(roomObj => ({
+                room: normalizeRoomId(roomObj.id),
+                capacity: roomObj.places
+              }))
+            );
+            // --- LOG ---
+            // console.warn(`UL #${floor} — {block: ${ul.dataset.block}, floor: ${ul.dataset.floor}, rooms: ${ul.dataset.rooms}}`);
+
+            // Проверка сохранённого состояния из localStorage
+            const storageKey = `floor-${block}-${floor}`;
+            const isOpened = localStorage.getItem(storageKey) === "true";
+            if (isOpened) {
+              ul.style.display = "block";
+              // ul.dataset.openedByStorage = "true";
+            }
+
+            // Sort rooms
+            const roomsSorted = blocks[block][floor].slice().sort((a, b) => {
+              const aNum = parseInt(a.id.split("-")[1]);
+              const bNum = parseInt(b.id.split("-")[1]);
+              return aNum - bNum;
+            });
+
+            roomsSorted.forEach(({ id, places }) => {
+              const normalizedId = normalizeRoomId(id);
+              const roomStudents = students[normalizedId] || [];
+              const occupied = roomStudents.filter(s => !s.left).length;
+
+              const li = document.createElement("li");
+              li.classList.add("room");
+              li.innerHTML = `
+                <span class="room-number">${convertRoomIdToCyrillic(id)}</span>
+                <span class="room-counter room-status ${occupied >= places ? "occupied" : "free"}">
+                  ${occupied}/${places}
+                </span>
+              `;
+              // --- СПИСОК СТУДЕНТОВ ВНУТРИ КАЖДОЙ КОМНАТЫ УДАЛЁН ---
+              li.appendChild(createViewButton(id));
+              ul.appendChild(li);
+              // --- Добавляем анимацию появления ---
+              li.classList.add("fade-in");
+              setTimeout(() => li.classList.remove("fade-in"), 500);
+
+              blockCapacity += places;
+              blockOccupied += occupied;
+            });
+
+            h3.addEventListener("click", () => {
+              const isNowVisible = ul.style.display === "none";
+              ul.style.display = isNowVisible ? "block" : "none";
+              const storageKey = `floor-${block}-${floor}`;
+              if (isNowVisible) {
+                localStorage.setItem(storageKey, "true");
+              } else {
+                localStorage.removeItem(storageKey);
               }
             });
-            // Создаём floorDiv с пустым ul и нужными data-атрибутами
-            const { floorDiv, ul, h3 } = createFloorDiv(block, floor, floorStats);
-            // rooms будут подгружаться лениво
+
+            floorDiv.appendChild(h3);
+            floorDiv.appendChild(ul);
             blockDiv.appendChild(floorDiv);
-            // --- Автоматическое раскрытие нужных этажей при поиске совпадений ---
-            // Если найден хотя бы один студент, раскрываем нужный этаж
-            if (isSearching && floorStats.matches > 0) {
-              ul.style.display = "block";
-              lazyLoadRooms(ul); // подгружаем комнаты сразу
-            }
           }
 
           const blockFree = blockCapacity - blockOccupied;
-          let statsHTML = `<div class="block-stats">Вместимость: ${blockCapacity} мест | Занято: ${blockOccupied} | Свободно: ${blockFree} | Выбывшие: ${blockLeft}</div>`;
-          if (isSearching) {
-            statsHTML += `<div class="block-stats">Найдено студентов: ${blockMatches}</div>`;
-          }
+          // Новый подсчёт выбывших студентов в блоке:
+          const blockLeft = Object.entries(students)
+            .filter(([room]) => normalizeRoomId(room).startsWith(normalizeRoomId(block)))
+            .flatMap(([, arr]) => arr)
+            .filter(s => s.left)
+            .length;
+          const statsHTML = `<div class="block-stats">Вместимость: ${blockCapacity} мест | Занято: ${blockOccupied} | Свободно: ${blockFree} | Выбывшие: ${blockLeft}</div>`;
           blockDiv.insertAdjacentHTML("afterbegin", statsHTML);
           container.appendChild(blockDiv);
+
+          globalCapacity += blockCapacity;
+          globalOccupied += blockOccupied;
         }
 
         const globalFree = globalCapacity - globalOccupied;
-        let globalStatsHTML = `Общая статистика: Вместимость: ${globalCapacity} мест | Занято: ${globalOccupied} | Свободно: ${globalFree} | Выбывшие: ${globalLeft}`;
-        if (isSearching) {
-          globalStatsHTML += ` | Найдено студентов: ${globalMatches}`;
-        }
-        document.getElementById("globalStats").textContent = globalStatsHTML;
-
-        // После генерации блоков — инициализировать ленивую подгрузку этажей
-        setupLazyObserver();
+        // Новый подсчёт выбывших студентов глобально:
+        const globalLeft = Object.values(students).flat().filter(s => s.left).length;
+        const globalStats = document.getElementById("globalStats");
+        globalStats.textContent = `Общая статистика: Вместимость: ${globalCapacity} мест | Занято: ${globalOccupied} | Свободно: ${globalFree} | Выбывшие: ${globalLeft}`;
       }
 
-      function openDossierModal(room, filtered = null) {
+      // --- Универсальная функция нормализации roomId ---
+      function normalizeRoomId(roomId = "") {
+        return roomId
+          .replace(/А/g, 'A')
+          .replace(/В/g, 'B')
+          .replace(/С/g, 'C')
+          .replace(/Е/g, 'E')
+          .replace(/К/g, 'K')
+          .replace(/М/g, 'M')
+          .replace(/Н/g, 'H')
+          .replace(/О/g, 'O')
+          .replace(/Р/g, 'P')
+          .replace(/Т/g, 'T')
+          .replace(/Х/g, 'X');
+      }
+
+      // --- WebSocket обновление одной комнаты ---
+      const socket = new WebSocket(`ws://${window.location.hostname}:3000`);
+
+      socket.addEventListener("open", function () {
+        // WebSocket подключен (лог удалён)
+      });
+
+socket.addEventListener("close", function () {
+  console.warn("⚠️ WebSocket соединение закрыто");
+  showToast("⚠️ Соединение с сервером прервано", "error");
+});
+
+socket.addEventListener("error", function (error) {
+  console.error("❌ Ошибка WebSocket:", error);
+  showToast("❌ WebSocket ошибка. Проверьте соединение", "error");
+});
+
+socket.addEventListener("message", function (event) {
+  // === Новый блок: обработка сообщений markAsLeftSuccess/markAsLeftError ===
+  if (event.data.includes('"type":"markAsLeftSuccess"')) {
+    showToast("✅ Обновление завершено", "success");
+    return;
+  }
+  if (event.data.includes('"type":"markAsLeftError"')) {
+    showToast("❌ Ошибка при обновлении студента", "error");
+    return;
+  }
+  try {
+    const data = JSON.parse(event.data);
+    if (data.type === "roomUpdate" && data.roomId) {
+            const rawRoomId = data.roomId;
+            const normalizedRoomId = normalizeRoomId(rawRoomId);
+            updateSingleRoom(normalizedRoomId, data.roomData);
+            // generateBlocks(); // ❌ Удалено: мешает раскрытым этажам
+          } else if (data.type === "newStudent" && data.student && data.roomId) {
+            // --- [LOG] Проверка всех UL перед поиском комнаты ---
+            // console.warn("🔍 Проверка всех UL перед поиском комнаты:");
+            // document.querySelectorAll('ul.room-list').forEach((ul, i) => {
+            //   console.log(`UL #${i}`, {
+            //     block: ul.dataset.block,
+            //     floor: ul.dataset.floor,
+            //     rooms: ul.dataset.rooms
+            //   });
+            // });
+
+            // 1. Сразу после проверки:
+            // console.log("🧠 WebSocket: newStudent сообщение получено");
+            // console.log("📨 roomId:", data.roomId);
+            // console.log("👤 student:", data.student);
+            const rawRoomId = data.roomId;
+            const roomId = normalizeRoomId(rawRoomId);
+            // console.log("📦 Получен newStudent по комнате:", roomId);
+            const { student } = data;
+            const now = new Date();
+
+            const safeStudent = {
+              ...student,
+              left: false,
+              relative: student.relative || "",
+              relativePhone: student.relativePhone || "",
+              rentalPeriod: student.rentalPeriod || "",
+              moveInDate: student.moveInDate || "",
+              date_added: now.toDateString()
+            };
+
+            if (!students[roomId]) students[roomId] = [];
+            students[roomId].push(safeStudent);
+            // Если модалка открыта и показывает эту комнату — обновить UI
+            if (document.getElementById("studentModal")?.style.display === "block" && currentRoom === roomId) {
+              openRoomModal(roomId); // переоткрыть модалку, она перерисует студентов
+            }
+            // 🔄 Обновим счётчик комнаты
+            const currentStudents = students[roomId]?.filter(s => !s.left) || [];
+            const newRoomData = {
+              places: roomCapacities[roomId] || 0,
+              occupied: currentStudents.length
+            };
+            updateSingleRoom(roomId, newRoomData);
+            // 2. После добавления студента:
+            // console.log("📊 Всего студентов в комнате", roomId, "=", students[roomId].length);
+            // Обновляем модалку, если она сейчас открыта на эту комнату
+            // 3. До вызова openDossierModal()
+            // console.log("📋 Модалка открыта?", document.getElementById("dossierModal").style.display);
+            // console.log("📍 currentRoom:", currentRoom, "| incoming roomId:", roomId);
+            // --- Обновление .room-modal (если есть) ---
+            const modal = document.querySelector(".room-modal");
+            if (modal) {
+              const title = modal.querySelector(".room-modal-title");
+              if (title) {
+                title.textContent = `Комната ${roomId}`;
+              }
+              const list = modal.querySelector(".room-modal-body");
+              if (list) {
+                list.innerHTML = "";
+                students[roomId]?.forEach((student) => {
+                  if (!student.left) {
+                    const li = document.createElement("li");
+                    li.textContent = student.fio;
+                    list.appendChild(li);
+                  }
+                });
+              }
+            }
+            if (document.getElementById("dossierModal").style.display === "flex" && currentRoom === roomId) {
+              openDossierModal(roomId); // перерисовать список студентов
+            }
+            // roomList is not directly used here, but if you use it for searching elsewhere, update as follows:
+            // Example: if (roomList.some(r => r.room === roomId)) { ... }
+            // Replace with:
+            // if (roomList.some(r => normalizeRoomId(r.room) === roomId)) { ... }
+
+            const block = roomId.split("-")[0];
+            const floor = roomId.split("-")[1].charAt(0);
+            const ul = document.querySelector(`ul.room-list[data-block="${normalizeRoomId(block)}"][data-floor="${floor}"]`);
+
+            // 4. После обновления ul:
+            if (ul) {
+              // console.log("📁 Найден UL для блока", block, "этажа", floor);
+              const roomsList = JSON.parse(ul.dataset.rooms || "[]");
+              if (!roomsList.some(r => r.room === roomId)) {
+                roomsList.push({ room: roomId, capacity: roomCapacities[roomId] || 0 });
+                ul.dataset.rooms = JSON.stringify(roomsList);
+              }
+              if (ul.style.display !== "none") {
+                ul.dataset.loaded = "false";
+                ul.innerHTML = "";
+                lazyLoadRooms(ul);
+              }
+            } else {
+              console.warn("⚠️ UL не найден для блока", block, "этажа", floor);
+            }
+
+            // Отображение уведомления для всех пользователей
+            showToast(`👤 Добавлен студент: ${data.student?.fio || "Неизвестный"} в комнату ${data.roomId}`, "success");
+            // 5. После showToast(...)
+            // console.log("🔔 Toast показан:", `Добавлен студент: ${student.fio}`);
+            // Если модалка "Сегодня добавили" открыта — перерисовать её
+            if (document.getElementById("todayAddedModal").style.display === "flex") {
+              openTodayAddedModal();
+            }
+            // generateBlocks(); // ❌ Удалено: мешает раскрытым этажам
+          }
+          // === Добавлено: обработка события globalUpdate ===
+          else if (data.type === "globalUpdate") {
+            // console.log("🌐 Получен globalUpdate");
+            fetch("/api/rooms/all")
+              .then(res => res.json())
+              .then(data => {
+                allRooms = data;
+                generateBlocks();
+              });
+          }
+          // === Новый блок: обработка события studentLeft ===
+          else if (data.type === "studentLeft" && data.student && data.room) {
+            const { student, room } = data;
+            showToast(`Студент выбыл: ${student.fio}`, "warning");
+
+            if (!students[room]) students[room] = [];
+            const found = students[room].find(s => s.iin === student.iin);
+            if (found) {
+              found.left = true;
+              found.leftDate = student.leftDate || new Date().toISOString().split("T")[0];
+            }
+
+            // generateBlocks(); // ❌ Удалено: мешает раскрытым этажам
+            if (currentRoom === room) openDossierModal(room);
+            updateGlobalStats();
+          }
+          // === Новый блок: обработка события studentDeleted ===
+          else if (data.type === "studentDeleted" && data.iin && data.room) {
+            const room = normalizeRoomId(data.room);
+            if (students[room]) {
+              const index = students[room].findIndex(s => s.iin === data.iin);
+              if (index !== -1) {
+                students[room].splice(index, 1);
+                showToast(`Студент удалён: ИИН ${data.iin}`, "info");
+                // generateBlocks(); // ❌ Удалено: мешает раскрытым этажам
+                if (currentRoom === room) openDossierModal(room);
+              }
+            }
+          }
+          // === Новый блок: обработка события studentUpdated ===
+          else if (data.type === "studentUpdated" && data.student && data.room) {
+            const room = normalizeRoomId(data.room);
+            if (!students[room]) students[room] = [];
+            const index = students[room].findIndex(s => s.iin === data.student.iin);
+            if (index !== -1) {
+              students[room][index] = { ...students[room][index], ...data.student };
+            } else {
+              students[room].push(data.student);
+            }
+            showToast(`Студент обновлён: ${data.student.fio}`, "info");
+            // generateBlocks(); // ❌ Удалено: мешает раскрытым этажам
+            if (currentRoom === room) openDossierModal(room);
+            updateGlobalStats();
+          }
+          // === Новый блок: обработка события leftStudent ===
+          else if (data.type === "leftStudent" && data.student && data.roomId) {
+            const roomId = normalizeRoomId(data.roomId);
+            // Удаляем студента из массива по roomId
+            if (students[roomId]) {
+              students[roomId] = students[roomId].filter(s => s.iin !== data.student.iin);
+            }
+            // Если модалка открыта и показывает эту комнату — обновить UI
+            if (document.getElementById("studentModal")?.style.display === "block" && currentRoom === roomId) {
+              openRoomModal(roomId); // переоткрыть модалку, она перерисует студентов
+            }
+            showToast(`🚪 Студент выбыл: ${data.student?.fio || "Неизвестный"} из комнаты ${data.roomId}`, "warning");
+            // Можно добавить обновление комнаты, если нужно (например, updateSingleRoom)
+            if (currentRoom === roomId) openDossierModal(roomId);
+            updateGlobalStats();
+          }
+
+        } catch (e) {
+          console.warn("Ошибка при обработке WebSocket сообщения:", e);
+        }
+      });
+
+      // Вспомогательная функция для кнопки "Просмотр"
+      function createViewButton(roomId) {
+        const btn = document.createElement("button");
+        btn.classList.add("btn");
+        btn.textContent = "Просмотр";
+        if (btn) {
+          btn.addEventListener("click", () => {
+            const searchQuery = document.getElementById("searchInput").value.trim().toLowerCase();
+            openDossierModal(normalizeRoomId(roomId), null, null, searchQuery);
+          });
+        }
+        return btn;
+      }
+
+      // --- Функция для обновления только одной комнаты (по WebSocket) ---
+      function updateSingleRoom(roomId, data) {
+        console.log("🔄 Обновление комнаты:", roomId, "→", data);
+        const roomElements = document.querySelectorAll(".room");
+        // Эта строка должна оставаться без изменений, чтобы .room находились корректно
+        for (const roomElement of roomElements) {
+          const roomNumberEl = roomElement.querySelector(".room-number");
+          if (roomNumberEl && normalizeRoomId(roomNumberEl.innerText.trim()) === normalizeRoomId(roomId)) {
+            const counter = roomElement.querySelector(".room-counter");
+            if (counter) {
+              counter.innerText = `${data.occupied}/${data.places}`;
+              counter.className = `room-counter room-status ${data.occupied >= data.places ? "occupied" : "free"}`;
+              console.log("✅ Обновлён счётчик комнаты", roomId, "→", counter.innerText);
+            } else {
+              console.warn("❌ Не найден .room-counter внутри .room");
+            }
+            // highlight room if parent ul is visible
+            const ul = roomElement.closest("ul.room-list");
+            if (ul && ul.style.display !== "none") {
+              roomElement.classList.add("highlighted");
+              setTimeout(() => roomElement.classList.remove("highlighted"), 2000);
+            }
+            updateGlobalStats(); // Обновление только глобальной статистики без перерисовки DOM
+            return;
+          }
+        }
+
+        console.warn("⚠️ Комната не найдена в DOM:", roomId);
+      }
+
+      function updateGlobalStats() {
+        let globalCapacity = 0;
+        let globalOccupied = 0;
+        const allStudents = Object.values(students).flat();
+        const globalLeft = allStudents.filter(s => s.left).length;
+
+        for (let roomId in students) {
+          const roomStudents = students[roomId];
+          const activeCount = roomStudents.filter(s => !s.left).length;
+          const roomPlaces = roomCapacities[roomId] || 0;
+          globalOccupied += activeCount;
+          globalCapacity += roomPlaces;
+        }
+
+        const globalFree = globalCapacity - globalOccupied;
+        const globalStats = document.getElementById("globalStats");
+        globalStats.textContent = `Общая статистика: Вместимость: ${globalCapacity} мест | Занято: ${globalOccupied} | Свободно: ${globalFree} | Выбывшие: ${globalLeft}`;
+      }
+
+      function openDossierModal(room, filtered = null, highlightIin = null, highlightQuery = null) {
         currentRoom = room;
+        console.log("📂 Открыто досье для комнаты:", room);
         const roomStudents = students[room] || [];
-        const listToShow = filtered || roomStudents;
-        currentFiltered = listToShow;
+        const activeStudents = filtered !== null ? filtered.filter(s => !s.left) : roomStudents.filter(s => !s.left);
+        // Сортировка активных студентов по дате заселения (от новых к старым)
+        activeStudents.sort((a, b) => new Date(b.moveInDate) - new Date(a.moveInDate));
+        console.log("🔍 В модалке активные студенты:");
+        (activeStudents || []).forEach(s => console.log("  →", s.fio));
+
+        state.currentRoom = room;
+        const departedStudents = filtered !== null ? filtered.filter(s => s.left) : roomStudents.filter(s => s.left);
+        // Сортировка выбывших студентов по дате заселения (от новых к старым)
+        departedStudents.sort((a, b) => new Date(b.moveInDate) - new Date(a.moveInDate));
+        state.currentFiltered = activeStudents;
+
         document.getElementById("dossierRoom").textContent = room;
         const dossierContent = document.getElementById("dossierContent");
         dossierContent.innerHTML = "";
-        if (listToShow.length === 0) {
+
+        if (activeStudents.length === 0 && departedStudents.length === 0) {
           dossierContent.innerHTML = `<p>Студенты не найдены.</p>`;
-        } else {
-          listToShow.forEach((student) => {
+        }
+
+        // Активные студенты
+        if (activeStudents.length > 0) {
+          dossierContent.innerHTML += `<h3>Активные студенты</h3>`;
+          activeStudents.forEach((student) => {
+            let highlight = "";
+            if (highlightQuery) {
+              const fio = (student.fio || "").toLowerCase();
+              const fioParts = fio.split(/\s+/);
+              const fioMatch = fioParts.some(part => part.startsWith(highlightQuery));
+              const iinMatch = (student.iin || "").includes(highlightQuery);
+              if (fioMatch || iinMatch) {
+                highlight = 'style="background-color: #cce5ff;"';
+              }
+            } else if (highlightIin && student.iin === highlightIin) {
+              highlight = 'style="background-color: #cce5ff;"';
+            }
+
+            // Безопасная обработка moveInDate
+            const moveInDateObj = student.moveInDate ? new Date(student.moveInDate) : null;
+            let moveInDateFormatted = "—";
+            if (moveInDateObj && !isNaN(moveInDateObj)) {
+              moveInDateObj.setDate(moveInDateObj.getDate() + 1);
+              moveInDateFormatted = moveInDateObj.toISOString().split("T")[0];
+            }
+            // Безопасная обработка moveOutDate
+            let moveOutDateFormatted = "—";
+            if (student.leftDate && !isNaN(new Date(student.leftDate))) {
+              const temp = new Date(student.leftDate);
+              temp.setDate(temp.getDate() + 1);
+              moveOutDateFormatted = temp.toISOString().split("T")[0];
+            } else if (student.moveInDate && !isNaN(new Date(student.moveInDate))) {
+              const temp = addMonths(new Date(student.moveInDate), parseInt(student.rentalPeriod));
+              temp.setDate(temp.getDate() + 1);
+              moveOutDateFormatted = temp.toISOString().split("T")[0];
+            }
+
             dossierContent.innerHTML += `
-            <div class="student-entry">
+              <div class="student-entry" ${highlight}>
+                <p><strong>ФИО:</strong> ${student.fio}</p>
+                <p><strong>ИИН:</strong> ${student.iin}</p>
+                <p><strong>Телефон:</strong> ${student.phone}</p>
+                <p><strong>Университет:</strong> ${student.university}</p>
+                <p><strong>Родственник:</strong> ${student.relative}</p>
+                <p><strong>Телефон родственника:</strong> ${student.relativePhone}</p>
+                <p><strong>Сумма оплаты:</strong> ${Number(student.payment).toLocaleString("ru-RU")} ₸</p>
+                <p><strong>Дата заселения:</strong> ${moveInDateFormatted}</p>
+                <p><strong>Срок аренды:</strong> ${student.rentalPeriod} мес.</p>
+                <p><strong>Окончание аренды:</strong> ${moveOutDateFormatted}</p>
+                <p><strong>Номер карточки:</strong>
+                  <span class="card-number-span">${student.cardNumber || "—"}</span>
+                  <button class="btn btn-sm btn-secondary" onclick="editCardNumber('${room}', '${student.iin}')">
+                    ${student.cardNumber ? "Редактировать" : "Добавить"}
+                  </button>
+                </p>
+                <p><strong>Статус:</strong> Активен</p>
+                <button class="btn btn-danger" onclick="deleteStudent('${room}', '${student.iin}')">Удалить</button>
+                <button class="btn" onclick="markStudentLeft('${room}', '${student.iin}')">Отметить как выбывшего</button>
+                <button class="btn btn-warning" onclick="extendRentalPeriod('${room}', '${student.iin}')">Продлить аренду</button>
+                <button class="btn btn-sm btn-warning" onclick="generateContract('${room}', '${student.iin}')">Договор</button>
+                <hr>
+              </div>
+            `;
+          });
+        }
+
+        // Выбывшие студенты
+        if (departedStudents.length > 0) {
+          dossierContent.innerHTML += `<h3 style="margin-top: 20px;">Выбывшие студенты</h3>`;
+          const departedSection = document.createElement("div");
+          dossierContent.appendChild(departedSection);
+          departedStudents.forEach((student) => {
+            // Упрощённый расчет: фактическая сумма = student.payment
+            const plannedPayment = parseInt(student.rentalPeriod || "0") * 30 * 1000;
+            const actualAmount = student.payment;
+
+            // Безопасная обработка moveInDate
+            const moveInDateObj = student.moveInDate ? new Date(student.moveInDate) : null;
+            let moveInDateFormatted = "—";
+            if (moveInDateObj && !isNaN(moveInDateObj)) {
+              moveInDateObj.setDate(moveInDateObj.getDate() + 1);
+              moveInDateFormatted = moveInDateObj.toISOString().split("T")[0];
+            }
+            // Плановая дата окончания аренды (новая логика)
+            let moveOutDateFormatted = "—";
+            if (student.moveInDate && !isNaN(new Date(student.moveInDate)) && student.rentalPeriod) {
+              const moveIn = new Date(student.moveInDate);
+              moveIn.setMonth(moveIn.getMonth() - 1); // на месяц назад
+              const moveOut = new Date(moveIn);
+              moveOut.setMonth(moveOut.getMonth() + parseInt(student.rentalPeriod));
+              moveOut.setDate(moveOut.getDate() + 1);
+              moveOutDateFormatted = moveOut.toISOString().split("T")[0];
+            }
+            // Фактическая дата выбытия
+            let leftDateFormatted = "—";
+            if (student.leftDate && !isNaN(new Date(student.leftDate))) {
+              const leftDateObj = new Date(student.leftDate);
+              leftDateObj.setDate(leftDateObj.getDate() + 1);
+              leftDateFormatted = leftDateObj.toISOString().split("T")[0];
+            }
+
+            const studentDiv = document.createElement("div");
+            studentDiv.className = "student-entry";
+            studentDiv.style.opacity = "0.7";
+
+            // Новый блок: анимированная подсветка и прокрутка
+            if (highlightIin && student.iin === highlightIin) {
+              studentDiv.classList.add("highlighted-entry");
+              requestAnimationFrame(() => {
+                studentDiv.scrollIntoView({ behavior: "smooth", block: "center" });
+              });
+              setTimeout(() => {
+                studentDiv.classList.remove("highlighted-entry");
+              }, 2500);
+            }
+
+            studentDiv.innerHTML = `
               <p><strong>ФИО:</strong> ${student.fio}</p>
               <p><strong>ИИН:</strong> ${student.iin}</p>
               <p><strong>Телефон:</strong> ${student.phone}</p>
               <p><strong>Университет:</strong> ${student.university}</p>
-              <p><strong>Родственник:</strong> ${student.relative}</p>
-              <p><strong>Телефон родственника:</strong> ${
-                student.relativePhone
-              }</p>
-              <p><strong>Сумма оплаты:</strong> ${Number(
-                student.payment
-              ).toLocaleString("ru-RU")} ₸</p>
-              <p><strong>Дата заселения:</strong> ${student.moveInDate}</p>
+              <p><strong>Плановая сумма:</strong> ${plannedPayment.toLocaleString("ru-RU")} ₸</p>
+              <p><strong>Фактическая сумма:</strong> ${Number(actualAmount).toLocaleString("ru-RU")} ₸</p>
+              <p><strong>Дата заселения:</strong> ${moveInDateFormatted}</p>
               <p><strong>Срок аренды:</strong> ${student.rentalPeriod} мес.</p>
-              <p><strong>Окончание аренды:</strong> ${
-                addMonths(
-                  new Date(student.moveInDate),
-                  parseInt(student.rentalPeriod)
-                )
-                  .toISOString()
-                  .split("T")[0]
-              }</p>
-              <p><strong>Добавил:</strong> ${student.addedBy}</p>
-              <p><strong>Статус:</strong> ${
-                student.left ? "Выбывший" : "Активен"
-              }</p>
-              <!--
-              <p><strong>Вместимость комнаты:</strong> ...</p>
-              <p><strong>Заселено студентов:</strong> ...</p>
-              -->
-              <button class="btn" onclick="deleteStudent('${room}', '${student.iin}')">Удалить</button>
-              ${
-                !student.left
-                  ? `<button class="btn" onclick="markStudentLeft('${room}', '${student.iin}')">Отметить как выбывшего</button>`
-                  : ""
-              }
-              <button class="btn" onclick="editStudent('${room}', '${student.iin}')">Редактировать</button>
+              <p><strong>Плановая дата окончания аренды:</strong> ${moveOutDateFormatted}</p>
+              <p><strong>Фактическая дата выбытия:</strong> ${leftDateFormatted}</p>
+              <p><strong>Статус:</strong> Выбывший</p>
+              <button class="btn btn-danger" onclick="deleteStudent('${room}', '${student.iin}')">Удалить</button>
               <hr>
-            </div>
-          `;
+            `;
+
+            departedSection.appendChild(studentDiv);
           });
         }
+
+        // --- SCROLL AND HIGHLIGHT BY IIN ---
+        // (Удалено: теперь это делается непосредственно при создании studentDiv)
+
+        state.modals.dossier = true;
         document.getElementById("dossierModal").style.display = "flex";
+      }
+
+      // ---- Новый механизм продления аренды через модалку ----
+      let extendTarget = { room: null, iin: null };
+
+      function extendRentalPeriod(room, iin) {
+        extendTarget = { room, iin };
+        document.getElementById("extendRentalHidden").value = "";
+        document.getElementById("displayExtendRental").textContent = "Выберите срок";
+        document.getElementById("extendRentalModal").style.display = "flex";
+      }
+
+      function closeExtendModal() {
+        document.getElementById("extendRentalModal").style.display = "none";
+      }
+
+      function confirmExtendRental() {
+        const { room, iin } = extendTarget;
+        const student = students[room]?.find(s => s.iin === iin);
+        if (!student) return;
+
+        const extraMonths = parseInt(document.getElementById("extendRentalHidden").value);
+        if (isNaN(extraMonths) || extraMonths <= 0) {
+          showToast("Неверное значение", "error");
+          return;
+        }
+
+        student.rentalPeriod = String(parseInt(student.rentalPeriod || "0") + extraMonths);
+
+        // Лог перед отправкой запроса
+        console.log("📤 Подтверждение продления:", { room, iin, newPeriod: student.rentalPeriod });
+
+        fetch(`/api/students/update-rental`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ room, iin, rentalPeriod: student.rentalPeriod })
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              showToast("Срок аренды продлён", "success");
+              closeExtendModal();
+              openDossierModal(room); // Обновить UI
+              updateGlobalStats();
+            } else {
+              showToast("Ошибка при обновлении", "error");
+            }
+          })
+          .catch(err => {
+            console.error("Ошибка продления:", err);
+            showToast("Ошибка сети", "error");
+          });
       }
 
       function closeDossierModal() {
         document.getElementById("dossierModal").style.display = "none";
-        currentRoom = null;
-        currentFiltered = null;
+        state.currentRoom = null;
+        state.currentFiltered = null;
+        state.modals.dossier = false;
       }
 
-      function openAddModal(room) {
-        currentRoom = room;
-        document.getElementById("inputRoom").value = room;
-        document.getElementById("addRoomLabel").textContent = room;
-        document.getElementById("addStudentModal").style.display = "flex";
-        // Не сбрасываем поля, если пользователь уже начал заполнять форму
-        // При открытии формы — сразу валидируем все поля, чтобы показать ошибки, если они есть
-        // setTimeout(() => validateForm(), 50);
-      }
 
-      function closeAddModal() {
-        document.getElementById("addStudentModal").style.display = "none";
-        // Очистка dataset.editing и возврат текста кнопки
-        const form = document.getElementById("addStudentForm");
-        if (form && form.dataset && form.dataset.editing) {
-          delete form.dataset.editing;
-        }
-        const submitButton = form ? form.querySelector('button[type="submit"]') : null;
-        if (submitButton) {
-          submitButton.textContent = "Добавить";
-        }
-        // Не очищаем данные, чтобы они остались при повторном открытии
-      }
-
-      document
-        .getElementById("addStudentForm")
-        .addEventListener("submit", function (event) {
-          event.preventDefault();
-          // Удаляем все предыдущие сообщения об ошибках
-          document.querySelectorAll(".field-error").forEach(el => el.remove());
-
-          const fioEl = document.getElementById("inputFio");
-          const iinInput = document.getElementById("inputIin");
-          const phoneInput = document.getElementById("inputPhone");
-          const universityEl = document.getElementById("inputUniversity");
-          const relativeEl = document.getElementById("inputRelative");
-          const relativePhoneInput =
-            document.getElementById("inputRelativePhone");
-          const paymentEl = document.getElementById("inputPayment");
-          const rentalPeriodEl = document.getElementById("inputRentalPeriod");
-          const addedByEl = document.getElementById("inputAddedBy");
-          const moveInDateEl = document.getElementById("inputMoveInDate");
-          const form = document.getElementById("addStudentForm");
-          const submitButton = form.querySelector('button[type="submit"]');
-
-          // Проверка на режим редактирования
-          if (form.dataset && form.dataset.editing) {
-            // === РЕДАКТИРОВАНИЕ СТУДЕНТА ===
-            // Полная валидация полей
-            [
-              fioEl,
-              iinInput,
-              phoneInput,
-              universityEl,
-              relativeEl,
-              relativePhoneInput,
-              paymentEl,
-              rentalPeriodEl,
-              addedByEl,
-              moveInDateEl,
-            ].forEach((el) => {
-              el.style.border = "";
-            });
-            let isValid = true;
-            [
-              fioEl,
-              iinInput,
-              phoneInput,
-              universityEl,
-              relativeEl,
-              relativePhoneInput,
-              paymentEl,
-              rentalPeriodEl,
-              addedByEl,
-              moveInDateEl,
-            ].forEach((el) => {
-              if (!el.value.trim()) {
-                el.style.border = "2px solid red";
-                isValid = false;
-              }
-            });
-            const iinPattern = /^\d{12}$/;
-            const phonePattern = /^\+7 \d{3} \d{3} \d{4}$/;
-            if (!iinPattern.test(iinInput.value.trim())) {
-              iinInput.style.border = "2px solid red";
-              isValid = false;
-            }
-            if (!phonePattern.test(phoneInput.value.trim())) {
-              phoneInput.style.border = "2px solid red";
-              isValid = false;
-            }
-            if (!phonePattern.test(relativePhoneInput.value.trim())) {
-              relativePhoneInput.style.border = "2px solid red";
-              isValid = false;
-            }
-            if (phoneInput.value.trim() === relativePhoneInput.value.trim()) {
-              phoneInput.style.border = "2px solid red";
-              relativePhoneInput.style.border = "2px solid red";
-              const phoneError = document.createElement("div");
-              phoneError.className = "field-error";
-              phoneError.style.color = "red";
-              phoneError.style.marginTop = "-8px";
-              phoneError.style.fontSize = "0.85em";
-              phoneError.textContent = "Нельзя вводить одинаковые номера телефонов!";
-              phoneInput.closest("label").insertAdjacentElement("afterend", phoneError);
-              relativePhoneInput.closest("label").insertAdjacentElement("afterend", phoneError.cloneNode(true));
-              isValid = false;
-            }
-            // Проверка на уникальность ИИН среди других студентов (кроме текущего)
-            const newIin = iinInput.value.trim();
-            const editingIin = form.dataset.editing;
-            for (let roomKey in students) {
-              if (students[roomKey].some(s => s.iin === newIin && !s.left && s.iin !== editingIin)) {
-                showError(iinInput, "Студент с таким ИИН уже существует!");
-                isValid = false;
-                break;
-              }
-            }
-            // Сумма оплаты > 0
-            if (parseFloat(paymentEl.value.trim()) <= 0) {
-              showError(paymentEl, "Сумма должна быть больше 0");
-              isValid = false;
-            }
-            if (!isValid) {
-              alert("Пожалуйста, корректно заполните все обязательные поля.");
-              return;
-            }
-            // Обновляем найденного студента
-            const room = document.getElementById("inputRoom").value.trim();
-            if (!room) return;
-            if (!students[room]) return;
-            const student = students[room].find(s => s.iin === editingIin);
-            if (!student) return;
-            student.fio = fioEl.value.trim();
-            student.iin = iinInput.value.trim();
-            student.phone = phoneInput.value.trim();
-            student.university = universityEl.value.trim();
-            student.relative = relativeEl.value;
-            student.relativePhone = relativePhoneInput.value.trim();
-            student.payment = paymentEl.value.trim();
-            student.rentalPeriod = rentalPeriodEl.value;
-            student.moveInDate = moveInDateEl.value;
-            student.addedBy = addedByEl.value.trim();
-            // generateBlocks, закрыть модалку, уведомление
-            generateBlocks();
-            // Очистить dataset.editing и вернуть текст кнопки
-            if (form && form.dataset && form.dataset.editing) {
-              delete form.dataset.editing;
-            }
-            if (submitButton) {
-              submitButton.textContent = "Добавить";
-            }
-            closeAddModal();
-            // Открыть досье для текущей комнаты после сохранения изменений
-            openDossierModal(currentRoom, currentFiltered);
-            showToast("Данные студента обновлены!", "success");
-            return;
-          }
-
-          // === ДОБАВЛЕНИЕ НОВОГО СТУДЕНТА ===
-          [
-            fioEl,
-            iinInput,
-            phoneInput,
-            universityEl,
-            relativeEl,
-            relativePhoneInput,
-            paymentEl,
-            rentalPeriodEl,
-            addedByEl,
-            moveInDateEl,
-          ].forEach((el) => {
-            el.style.border = "";
-          });
-
-          let isValid = true;
-
-          [
-            fioEl,
-            iinInput,
-            phoneInput,
-            universityEl,
-            relativeEl,
-            relativePhoneInput,
-            paymentEl,
-            rentalPeriodEl,
-            addedByEl,
-            moveInDateEl,
-          ].forEach((el) => {
-            if (!el.value.trim()) {
-              el.style.border = "2px solid red";
-              isValid = false;
-            }
-          });
-
-          const iinPattern = /^\d{12}$/;
-          const phonePattern = /^\+7 \d{3} \d{3} \d{4}$/;
-
-          if (!iinPattern.test(iinInput.value.trim())) {
-            iinInput.style.border = "2px solid red";
-            isValid = false;
-          }
-          if (!phonePattern.test(phoneInput.value.trim())) {
-            phoneInput.style.border = "2px solid red";
-            isValid = false;
-          }
-          if (!phonePattern.test(relativePhoneInput.value.trim())) {
-            relativePhoneInput.style.border = "2px solid red";
-            isValid = false;
-          }
-          if (phoneInput.value.trim() === relativePhoneInput.value.trim()) {
-            phoneInput.style.border = "2px solid red";
-            relativePhoneInput.style.border = "2px solid red";
-            const phoneError = document.createElement("div");
-            phoneError.className = "field-error";
-            phoneError.style.color = "red";
-            phoneError.style.marginTop = "-8px";
-            phoneError.style.fontSize = "0.85em";
-            phoneError.textContent = "Нельзя вводить одинаковые номера телефонов!";
-            phoneInput.closest("label").insertAdjacentElement("afterend", phoneError);
-            relativePhoneInput.closest("label").insertAdjacentElement("afterend", phoneError.cloneNode(true));
-            isValid = false;
-          }
-          // === ДОПОЛНИТЕЛЬНАЯ ПРОВЕРКА: Уникальность ИИН среди всех студентов ===
-          const newIin = iinInput.value.trim();
-          for (let roomKey in students) {
-            if (students[roomKey].some(s => s.iin === newIin && !s.left)) {
-              showError(iinInput, "Студент с таким ИИН уже существует!");
-              isValid = false;
-              break;
-            }
-          }
-          // === ДОПОЛНИТЕЛЬНАЯ ПРОВЕРКА: Сумма оплаты больше 0 ===
-          if (parseFloat(paymentEl.value.trim()) <= 0) {
-            showError(paymentEl, "Сумма должна быть больше 0");
-            isValid = false;
-          }
-          if (!isValid) {
-            alert("Пожалуйста, корректно заполните все обязательные поля.");
-            return;
-          }
-          const room = document.getElementById("inputRoom").value.trim();
-          if (!room) return;
-          if (!students[room]) {
-            students[room] = [];
-          }
-          if (students[room].length >= (roomCapacities[room] || 5)) {
-            alert(
-              `В этой комнате уже заполнено ${roomCapacities[room] || 5} мест!`
-            );
-            return;
-          }
-          const addDate = new Date().toISOString().split("T")[0];
-          students[room].push({
-            fio: fioEl.value.trim(),
-            iin: iinInput.value.trim(),
-            phone: phoneInput.value.trim(),
-            university: universityEl.value.trim(),
-            relative: relativeEl.value,
-            relativePhone: relativePhoneInput.value.trim(),
-            payment: paymentEl.value.trim(),
-            rentalPeriod: rentalPeriodEl.value,
-            moveInDate: moveInDateEl.value,
-            left: false,
-            addDate,
-            addedBy: addedByEl.value.trim(),
-          });
-          generateBlocks();
-          showToast("Студент успешно добавлен!", "success");
-          // Ручной сброс полей формы и ошибок после успешного добавления
-          document.getElementById("addStudentForm").reset();
-          document.querySelectorAll(".field-error").forEach(el => el.remove());
-          const summary = document.getElementById("formErrorSummary");
-          if (summary) {
-            summary.innerHTML = "";
-            summary.style.display = "none";
-          }
-          [
-            fioEl, iinInput, phoneInput, universityEl, relativeEl,
-            relativePhoneInput, paymentEl, rentalPeriodEl, addedByEl, moveInDateEl
-          ].forEach(el => el.classList.remove("tooltip", "field-error", "valid"));
-          closeAddModal();
-          // Открыть досье для текущей комнаты после добавления студента
-          openDossierModal(currentRoom, currentFiltered);
-        });
 
       // --- Функция для редактирования студента ---
       function editStudent(room, iin) {
-        currentRoom = room;
+        state.currentRoom = room;
         const student = (students[room] || []).find(s => s.iin === iin);
         if (!student) return;
         document.getElementById("inputRoom").value = room;
@@ -1454,7 +982,6 @@
         document.getElementById("inputPayment").value = student.payment;
         document.getElementById("inputMoveInDate").value = student.moveInDate;
         document.getElementById("inputRentalPeriod").value = student.rentalPeriod;
-        document.getElementById("inputAddedBy").value = student.addedBy;
         const form = document.getElementById("addStudentForm");
         form.dataset.editing = iin;
         const submitButton = form.querySelector('button[type="submit"]');
@@ -1463,17 +990,38 @@
       }
 
       function deleteStudent(room, iin) {
-        if (students[room]) {
-          const index = students[room].findIndex((s) => s.iin === iin);
-          if (index !== -1) {
-            if (confirm(`Удалить студента с ИИН ${iin} из комнаты ${room}?`)) {
+        if (confirm(`Удалить студента с ИИН ${iin} из комнаты ${room}?`)) {
+          // --- ДОБАВЛЕНО: удаление папки документов по ФИО ---
+          const student = students[room]?.find((s) => s.iin === iin);
+          const fullName = student?.fio?.trim() || (
+            `${student?.lastName || ""} ${student?.firstName || ""} ${student?.middleName || ""}`.trim()
+          );
+          console.log("📂 Удаление папки для:", fullName);
+          if (fullName) {
+            fetch("/api/upload/delete-folder", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ fullName })
+            }).then(res => {
+              if (!res.ok) {
+                console.warn("❌ Не удалось удалить папку с документами для:", fullName);
+              }
+            });
+          }
+          fetch(`/api/students/delete/${encodeURIComponent(iin)}`, {
+            method: "DELETE"
+          })
+          .then(res => {
+            if (res.ok) {
               showToast("Студент удален!", "info");
-              students[room].splice(index, 1);
+              if (students[room]) {
+                const index = students[room].findIndex((s) => s.iin === iin);
+                if (index !== -1) {
+                  students[room].splice(index, 1);
+                }
+              }
               generateBlocks();
-              const searchQuery = document
-                .getElementById("searchInput")
-                .value.trim()
-                .toLowerCase();
+              const searchQuery = document.getElementById("searchInput").value.trim().toLowerCase();
               if (searchQuery) {
                 const filtered = (students[room] || []).filter(
                   (s) =>
@@ -1484,8 +1032,14 @@
               } else {
                 openDossierModal(room);
               }
+            } else {
+              showToast("Ошибка при удалении студента", "error");
             }
-          }
+          })
+          .catch(err => {
+            console.error("❌ Ошибка удаления студента:", err);
+            showToast("Ошибка при удалении студента", "error");
+          });
         }
       }
 
@@ -1493,209 +1047,526 @@
         if (students[room]) {
           const student = students[room].find((s) => s.iin === iin);
           if (student && !student.left) {
-            if (confirm(`Отметить студента с ИИН ${iin} как выбывшего?`)) {
-              showToast("Студент отмечен как выбывший!", "warning");
-              student.left = true;
-              const today = new Date().toISOString().split("T")[0];
-              student.leftDate = today;
-              departedArchive.push({
-                room,
-                student: { ...student },
-                leftDate: today,
-              });
-              generateBlocks();
-              const searchQuery = document
-                .getElementById("searchInput")
-                .value.trim()
-                .toLowerCase();
-              if (searchQuery) {
-                const filtered = (students[room] || []).filter(
-                  (s) =>
-                    s.fio.toLowerCase().includes(searchQuery) ||
-                    s.iin.toLowerCase().includes(searchQuery)
-                );
-                openDossierModal(room, filtered);
-              } else {
-                openDossierModal(room);
-              }
+            const confirmLeave = confirm(`Отметить студента с ИИН ${iin} как выбывшего?`);
+            if (!confirmLeave) return;
+
+            const now = new Date();
+            const moveIn = new Date(student.moveInDate);
+            const endDate = new Date(now);
+            moveIn.setHours(0, 0, 0, 0);
+            endDate.setHours(0, 0, 0, 0);
+
+            const originalPayment = Number(student.payment || 0);
+            let totalCalculated = 0;
+
+            let current = new Date(moveIn);
+            while (current <= endDate) {
+              const y = current.getFullYear();
+              const m = current.getMonth();
+              const daysInMonth = new Date(y, m + 1, 0).getDate();
+
+              const startDay = (y === moveIn.getFullYear() && m === moveIn.getMonth()) ? moveIn.getDate() : 1;
+              const endDay = (y === endDate.getFullYear() && m === endDate.getMonth()) ? endDate.getDate() : daysInMonth;
+
+              const livedDays = endDay - startDay + 1;
+              const perDay = 30000 / daysInMonth;
+              totalCalculated += perDay * livedDays;
+
+              current = new Date(y, m + 1, 1);
             }
+
+            const actualAmount = Math.round(totalCalculated);
+            const refundSuggested = Math.max(0, originalPayment - actualAmount);
+
+            const refundStr = prompt(
+              `Прожито с ${moveIn.toLocaleDateString("ru-RU")} по ${endDate.toLocaleDateString("ru-RU")}\n` +
+              `Прожитые дни: ${Math.ceil((endDate - moveIn) / (1000 * 60 * 60 * 24)) + 1} дней\n` +
+              `Сумма оплаты: ${originalPayment.toLocaleString("ru-RU")} ₸\n` +
+              `Фактическая сумма: ${actualAmount.toLocaleString("ru-RU")} ₸\n` +
+              `Сумма возврата: ${refundSuggested.toLocaleString("ru-RU")} ₸\n\n` +
+              `Введите сумму возврата (в ₸):`,
+              refundSuggested
+            );
+            if (refundStr === null) return;
+
+            const refund = parseInt(refundStr);
+            if (isNaN(refund) || refund < 0) {
+              showToast("Неверная сумма возврата", "error");
+              return;
+            }
+
+            const adjustedPayment = Math.max(0, originalPayment - refund);
+
+            console.log("📤 Отправка WebSocket markAsLeft:", { room, iin, adjustedPayment });
+
+            socket.send(JSON.stringify({
+              type: "markAsLeft",
+              iin,
+              room,
+              payment: adjustedPayment
+            }));
+
+            showToast(`Студент отмечен как выбывший. Сумма после возврата: ${adjustedPayment.toLocaleString("ru-RU")} ₸`, "info");
           }
         }
       }
 
+      // Универсальная функция для отображения карточки студента (используется в нескольких модалках)
+      function renderStudentCard({ full_name, iin, room, rent_end, student, color = "#777", label = "", onClick = null }) {
+        const div = document.createElement("div");
+        div.style.marginBottom = "12px";
+        div.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div><strong>${full_name}</strong></div>
+              <div style="font-size: 13px; color: #555;">ИИН: ${iin}</div>
+              <div style="font-size: 13px; color: ${color};">Комната: ${room || "—"}</div>
+              ${label ? `<div style="font-size: 13px; color: ${color};">${label}</div>` : ""}
+            </div>
+            <div style="text-align: right;">
+              <button class="btn btn-sm btn-primary">Просмотр</button>
+            </div>
+          </div>
+        `;
+        const btn = div.querySelector("button");
+        if (onClick) {
+          btn.addEventListener("click", onClick);
+        }
+        return div;
+      }
+
       function openDepartedModal() {
+        state.modals.departed = true;
         const modal = document.getElementById("departedModal");
         const content = document.getElementById("departedContent");
         content.innerHTML = "";
-        if (departedArchive.length === 0) {
-          content.innerHTML = `<p>Архив пуст.</p>`;
-        } else {
-          departedArchive.forEach((entry) => {
-            content.innerHTML += `
-            <div class="student-entry">
-              <p><strong>Комната:</strong> ${entry.room}</p>
-              <p><strong>ФИО:</strong> ${entry.student.fio}</p>
-              <p><strong>ИИН:</strong> ${entry.student.iin}</p>
-              <p><strong>Добавил:</strong> ${entry.student.addedBy}</p>
-              <p><strong>Дата добавления:</strong> ${entry.student.addDate}</p>
-              <p><strong>Дата выбывания:</strong> ${entry.leftDate}</p>
-              <hr>
-            </div>
-          `;
+
+        const today = new Date();
+        const departedStudents = [];
+
+        for (let room in students) {
+          students[room].forEach((s) => {
+            if (s.left) {
+              departedStudents.unshift({ room, student: s });
+            }
           });
         }
+
+        const count = departedStudents.length;
+        const countLine = document.createElement("p");
+        countLine.innerHTML = `<strong>Всего выбывших студентов:</strong> ${count}`;
+        content.appendChild(countLine);
+
+        if (count === 0) {
+          content.innerHTML += `<p>Архив пуст.</p>`;
+        } else {
+          departedStudents.forEach(({ room, student }) => {
+            const div = document.createElement("div");
+            div.style.marginBottom = "12px";
+            div.innerHTML = `
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <div><strong>${student.fio}</strong></div>
+                  <div style="font-size: 13px; color: #555;">ИИН: ${student.iin}</div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-size: 13px; color: #777;">${room}</div>
+                  <button class="btn btn-sm btn-primary">Просмотр</button>
+                </div>
+              </div>
+            `;
+            const btn = div.querySelector("button");
+            btn.addEventListener("click", () => {
+              // Показываем досье по комнате, но выделяем нужного студента
+              modal.style.display = "none";
+              setTimeout(() => {
+                openDossierModal(room, null, student.iin);
+              }, 100);
+            });
+            content.appendChild(div);
+          });
+        }
+
         modal.style.display = "flex";
       }
 
       function closeDepartedModal() {
         document.getElementById("departedModal").style.display = "none";
+        state.modals.departed = false;
       }
 
-      function openNotificationsModal() {
-        const modal = document.getElementById("notificationsModal");
-        const content = document.getElementById("notificationsContent");
-        content.innerHTML = "";
+      function normalizeDate(date) {
+        const d = new Date(date);
+        d.setHours(0, 0, 0, 0);
+        return d;
+      }
+
+
+      // Функция для вычисления дней до окончания аренды
+      function getDaysLeft(dateStr) {
+        const expire = new Date(dateStr);
         const today = new Date();
-        let expiredStudents = [];
-        let soonExpiringStudents = [];
-        for (let room in students) {
-          students[room].forEach((student) => {
-            if (!student.left) {
-              let moveInDate = new Date(student.moveInDate);
-              let rentalMonths = parseInt(student.rentalPeriod, 10);
-              let expireDate = addMonths(moveInDate, rentalMonths);
-              if (today >= expireDate) {
-                expiredStudents.push({
-                  room,
-                  student,
-                  expireDate: expireDate.toISOString().split("T")[0],
-                });
+        expire.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0);
+        return Math.round((expire - today) / (1000 * 60 * 60 * 24));
+      }
+
+      // --- Универсальная функция получения имени комнаты по студенту и allRooms ---
+      function getStudentRoomName(student, allRooms) {
+        if (!student || (!student.room_id && !student.room_number)) return "Неизвестно";
+        if (student.room_number) return student.room_number;
+
+        const room = allRooms.find(r => r.room_id === student.room_id || r.id === student.room_id);
+        return room ? (room.room_number || room.id || room.room_id) : "Неизвестно";
+      }
+
+      // Новая версия модалки уведомлений с отображением студентов как в "Архиве выбывших"
+      function openNotificationsModal() {
+        state.modals.notifications = true;
+        const modal = document.getElementById('notificationsModal');
+        const expiredContent = document.getElementById('expiredContent');
+        const expiringContent = document.getElementById('expiringContent');
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const in7Days = new Date(today);
+        in7Days.setDate(today.getDate() + 7);
+
+        expiredContent.innerHTML = '';
+        expiringContent.innerHTML = '';
+        const noCardContent = document.getElementById('noCardContent');
+        if (noCardContent) noCardContent.innerHTML = '';
+
+        const expired = [];
+        const expiring = [];
+
+        // Собираем карту комнат по id для быстрого поиска
+        const roomMap = {};
+        if (typeof allRooms !== "undefined" && Array.isArray(allRooms)) {
+          allRooms.forEach(room => {
+            roomMap[normalizeRoomId(room.id)] = room;
+          });
+        }
+
+        // Собираем всех студентов (по всем комнатам)
+        Object.entries(students).forEach(([roomId, arr]) => {
+          arr.forEach(student => {
+            // --- Надёжная обработка даты окончания аренды ---
+            let rent_end = null;
+            const parsedDate = new Date(student.moveInDate);
+            if (!isNaN(parsedDate) && student.rentalPeriod) {
+              rent_end = addMonths(parsedDate, parseInt(student.rentalPeriod));
+              rent_end.setDate(rent_end.getDate() + 1);
+              rent_end.setHours(0, 0, 0, 0);
+            }
+            if (!rent_end || isNaN(rent_end)) return;
+            // --- Надёжная обработка left ---
+            const hasLeft = !!student.left;
+            // Комната для отображения
+            let roomName = "";
+            let roomObj = roomMap[normalizeRoomId(roomId)];
+            if (roomObj) {
+              roomName = roomObj.name || roomObj.room_number || roomObj.id || "";
+            }
+            if (!roomName) {
+              roomName = student.room_number || student.room_name || student.room_id || roomId || "";
+            }
+            // ФИО, ИИН
+            const fio = student.fio || student.full_name || "";
+            const iin = student.iin || "";
+            // Для вывода даты окончания (как в модалке студентов)
+            const rent_end_str = (() => {
+              if (hasLeft && student.leftDate && !isNaN(new Date(student.leftDate))) {
+                const leftDateObj = new Date(student.leftDate);
+                leftDateObj.setDate(leftDateObj.getDate() + 1);
+                return leftDateObj.toISOString().split("T")[0];
+              } else if (student.moveInDate && !isNaN(new Date(student.moveInDate)) && student.rentalPeriod) {
+                const moveIn = new Date(student.moveInDate);
+                const end = addMonths(moveIn, parseInt(student.rentalPeriod));
+                end.setDate(end.getDate() + 1);
+                return end.toISOString().split("T")[0];
               }
-              const diffDays = Math.ceil((expireDate - today) / (1000 * 60 * 60 * 24));
-              if (diffDays > 0 && diffDays <= 7) {
-                soonExpiringStudents.push({
-                  room,
-                  student,
-                  expireDate: expireDate.toISOString().split("T")[0],
-                  daysLeft: diffDays
-                });
-              }
+              return "—";
+            })();
+            // Истёкшие (выбывшие)
+            if (hasLeft) {
+              expired.push({
+                room: roomName,
+                roomId: roomId,
+                full_name: fio,
+                iin: iin,
+                rent_end: rent_end_str,
+                student: student
+              });
+            }
+            // Истекают в ближайшие 7 дней (не выбывшие)
+            else if (rent_end >= today && rent_end <= in7Days) {
+              expiring.push({
+                room: roomName,
+                roomId: roomId,
+                full_name: fio,
+                iin: iin,
+                rent_end: rent_end_str,
+                student: student
+              });
             }
           });
-        }
-        content.innerHTML += `<p><strong>Студентов с истёкшим сроком аренды:</strong> ${expiredStudents.length}</p>`;
-        if (expiredStudents.length === 0) {
-          content.innerHTML += `<p>Нет уведомлений.</p>`;
-        } else {
-          expiredStudents.forEach((entry) => {
-            content.innerHTML += `
-            <div class="student-entry">
-              <p><strong>Комната:</strong> ${entry.room}</p>
-              <p><strong>ФИО:</strong> ${entry.student.fio}</p>
-              <p><strong>Добавил:</strong> ${entry.student.addedBy}</p>
-              <p><strong>Дата добавления:</strong> ${entry.student.addDate}</p>
-              <p><strong>Срок аренды (мес):</strong> ${entry.student.rentalPeriod}</p>
-              <p><strong>Окончание аренды:</strong> ${entry.expireDate}</p>
-              <hr>
-            </div>
-          `;
-          });
-        }
-        content.innerHTML += `<hr><p><strong>Студентов с истекающим сроком аренды:</strong> ${soonExpiringStudents.length}</p>`;
-        if (soonExpiringStudents.length === 0) {
-          content.innerHTML += `<p>В ближайшие 7 дней аренда ни у кого не заканчивается.</p>`;
-        } else {
-          soonExpiringStudents.forEach((entry) => {
-            content.innerHTML += `
-              <div class="student-entry soon-expiring" data-room="${entry.room}">
-                <p><strong>ФИО:</strong> <a href="#" class="expiring-link" data-room="${entry.room}">${entry.student.fio}</a></p>
-                <p><strong>Окончание аренды:</strong> ${entry.expireDate}</p>
-                <p style="color:#ffc107"><strong>Осталось дней:</strong> ${entry.daysLeft}</p>
-                <hr>
-              </div>
-            `;
-          });
-        }
-        modal.style.display = "flex";
-        setTimeout(() => {
-          document.querySelectorAll(".expiring-link").forEach(link => {
-            link.addEventListener("click", function (e) {
-              e.preventDefault();
-              const room = this.dataset.room;
-              closeNotificationsModal();
+        });
 
-              setTimeout(() => {
-                const block = room.split("-")[0];
-                const floor = room.split("-")[1].charAt(0);
-                const ul = document.querySelector(`ul.room-list[data-block="${block}"][data-floor="${floor}"]`);
-                if (ul) {
-                  ul.style.display = "block";
-                  lazyLoadRooms(ul);
-                  const li = [...ul.children].find(li => li.textContent.includes(room));
-                  if (li) {
-                    li.classList.add("soon-warning");
-                    setTimeout(() => li.classList.remove("soon-warning"), 4000);
-                  }
-                }
-              }, 400);
+        // Сортировка по rent_end возрастанию (старые выше)
+        expired.sort((a, b) => new Date(a.rent_end) - new Date(b.rent_end));
+        expiring.sort((a, b) => new Date(a.rent_end) - new Date(b.rent_end));
+
+        // --- Секция "Истекли"
+        if (expired.length > 0) {
+          const countLine = document.createElement("p");
+          countLine.innerHTML = `<strong>Студентов с истёкшим сроком аренды:</strong> ${expired.length}`;
+          expiredContent.appendChild(countLine);
+          expired.forEach(({ room, roomId, full_name, iin, rent_end, student }) => {
+            const card = renderStudentCard({
+              full_name,
+              iin,
+              room,
+              rent_end,
+              student,
+              color: "#c00",
+              label: `Окончание аренды: ${rent_end}`,
+              onClick: () => {
+                modal.style.display = "none";
+                setTimeout(() => {
+                  openDossierModal(roomId, null, iin);
+                }, 100);
+              }
             });
+            expiredContent.appendChild(card);
           });
-        }, 100);
+        } else {
+          expiredContent.innerHTML = '<p>Нет студентов с истёкшим сроком аренды.</p>';
+        }
+
+        // --- Секция "Истекают"
+        if (expiring.length > 0) {
+          const countLine = document.createElement("p");
+          countLine.innerHTML = `<strong>Студентов с истекающим сроком аренды:</strong> ${expiring.length}`;
+          expiringContent.appendChild(countLine);
+          expiring.forEach(({ room, roomId, full_name, iin, rent_end, student }) => {
+            const card = renderStudentCard({
+              full_name,
+              iin,
+              room,
+              rent_end,
+              student,
+              color: "#b97a00",
+              label: `Окончание аренды: ${rent_end}`,
+              onClick: () => {
+                modal.style.display = "none";
+                setTimeout(() => {
+                  openDossierModal(roomId, null, iin);
+                }, 100);
+              }
+            });
+            expiringContent.appendChild(card);
+          });
+        } else {
+          expiringContent.innerHTML = '<p>Нет студентов с истекающим сроком аренды.</p>';
+        }
+
+
+        // --- Секция "Без карточки" ---
+        const noCardStudents = [];
+        Object.entries(students).forEach(([roomId, arr]) => {
+          arr.forEach(student => {
+            if (!student.left && (!student.cardNumber || student.cardNumber === "—")) {
+              noCardStudents.push({
+                room: roomId,
+                full_name: student.fio || "",
+                iin: student.iin || "",
+                student
+              });
+            }
+          });
+        });
+        if (noCardContent) {
+          noCardContent.innerHTML = '';
+          if (noCardStudents.length > 0) {
+            const countLine = document.createElement("p");
+            countLine.innerHTML = `<strong>Студентов без номера карточки:</strong> ${noCardStudents.length}`;
+            noCardContent.appendChild(countLine);
+            noCardStudents.forEach(({ room, full_name, iin, student }) => {
+              const card = renderStudentCard({
+                full_name,
+                iin,
+                room,
+                student,
+                color: "#999",
+                label: `Номер карточки: —`,
+                onClick: () => {
+                  document.getElementById('notificationsModal').style.display = 'none';
+                  setTimeout(() => openDossierModal(room, null, iin), 100);
+                }
+              });
+              noCardContent.appendChild(card);
+            });
+          } else {
+            noCardContent.innerHTML = '<p>Все студенты имеют номер карточки.</p>';
+          }
+        }
+
+        // Отображение модального окна и табов
+        modal.style.display = 'flex';
+        // Табы
+        const expiredTab = document.getElementById("expiredTab");
+        const expiringTab = document.getElementById("expiringTab");
+        const cardTab = document.getElementById("cardTab");
+        const noCardTab = document.getElementById("noCardTab");
+        expiredTab.classList.add("active");
+        expiringTab.classList.remove("active");
+        if (noCardTab) noCardTab.classList.remove("active");
+        expiredContent.style.display = "block";
+        expiringContent.style.display = "none";
+        if (noCardContent) noCardContent.style.display = "none";
+        expiredTab.onclick = () => {
+          expiredTab.classList.add("active");
+          expiringTab.classList.remove("active");
+          if (noCardTab) noCardTab.classList.remove("active");
+          expiredContent.style.display = "block";
+          expiringContent.style.display = "none";
+          if (noCardContent) noCardContent.style.display = "none";
+        };
+        expiringTab.onclick = () => {
+          expiredTab.classList.remove("active");
+          expiringTab.classList.add("active");
+          if (noCardTab) noCardTab.classList.remove("active");
+          expiredContent.style.display = "none";
+          expiringContent.style.display = "block";
+          if (noCardContent) noCardContent.style.display = "none";
+        };
+        if (noCardTab) {
+          noCardTab.onclick = () => {
+            expiredTab.classList.remove("active");
+            expiringTab.classList.remove("active");
+            noCardTab.classList.add("active");
+            expiredContent.style.display = "none";
+            expiringContent.style.display = "none";
+            if (noCardContent) noCardContent.style.display = "block";
+          };
+        }
       }
 
       function closeNotificationsModal() {
         document.getElementById("notificationsModal").style.display = "none";
+        state.modals.notifications = false;
       }
 
       function openTodayAddedModal() {
+        state.modals.todayAdded = true;
+        console.log("📅 DEBUG: Текущее состояние students объекта", students);
         const modal = document.getElementById("todayAddedModal");
         const content = document.getElementById("todayAddedContent");
-        content.innerHTML = "";
-        const today = new Date().toISOString().split("T")[0];
-        let addersSet = new Set();
-        let settledSet = new Set();
+        content.innerHTML = ""; // очистим содержимое
 
+        // Новый цикл сравнения дат без учета времени и временной зоны
+        let today = new Date();
+        const todayStr = today.toISOString().split("T")[0];
+        
+        let addedTodayCount = 0;
+        let todayStudents = [];
         for (let room in students) {
-          students[room].forEach((student) => {
-            if (student.addDate === today) {
-              addersSet.add(student.addedBy);
-              settledSet.add(student.fio);
+          students[room].forEach(s => {
+            if (!s.left && s.moveInDate) {
+              const moveIn = new Date(s.moveInDate);
+              moveIn.setDate(moveIn.getDate() + 1);
+              if (!isNaN(moveIn)) {
+                const moveInDateStr = moveIn.toISOString().split("T")[0];
+                if (moveInDateStr === todayStr) {
+                  addedTodayCount++;
+                  // Добавляем новых студентов в начало, чтобы порядок был от последнего к первому
+                  todayStudents.unshift({ fio: s.fio, room, iin: s.iin, date_added: s.date_added });
+                }
+              } else {
+                console.warn("⚠️ Пропущен студент с некорректной датой:", s.fio, "→", s.moveInDate);
+              }
             }
           });
         }
-        const adders = Array.from(addersSet);
-        const settled = Array.from(settledSet);
-        content.innerHTML += `<p><strong>Уникальных добавивших сегодня:</strong> ${adders.length}</p>`;
-        if (adders.length === 0) {
-          content.innerHTML += `<p>Сегодня никто не добавил студентов.</p>`;
-        } else {
-          content.innerHTML += `<p><strong>ФИО добавивших:</strong></p>`;
-          adders.forEach((name) => {
-            content.innerHTML += `<p>${name}</p>`;
-          });
-        }
-        content.innerHTML += `<p><strong>Уникальных заселённых сегодня:</strong> ${settled.length}</p>`;
-        if (settled.length === 0) {
+        // Удаляем сортировку — порядок уже соответствует поступлению (новые в начале)
+        // todayStudents.sort(...);
+        console.log("Уникальных заселённых сегодня:", addedTodayCount);
+
+        if (todayStudents.length === 0) {
+          const countLine = document.createElement("p");
+          countLine.innerHTML = `<strong>Уникальных заселённых сегодня:</strong> 0`;
+          content.appendChild(countLine);
           content.innerHTML += `<p>Сегодня никто не заселился.</p>`;
         } else {
-          content.innerHTML += `<p><strong>ФИО заселённых:</strong></p>`;
-          settled.forEach((name) => {
-            content.innerHTML += `<p>${name}</p>`;
+          const countLine = document.createElement("p");
+          countLine.innerHTML = `<strong>Уникальных заселённых сегодня:</strong> ${addedTodayCount}`;
+          content.appendChild(countLine);
+
+          todayStudents.forEach(({ fio, room, iin }) => {
+            const div = document.createElement("div");
+            div.style.marginBottom = "12px";
+            div.innerHTML = `
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <div><strong>${fio}</strong></div>
+                  <div style="font-size: 13px; color: #555;">ИИН: ${iin}</div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-size: 13px; color: #777;">${room}</div>
+                  <button class="btn btn-sm btn-primary">Просмотр</button>
+                  <button class="btn btn-sm btn-warning" style="margin-left: 5px;" onclick="generateContract('${room}', '${iin}')">Договор</button>
+                </div>
+              </div>
+            `;
+            const btn = div.querySelector("button.btn-primary");
+            btn.addEventListener("click", () => {
+              const modal = document.getElementById("todayAddedModal");
+              modal.style.display = "none";
+              setTimeout(() => {
+                openDossierModal(room, null, iin);
+              }, 100);
+            });
+            content.appendChild(div);
           });
         }
         modal.style.display = "flex";
       }
 
+      // --- Функция генерации договора ---
+      function generateContract(room, iin) {
+        fetch(`/contracts/${encodeURIComponent(iin)}`)
+          .then(response => {
+            if (response.ok) {
+              return response.blob();
+            } else {
+              throw new Error("Файл не найден");
+            }
+          })
+          .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `Договор ${iin}.docx`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+            showToast("📄 Договор загружен", "success");
+          })
+          .catch(err => {
+            console.error("Ошибка при загрузке договора:", err);
+            showToast("❌ Не удалось скачать договор", "error");
+          });
+      }
+
       function closeTodayAddedModal() {
         document.getElementById("todayAddedModal").style.display = "none";
+        state.modals.todayAdded = false;
       }
 
       document
         .getElementById("closeDossierModal")
         .addEventListener("click", closeDossierModal);
-      document
-        .getElementById("closeAddModal")
-        .addEventListener("click", closeAddModal);
       document
         .getElementById("closeDepartedModal")
         .addEventListener("click", closeDepartedModal);
@@ -1708,21 +1579,334 @@
 
       window.addEventListener("click", (event) => {
         const dossierModal = document.getElementById("dossierModal");
-        const addModal = document.getElementById("addStudentModal");
         const departedModal = document.getElementById("departedModal");
         const notificationsModal =
           document.getElementById("notificationsModal");
         const todayAddedModal = document.getElementById("todayAddedModal");
+        const accountingModal = document.getElementById("accountingModal");
         if (event.target === dossierModal) closeDossierModal();
-        if (event.target === addModal) closeAddModal();
         if (event.target === departedModal) closeDepartedModal();
         if (event.target === notificationsModal) closeNotificationsModal();
         if (event.target === todayAddedModal) closeTodayAddedModal();
+        if (event.target === accountingModal) closeAccountingModal();
       });
+function openAccountingModal() {
+  const monthlyData = {};
+  const modal = document.getElementById("accountingModal");
+  const details = document.getElementById("accountingContentDetails");
+  const monthly = document.getElementById("accountingContentMonthly");
+  const income = document.getElementById("accountingContentIncome");
+  details.innerHTML = "";
+  monthly.innerHTML = "";
+  income.innerHTML = "";
 
-      document
-        .getElementById("searchInput")
-        .addEventListener("input", generateBlocks);
+  // Собираем всех студентов в один массив, добавляя room, фильтруем только с валидной датой
+  const allStudents = Object.entries(students)
+    .flatMap(([room, arr]) => arr.map(s => ({ ...s, room })))
+    .filter(s => s.moveInDate && !isNaN(new Date(s.moveInDate))) // фильтруем только с валидной датой
+    .sort((a, b) => {
+      const dateA = new Date(a.moveInDate);
+      const dateB = new Date(b.moveInDate);
+      return dateB - dateA; // новые выше
+    });
+
+  // === Добавляем строку с количеством студентов, активных и выбывших ===
+  const activeCount = allStudents.filter(s => !s.left).length;
+  const leftCount = allStudents.filter(s => s.left).length;
+
+  const totalStudentsLine = document.createElement("p");
+  totalStudentsLine.innerHTML = `
+    <strong>Всего студентов:</strong> ${allStudents.length} 
+    | <strong>Активных:</strong> ${activeCount}
+    | <strong>Выбывших:</strong> ${leftCount}
+  `;
+  details.appendChild(totalStudentsLine);
+
+  // === Добавляем строку с общей суммой по всем студентам ===
+  const totalAmount = allStudents.reduce((sum, s) => {
+    if (s.left && s.leftDate) {
+      return sum + Number(s.payment || 0);
+    } else {
+      return sum + (Number(s.rentalPeriod || 0) * 30000);
+    }
+  }, 0);
+  const totalAmountLine = document.createElement("p");
+  totalAmountLine.innerHTML = `<strong>Общая сумма:</strong> ${totalAmount.toLocaleString("ru-RU")} ₸`;
+  details.appendChild(totalAmountLine);
+
+  allStudents.forEach(student => {
+    if (!student.moveInDate) return;
+
+    const fio = student.fio || '-';
+    let amount = 0;
+    if (student.left && student.leftDate) {
+      amount = student.payment;
+    } else {
+      amount = student.rentalPeriod * 30000;
+    }
+    const div = document.createElement("div");
+    const statusLabel = student.left ? " (выбыл)" : "";
+    div.innerHTML = `<strong>${fio}</strong> — ${Number(amount).toLocaleString("ru-RU")} ₸${statusLabel}`;
+    details.appendChild(div);
+  });
+
+  // === Группировка по месяцам (ТОЧНАЯ логика для всех студентов через calculateMonthlyBreakdown) ===
+  // Новый расчёт paymentsByMonth: учитывает всех студентов, точную сумму по дням и количество студентов
+  const paymentsByMonth = {};
+  for (const room in students) {
+    for (const student of students[room]) {
+      const breakdown = calculateMonthlyBreakdown(student);
+      for (const key in breakdown) {
+        if (!paymentsByMonth[key]) {
+          paymentsByMonth[key] = {
+            amount: 0,
+            count: 0,
+          };
+        }
+        paymentsByMonth[key].amount += breakdown[key];
+        paymentsByMonth[key].count += 1;
+      }
+    }
+  }
+
+  // Для совместимости с остальным кодом: получаем массив ключей по годам и месяцам (от новых к старым)
+  const sortedKeys = Object.keys(paymentsByMonth).sort((a, b) => {
+    const [y1, m1] = a.split("-").map(Number);
+    const [y2, m2] = b.split("-").map(Number);
+    return y2 !== y1 ? y2 - y1 : m2 - m1;
+  });
+
+  // === Динамический диапазон месяцев для показа всех лет ===
+  const incomeData = {};
+  allStudents.forEach(student => {
+    if (!student.moveInDate || !student.rentalPeriod || !student.payment) return;
+
+    const start = new Date(student.moveInDate);
+    const rentalPeriod = parseInt(student.rentalPeriod);
+    const payment = Number(student.payment);
+    if (!rentalPeriod || isNaN(payment)) return;
+
+    // Вся сумма оплаты теперь записывается в месяц заселения (в одну строку)
+    const key = `${start.getFullYear()}-${start.getMonth()}`;
+    if (!incomeData[key]) incomeData[key] = 0;
+    incomeData[key] += payment;
+  });
+
+  // Собрать все года из monthlyData и incomeData
+  const allKeys = [...Object.keys(monthlyData), ...Object.keys(incomeData)];
+  const years = Array.from(new Set(allKeys.map(key => parseInt(key.split("-")[0])))).sort((a, b) => b - a);
+  const monthRange = [];
+  years.forEach(y => {
+    for (let m = 11; m >= 0; m--) {
+      monthRange.push(`${y}-${m}`);
+    }
+  });
+
+  // Показываем все месяцы в правильном порядке (от новых к старым)
+  sortedKeys.forEach(key => {
+    const [year, month] = key.split("-");
+    const monthName = new Date(year, month).toLocaleString("ru-RU", { month: "long" });
+    const sum = paymentsByMonth[key]?.amount || 0;
+    const count = paymentsByMonth[key]?.count || 0;
+    const div = document.createElement("div");
+    div.innerHTML = `<strong>${year}: ${monthName}</strong> — ${Number(sum).toLocaleString("ru-RU")} ₸ <span style="color: #777;">(${count} студент${count === 1 ? "" : "а"})</span>`;
+    monthly.appendChild(div);
+  });
+
+  // === Расчёт секции "Поступления" ===
+  income.innerHTML = "";
+  monthRange.forEach(key => {
+    const [year, month] = key.split("-");
+    const monthName = new Date(year, month).toLocaleString("ru-RU", { month: "long" });
+    const sum = incomeData[key] || 0;
+    const div = document.createElement("div");
+    div.style.padding = "6px 0";
+    div.style.borderBottom = "1px dashed #ddd";
+    div.innerHTML = `<strong>${year}: ${monthName}</strong> — ${Number(sum).toLocaleString("ru-RU")} ₸`;
+    income.appendChild(div);
+  });
+
+  // tabs
+  const tab1 = document.getElementById("accountingTabDetails");
+  const tab2 = document.getElementById("accountingTabMonthly");
+  const tab3 = document.getElementById("accountingTabIncome");
+  tab1.classList.add("active");
+  tab2.classList.remove("active");
+  tab3.classList.remove("active");
+  details.style.display = "block";
+  monthly.style.display = "none";
+  income.style.display = "none";
+  tab1.onclick = () => {
+    tab1.classList.add("active");
+    tab2.classList.remove("active");
+    tab3.classList.remove("active");
+    details.style.display = "block";
+    monthly.style.display = "none";
+    income.style.display = "none";
+  };
+  tab2.onclick = () => {
+    tab1.classList.remove("active");
+    tab2.classList.add("active");
+    tab3.classList.remove("active");
+    details.style.display = "none";
+    monthly.style.display = "block";
+    income.style.display = "none";
+  };
+  tab3.onclick = () => {
+    tab1.classList.remove("active");
+    tab2.classList.remove("active");
+    tab3.classList.add("active");
+    details.style.display = "none";
+    monthly.style.display = "none";
+    income.style.display = "block";
+  };
+
+  modal.style.display = "flex";
+}
+
+function closeAccountingModal() {
+  document.getElementById("accountingModal").style.display = "none";
+}
+
+document.getElementById("accountingBtn").addEventListener("click", openAccountingModal);
+document.getElementById("closeAccountingModal").addEventListener("click", closeAccountingModal);
+
+      // --- ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ: createRoomStatusHTML ---
+      function createRoomStatusHTML({ id, occupied, places }) {
+        return `<span class="room-number">${id}</span>
+          <span class="room-counter room-status ${occupied >= places ? "occupied" : "free"}">${occupied}/${places}</span>`;
+      }
+
+      // --- Обновлённая функция updateBlockStats ---
+      function updateBlockStats(blockDiv) {
+        if (!blockDiv) return;
+        const statsEl = blockDiv.querySelector(".block-stats");
+        if (!statsEl) return;
+
+        const ulElements = blockDiv.querySelectorAll("ul.room-list");
+        let blockCapacity = 0;
+        let blockOccupied = 0;
+        let blockLeft = 0;
+
+        ulElements.forEach(ul => {
+          try {
+            const rooms = JSON.parse(ul.dataset.rooms || "[]");
+            rooms.forEach(({ room, capacity }) => {
+              const roomStudents = students[room] || [];
+              const activeCount = roomStudents.filter(s => !s.left).length;
+              const leftCount = roomStudents.filter(s => s.left).length;
+              blockOccupied += activeCount;
+              blockLeft += leftCount;
+              blockCapacity += capacity || 0;
+            });
+          } catch (e) {
+            console.warn("❌ Ошибка в updateBlockStats:", e);
+          }
+        });
+
+        const blockFree = blockCapacity - blockOccupied;
+        statsEl.innerHTML = `Вместимость: ${blockCapacity} мест | Занято: ${blockOccupied} | Свободно: ${blockFree} | Выбывшие: ${blockLeft}`;
+      }
+
+      // Удалён дублирующийся блок setupExtendRentalSelect вне DOMContentLoaded
+
+      // --- Новый обработчик поиска по студентам и комнатам с подсветкой и счётчиком ---
+      const searchInput = document.getElementById("searchInput");
+      const resultCount = document.getElementById("resultCount");
+
+      function handleSearchInput() {
+        // Насильно подгружаем все комнаты
+        document.querySelectorAll("ul.room-list").forEach(ul => {
+          if (ul.dataset.loaded !== "true") {
+            lazyLoadRooms(ul);
+          }
+        });
+
+        // Добавляем задержку, чтобы дождаться отрисовки
+        setTimeout(() => {
+          const normalize = str => str.replace(/\s+/g, "").toLowerCase();
+          const query = normalize(searchInput.value);
+          state.searchQuery = query;
+          let foundCount = 0;
+
+          // Убираем все выделения и подсветки
+          document.querySelectorAll(".highlighted-room").forEach(room => {
+            room.classList.remove("highlighted-room");
+          });
+          document.querySelectorAll(".highlighted").forEach(room => {
+            room.classList.remove("highlighted");
+          });
+
+          if (!query) {
+            resultCount.textContent = "";
+            document.querySelectorAll(".highlighted-room").forEach(room => room.classList.remove("highlighted-room"));
+            document.querySelectorAll(".highlighted").forEach(room => room.classList.remove("highlighted"));
+            document.querySelectorAll('ul.room-list[data-opened-by-search="true"]').forEach(ul => {
+              ul.style.display = "none";
+              delete ul.dataset.openedBySearch;
+            });
+            return;
+          }
+
+          const matchingRoomIds = new Set();
+
+          document.querySelectorAll(".room").forEach(roomEl => {
+            const roomNumEl = roomEl.querySelector(".room-number");
+            if (!roomNumEl) return;
+            const roomId = normalizeRoomId(roomNumEl.textContent.trim());
+            const roomStudents = students[roomId] || [];
+            let matchedInRoom = 0;
+            for (const student of roomStudents) {
+              if (!student.left) {
+                const fioParts = normalize(student.fio || "").split(/[\s]+/);
+                const iinPart = normalize(student.iin);
+                const match =
+                  fioParts.some(part => part.includes(query)) ||
+                  iinPart.includes(query);
+                if (match) {
+                  matchedInRoom++;
+                  matchingRoomIds.add(roomId);
+                }
+              }
+            }
+            if (matchedInRoom > 0) {
+              foundCount += matchedInRoom;
+              roomEl.classList.add("highlighted-room");
+              const ul = roomEl.closest("ul.room-list");
+              if (ul && ul.style.display === "none") {
+                ul.style.display = "block";
+                ul.dataset.openedBySearch = "true";
+              }
+            } else {
+              roomEl.classList.remove("highlighted-room");
+            }
+          });
+
+          const ulElements = document.querySelectorAll("ul[data-block][data-floor]");
+          ulElements.forEach(ul => {
+            const roomList = JSON.parse(ul.dataset.rooms || "[]");
+            const shouldOpen = roomList.some(r => matchingRoomIds.has(r.room));
+            if (shouldOpen) {
+              ul.style.display = "block";
+            }
+            roomList.forEach(r => {
+              if (matchingRoomIds.has(r.room)) {
+                const roomDiv = document.getElementById(r.room);
+                if (roomDiv) {
+                  roomDiv.classList.add("highlighted");
+                  roomDiv.scrollIntoView({ behavior: "smooth", block: "center" });
+                  setTimeout(() => roomDiv.classList.remove("highlighted"), 1500);
+                }
+              }
+            });
+          });
+
+          resultCount.textContent = `Найдено: ${foundCount}`;
+          console.log("🔎 Найдено студентов:", foundCount);
+        }, 100); // 100 мс задержка
+      }
+
+      searchInput.addEventListener("input", handleSearchInput);
       document
         .getElementById("archiveBtn")
         .addEventListener("click", openDepartedModal);
@@ -1733,13 +1917,25 @@
         .getElementById("todayAddedBtn")
         .addEventListener("click", openTodayAddedModal);
 
-      // --- Валидация с тултипами и summary ошибок ---
+      // --- Ищем и заменяем вызовы openNotificationsModal(event) или openNotificationsModal() на openNotificationsModal(students) ---
+      // Заменяем возможные вызовы openNotificationsModal(event) или openNotificationsModal() на openNotificationsModal(Object.values(students).flat())
+      // (если такие вызовы есть в других местах, кроме addEventListener)
+      // Поиск по коду показал, что только addEventListener("click", openNotificationsModal) был, остальные не обнаружены.
       function showError(el, message) {
         removeError(el);
         el.classList.remove("valid");
         el.style.border = "2px solid red";
         el.setAttribute("data-tooltip", message);
         el.classList.add("tooltip");
+
+        const error = document.createElement("div");
+        error.className = "field-error";
+        error.textContent = message;
+
+        const label = el.closest("label");
+        if (label) {
+          label.insertAdjacentElement("afterend", error);
+        }
 
         const summary = document.getElementById("formErrorSummary");
         if (summary && !summary.innerHTML.includes(message)) {
@@ -1754,6 +1950,12 @@
         el.removeAttribute("data-tooltip");
         el.classList.remove("field-error");
         el.classList.add("valid");
+
+        const label = el.closest("label");
+        const next = label?.nextElementSibling;
+        if (next && next.classList && next.classList.contains("field-error")) {
+          next.remove();
+        }
 
         const summary = document.getElementById("formErrorSummary");
         if (summary) {
@@ -1788,106 +1990,116 @@
         event.target.value = formatted.trim();
       }
 
-      const phoneInput = document.getElementById("inputPhone");
-      const relativePhoneInput = document.getElementById("inputRelativePhone");
-      const iinInput = document.getElementById("inputIin");
-
-      const fioEl = document.getElementById("inputFio");
-      const universityEl = document.getElementById("inputUniversity");
-      const relativeEl = document.getElementById("inputRelative");
-      const paymentEl = document.getElementById("inputPayment");
-      const rentalPeriodEl = document.getElementById("inputRentalPeriod");
-      const addedByEl = document.getElementById("inputAddedBy");
+      // Все действия с DOM-элементами должны быть внутри DOMContentLoaded!
       document.addEventListener("DOMContentLoaded", function () {
+        // 🔄 Обновление has_left при открытии страницы
+        fetch("/api/update-has-left", { method: "POST" })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              console.log("✅ has_left обновлён при загрузке страницы");
+            } else {
+              console.warn("⚠️ Не удалось обновить has_left:", data.error);
+            }
+          })
+          .catch(err => {
+            console.error("❌ Ошибка при обновлении has_left:", err);
+          });
+        const phoneInput = document.getElementById("inputPhone");
+        const relativePhoneInput = document.getElementById("inputRelativePhone");
+        const iinInput = document.getElementById("inputIin");
+        const fioEl = document.getElementById("inputFio");
+        const universityEl = document.getElementById("inputUniversity");
+        const relativeEl = document.getElementById("inputRelative");
+        const paymentEl = document.getElementById("inputPayment");
+        const rentalPeriodEl = document.getElementById("inputRentalPeriod");
+        const addedByEl = document.getElementById("inputAddedBy");
         flatpickr("#inputMoveInDate", {
           dateFormat: "Y-m-d",
           defaultDate: new Date(),
           locale: "ru",
           minDate: null,
         });
-      });
 
-      [
-        fioEl,
-        iinInput,
-        phoneInput,
-        universityEl,
-        relativeEl,
-        relativePhoneInput,
-        paymentEl,
-        rentalPeriodEl,
-        addedByEl,
-      ].forEach((el) => {
-        el.addEventListener("focus", function () {
-          el.style.border = "";
+        [
+          fioEl,
+          iinInput,
+          phoneInput,
+          universityEl,
+          relativeEl,
+          relativePhoneInput,
+          paymentEl,
+          rentalPeriodEl,
+        ].forEach((el) => {
+          if (el) {
+            el.addEventListener("focus", function () {
+              el.style.border = "";
+            });
+          }
         });
-      });
 
-      // === Валидация по blur (потере фокуса) ===
-      function showError(el, message) {
-        removeError(el);
-        const error = document.createElement("div");
-        error.className = "field-error";
-        error.textContent = message;
-        el.closest("label").insertAdjacentElement("afterend", error);
-        el.style.border = "2px solid red";
-      }
-      function removeError(el) {
-        el.style.border = "";
-        const next = el.closest("label").nextElementSibling;
-        if (next && next.classList && next.classList.contains("field-error")) {
-          next.remove();
+        // === Валидация по blur (потере фокуса) ===
+        if (fioEl) {
+          fioEl.addEventListener("blur", () => {
+            removeError(fioEl);
+            if (!fioEl.value.trim()) showError(fioEl, "Поле обязательно");
+          });
         }
-      }
+        if (iinInput) {
+          iinInput.addEventListener("blur", () => {
+            removeError(iinInput);
+            if (!/^\d{12}$/.test(iinInput.value.trim())) showError(iinInput, "Введите ИИН из 12 цифр");
+          });
+        }
+        if (paymentEl) {
+          paymentEl.addEventListener("blur", () => {
+            removeError(paymentEl);
+            if (!paymentEl.value.trim()) showError(paymentEl, "Поле обязательно");
+          });
+        }
+        const moveInDateEl = document.getElementById("inputMoveInDate");
+        if (moveInDateEl) {
+          moveInDateEl.addEventListener("blur", () => {
+            removeError(moveInDateEl);
+            if (!moveInDateEl.value.trim()) showError(moveInDateEl, "Поле обязательно");
+          });
+        }
 
-      fioEl.addEventListener("blur", () => {
-        removeError(fioEl);
-        if (!fioEl.value.trim()) showError(fioEl, "Поле обязательно");
-      });
-      iinInput.addEventListener("blur", () => {
-        removeError(iinInput);
-        if (!/^\d{12}$/.test(iinInput.value.trim())) showError(iinInput, "Введите ИИН из 12 цифр");
-      });
-      paymentEl.addEventListener("blur", () => {
-        removeError(paymentEl);
-        if (!paymentEl.value.trim()) showError(paymentEl, "Поле обязательно");
-      });
-      const moveInDateEl = document.getElementById("inputMoveInDate");
-      moveInDateEl.addEventListener("blur", () => {
-        removeError(moveInDateEl);
-        if (!moveInDateEl.value.trim()) showError(moveInDateEl, "Поле обязательно");
-      });
+        // Улучшенная валидация телефонов
+        function validatePhones() {
+          removeError(phoneInput);
+          removeError(relativePhoneInput);
 
+          const phoneVal = phoneInput.value.trim();
+          const relativeVal = relativePhoneInput.value.trim();
+          const pattern = /^\+7 \d{3} \d{3} \d{4}$/;
 
-// Улучшенная валидация телефонов
-function validatePhones() {
-  removeError(phoneInput);
-  removeError(relativePhoneInput);
+          if (phoneVal && !pattern.test(phoneVal)) {
+            showError(phoneInput, "Введите номер в формате +7 XXX XXX XXXX");
+          }
+          if (relativeVal && !pattern.test(relativeVal)) {
+            showError(relativePhoneInput, "Введите номер в формате +7 XXX XXX XXXX");
+          }
 
-  const phoneVal = phoneInput.value.trim();
-  const relativeVal = relativePhoneInput.value.trim();
-  const pattern = /^\+7 \d{3} \d{3} \d{4}$/;
+          if (pattern.test(phoneVal) && pattern.test(relativeVal) && phoneVal === relativeVal) {
+            showError(phoneInput, "Нельзя вводить одинаковые номера телефонов!");
+            showError(relativePhoneInput, "Нельзя вводить одинаковые номера телефонов!");
+          }
+        }
 
-  if (phoneVal && !pattern.test(phoneVal)) {
-    showError(phoneInput, "Введите номер в формате +7 XXX XXX XXXX");
-  }
-  if (relativeVal && !pattern.test(relativeVal)) {
-    showError(relativePhoneInput, "Введите номер в формате +7 XXX XXX XXXX");
-  }
-
-  if (pattern.test(phoneVal) && pattern.test(relativeVal) && phoneVal === relativeVal) {
-    showError(phoneInput, "Нельзя вводить одинаковые номера телефонов!");
-    showError(relativePhoneInput, "Нельзя вводить одинаковые номера телефонов!");
-  }
-}
-
-phoneInput.addEventListener("input", formatPhoneInput);
-relativePhoneInput.addEventListener("input", formatPhoneInput);
-
-phoneInput.addEventListener("blur", validatePhones);
-relativePhoneInput.addEventListener("blur", validatePhones);
-      iinInput.addEventListener("input", function (e) {
-        sanitizeNumericInput(e);
+        if (phoneInput) {
+          phoneInput.addEventListener("input", formatPhoneInput);
+          phoneInput.addEventListener("blur", validatePhones);
+        }
+        if (relativePhoneInput) {
+          relativePhoneInput.addEventListener("input", formatPhoneInput);
+          relativePhoneInput.addEventListener("blur", validatePhones);
+        }
+        if (iinInput) {
+          iinInput.addEventListener("input", function (e) {
+            sanitizeNumericInput(e);
+          });
+        }
       });
 
       function copyMoveInDate() {
@@ -1921,53 +2133,32 @@ relativePhoneInput.addEventListener("blur", validatePhones);
       }
 
     </script>
-    <!-- Модальное окно бухгалтера: логика -->
+    <div id="toastContainer" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;"></div>
+
+
     <script>
-      const accountantModal = document.getElementById("accountantModal");
-      const accFioEl = document.getElementById("accFio");
-      const accRoomEl = document.getElementById("accRoom");
-      const accPayment = document.getElementById("accPayment");
-      const accMoveInDate = document.getElementById("accMoveInDate");
-      const accRentalPeriod = document.getElementById("accRentalPeriod");
-
-      function openAccountantModal(student, room) {
-        accFioEl.textContent = student.fio;
-        accRoomEl.textContent = room;
-        accPayment.value = student.payment || "";
-        accMoveInDate.value = student.moveInDate || "";
-        accRentalPeriod.value = student.rentalPeriod || "";
-        accountantModal.style.display = "flex";
-      }
-
-      document.getElementById("closeAccountantModal").addEventListener("click", () => {
-        accountantModal.style.display = "none";
-      });
-
-      document.getElementById("accountantForm").addEventListener("submit", function (e) {
-        e.preventDefault();
-        const room = accRoomEl.textContent.trim();
-        const fio = accFioEl.textContent.trim();
-        const student = students[room]?.find(s => s.fio === fio);
-        if (student) {
-          student.payment = accPayment.value.trim();
-          student.moveInDate = accMoveInDate.value.trim();
-          student.rentalPeriod = accRentalPeriod.value;
-          generateBlocks();
-          showToast("Данные обновлены", "success");
-          accountantModal.style.display = "none";
-        }
-      });
-
-      flatpickr("#accMoveInDate", {
-        dateFormat: "Y-m-d",
-        defaultDate: new Date(),
-        locale: "ru",
-      });
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
-    <div id="toastContainer"></div>
-    <script>
+document.getElementById("exportExcelBtn").addEventListener("click", () => {
+  fetch("/api/export-excel")
+    .then(res => {
+      if (!res.ok) throw new Error("Ошибка при экспорте");
+      return res.blob();
+    })
+    .then(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "Бухгалтерия.xlsx";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      showToast("📁 Файл Excel загружен", "success");
+    })
+    .catch(err => {
+      console.error("❌ Ошибка при экспорте Excel:", err);
+      showToast("Не удалось скачать Excel", "error");
+    });
+});
       function showToast(message = "Уведомление", type = "success") {
         const container = document.getElementById("toastContainer");
         const toast = document.createElement("div");
@@ -1976,13 +2167,200 @@ relativePhoneInput.addEventListener("blur", validatePhones);
         container.appendChild(toast);
         setTimeout(() => {
           toast.remove();
-        }, 2300); // исчезает через 2.3 секунды
+        }, 2300);
       }
     </script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        generateBlocks();
+        fetch("/api/rooms/all")
+          .then(res => res.json())
+          .then(data => {
+            allRooms = data;
+            roomCapacities = {};
+            allRooms.forEach(room => {
+              roomCapacities[room.id] = room.places;
+            });
+
+            return fetch("/api/students");
+          })
+          .then(res => res.json())
+          .then(data => {
+            students = {};
+            data.forEach(student => {
+              const room = normalizeRoomId(student.room_id || "");
+              if (!students[room]) students[room] = [];
+              students[room].push({
+                fio: student.fio,
+                iin: student.iin,
+                gender: student.gender,
+                phone: student.phone,
+                university: student.university,
+                relative: student.relative_type,
+                relativePhone: student.relative_phone,
+                documentNumber: student.document_number,
+                documentIssueDate: student.document_issue_date,
+                documentIssuer: student.document_issuer,
+                isGraduate: student.is_graduate,
+                hasDisability: student.has_disability,
+                payment: student.payment,
+                moveInDate: student.move_in_date,
+                rentalPeriod: student.rental_period,
+                left: student.has_left,
+                leftDate: student.left_date,
+                cardNumber: student.card_number
+              });
+            });
+
+            // === ИНИЦИАЛИЗАЦИЯ КАСТОМНОГО СЕЛЕКТА ПРОДЛЕНИЯ АРЕНДЫ ===
+            const display = document.getElementById("displayExtendRental");
+            const options = document.getElementById("optionsExtendRental");
+            const hiddenInput = document.getElementById("extendRentalHidden");
+
+            if (display && options && hiddenInput) {
+              display.addEventListener("click", () => {
+                const isOpen = options.style.display === "block";
+                document.querySelectorAll(".custom-options").forEach(o => o.style.display = "none");
+                document.querySelectorAll(".custom-select").forEach(d => d.classList.remove("active"));
+                if (!isOpen) {
+                  options.style.display = "block";
+                  display.classList.add("active");
+                }
+              });
+
+              options.querySelectorAll("div").forEach(opt => {
+                opt.addEventListener("click", () => {
+                  const val = opt.getAttribute("data-value");
+                  hiddenInput.value = val;
+                  display.textContent = opt.textContent;
+                  // Убедиться, что только выбранному присваивается класс selected
+                  options.querySelectorAll("div").forEach(d => d.classList.remove("selected"));
+                  opt.classList.add("selected");
+                  options.style.display = "none";
+                });
+              });
+
+              window.addEventListener("click", (e) => {
+                if (!e.target.closest(".custom-select-wrapper")) {
+                  options.style.display = "none";
+                  display.classList.remove("active");
+                }
+              });
+            } else {
+              console.warn("❌ Элементы кастомного селекта не найдены");
+            }
+            generateBlocks();
+            document.getElementById("loading")?.remove();
+          })
+          .catch(err => {
+            console.error("❌ Ошибка загрузки данных:", err);
+            document.getElementById("blocksContainer").innerHTML =
+              "<div style='color:red'>Не удалось загрузить данные.</div>";
+            document.getElementById("loading")?.remove();
+          });
       });
     </script>
+    <script>
+    document.getElementById("logoutBtn").addEventListener("click", function () {
+      localStorage.removeItem("auth");
+      window.location.href = "login.html";
+    });
+    function editCardNumber(room, iin) {
+      const student = students[room]?.find(s => s.iin === iin);
+      if (!student) return;
+
+      const parentDiv = event.target.closest("p");
+      if (parentDiv.querySelector(".card-input-wrapper")) return; // уже открыто
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "card-input-wrapper";
+      wrapper.style.marginTop = "8px";
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.placeholder = "10 цифр";
+      input.value = student.cardNumber || "";
+      input.maxLength = 10;
+      input.style.padding = "4px 8px";
+      input.style.width = "140px";
+      input.style.marginRight = "8px";
+      input.oninput = (e) => {
+        e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
+      };
+
+      const saveBtn = document.createElement("button");
+      saveBtn.textContent = "Сохранить";
+      saveBtn.className = "btn btn-sm btn-primary";
+      saveBtn.onclick = () => {
+        const cleaned = input.value;
+        if (cleaned.length !== 10) {
+          showToast("Номер карточки должен содержать 10 цифр", "error");
+          return;
+        }
+
+        fetch(`/api/students/update-card`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ room, iin, cardNumber: cleaned })
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              showToast("Номер карточки обновлён", "success");
+              student.cardNumber = cleaned;
+              openDossierModal(room); // перерисовать
+            } else {
+              showToast("Ошибка при обновлении карточки", "error");
+            }
+          })
+          .catch(err => {
+            console.error("Ошибка:", err);
+            showToast("Ошибка сети", "error");
+          });
+      };
+
+      wrapper.appendChild(input);
+      wrapper.appendChild(saveBtn);
+      parentDiv.appendChild(wrapper);
+    }
+    // --- Функция для точного расчёта помесячной разбивки для студента ---
+    function calculateMonthlyBreakdown(student) {
+      // Возвращает объект { 'YYYY-M': сумма, ... }
+      const breakdown = {};
+      if (!student.moveInDate || !student.rentalPeriod) return breakdown;
+      const moveIn = new Date(student.moveInDate);
+      if (isNaN(moveIn)) return breakdown;
+      const rentalPeriod = parseInt(student.rentalPeriod);
+      if (!rentalPeriod) return breakdown;
+      let moveOut;
+      if (student.left && student.leftDate) {
+        moveOut = new Date(student.leftDate);
+        if (isNaN(moveOut)) moveOut = new Date(moveIn.getFullYear(), moveIn.getMonth() + rentalPeriod, 0);
+      } else {
+        moveOut = addMonths(moveIn, rentalPeriod);
+        moveOut.setDate(moveOut.getDate() - 1);
+      }
+      const payment = Number(student.payment || (rentalPeriod * 30000));
+      // Считаем суммарное число дней проживания
+      const totalDays = Math.ceil((moveOut - moveIn) / (1000 * 60 * 60 * 24)) + 1;
+      let current = new Date(moveIn);
+      while (current <= moveOut) {
+        const y = current.getFullYear();
+        const m = current.getMonth();
+        const monthStart = new Date(y, m, 1);
+        const monthEnd = new Date(y, m + 1, 0);
+        // Определяем диапазон дней проживания в этом месяце
+        const fromDay = (current > monthStart) ? current.getDate() : 1;
+        const toDay = (moveOut < monthEnd) ? moveOut.getDate() : monthEnd.getDate();
+        const daysStayed = toDay - fromDay + 1;
+        const ratio = daysStayed / totalDays;
+        const part = Math.round(payment * ratio);
+        const key = `${y}-${m}`;
+        if (!breakdown[key]) breakdown[key] = 0;
+        breakdown[key] += part;
+        current = new Date(y, m + 1, 1);
+      }
+      return breakdown;
+    }
+  </script>
   </body>
 </html>

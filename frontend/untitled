@@ -1,0 +1,12 @@
+studentFomData = {"lastName":"ghj","firstName":"ghj",
+"middleName":"","iin":"567890987654",
+"phone":"+7 456 789 0987",
+"university":"ГККП «Строительно-технический колледж» акимата г. Астана",
+"relative":"Мама","relativePhone":"+7 567 898 7656",
+"payment":"90 000","moveInDate":"2025-05-28","rentalPeriod":"3",
+"gender":"Мужчина"}
+
+
+studentDocuments = {"documentNumber":"9789","documentIssueDate":"2025-05-28",
+"documentIssuer":"yah","isGraduate":"Нет","hasDisability":"Нету"}
+

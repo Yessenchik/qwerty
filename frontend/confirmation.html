@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Подтверждение</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #f4f6f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      font-size: 16px;
+    }
+    .confirmation-box {
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      padding: 30px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+    h2 {
+      color: #28a745;
+      margin-bottom: 20px;
+    }
+    .info {
+      text-align: left;
+      margin-top: 20px;
+      font-size: 15px;
+    }
+    .info strong {
+      color: #004d99;
+    }
+    button {
+      margin-top: 30px;
+      padding: 10px 20px;
+      background-color: #004d99;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #003366;
+    }
+    @media (max-width: 480px) {
+      body {
+        font-size: 14px;
+      }
+      .confirmation-box {
+        padding: 20px;
+        margin: 10px;
+      }
+
+      h2 {
+        font-size: 18px;
+      }
+      .info {
+        font-size: 14px;
+      }
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="confirmation-box">
+    <h2 id="welcomeMessage">🎉 Добро пожаловать!</h2>
+  </div>
+
+  <script>
+    const firstName = JSON.parse(localStorage.getItem("studentFirstName") || '""');
+    document.getElementById("welcomeMessage").innerText = `🎉 Добро пожаловать в наше общежитие, ${firstName}!`;
+  </script>
+</body>
+</html>
