@@ -15,6 +15,7 @@ router.get('/', async (req, res) => {
         s.university,
         s.relative_type,
         s.relative_phone,
+        s.card_number,
         d.document_number,
         d.document_issue_date,
         d.document_issuer,
@@ -72,6 +73,8 @@ router.get('/', async (req, res) => {
 
       { header: 'Выпускник', key: 'is_graduate', width: 10 },
       { header: 'Инвалидность', key: 'has_disability', width: 10 },
+
+      { header: 'Номер карточки', key: 'card_number', width: 15 },
     ];
 
     students.sort((a, b) => a.fio.localeCompare(b.fio, 'ru'));
@@ -80,6 +83,7 @@ router.get('/', async (req, res) => {
       worksheet.addRow({
         index: i + 1,
         ...s,
+        card_number: s.card_number || '–',
         has_left: s.has_left ? 'Да' : 'Нет',
         is_graduate: s.is_graduate ? 'Да' : 'Нет',
         has_disability: s.has_disability ? 'Да' : 'Нет',

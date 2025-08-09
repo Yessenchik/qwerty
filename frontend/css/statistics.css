@@ -772,3 +772,13 @@ input[type="date"],
   padding: 6px 0;
   border-bottom: 1px dashed #ddd;
 }
+input.modal-search {
+  width: 100%;
+  max-width: 300px;
+  padding: 8px;
+  margin: 10px auto;
+  display: block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}

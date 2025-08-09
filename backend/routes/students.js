@@ -290,4 +290,36 @@ router.post('/update-card', async (req, res) => {
   }
 });
 
+router.post('/mark-paid', async (req, res) => {
+  const { iin } = req.body;
+
+  logger.info(`💰 Обновление статуса оплаты: ИИН = ${iin}`);
+
+  try {
+    const updateRes = await db.query(`
+      UPDATE accommodation
+      SET paid = true
+      WHERE student_id = (SELECT id FROM students WHERE iin = $1)
+      RETURNING student_id
+    `, [iin]);
+
+    if (updateRes.rowCount === 0) {
+      return res.status(404).json({ success: false, error: "Студент не найден" });
+    }
+
+    const { rows } = await db.query(`SELECT room_id FROM selections WHERE student_id = $1`, [updateRes.rows[0].student_id]);
+    const roomId = rows[0]?.room_id || '';
+    const normalizedRoomId = normalizeRoomId(roomId);
+
+    broadcastRoomUpdate(normalizedRoomId);
+    broadcastStudentUpdated({ iin, paid: true }, normalizedRoomId);
+    broadcastGlobalUpdate();
+
+    res.json({ success: true });
+  } catch (err) {
+    logger.error("❌ Ошибка при обновлении оплаты: " + err.message);
+    res.status(500).json({ success: false, error: "Ошибка при обновлении оплаты" });
+  }
+});
+
 module.exports = router;
