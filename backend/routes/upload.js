@@ -7,11 +7,20 @@ const fs = require("fs");
 const router = express.Router();
 
 // 📁 Папка для хранения документов
-const destinationRoot = "/Users/yessenzhumagali/Desktop/2025";
+const destinationRoot = "/Users/yessenzhumagali/Desktop/studentsdocs"; // 🔧 Укажи свою корневую папку
 
 // Кеш для ФИО
 let cachedFullName = "неизвестный";
 const clearedDirs = new Set();
+
+function getAcademicYearFolder(settleDateStr) {
+  const settleDate = new Date(settleDateStr);
+  const year = settleDate.getFullYear();
+  const month = settleDate.getMonth() + 1;
+  const startYear = month >= 8 ? year : year - 1;
+  const endYear = startYear + 1;
+  return `${startYear} - ${endYear}`;
+}
 
 // ⚙️ Настройка multer
 const storage = multer.diskStorage({
@@ -21,7 +30,20 @@ const storage = multer.diskStorage({
       return cb(new Error("Некорректное имя/фамилия — невозможно создать директорию"), null);
     }
     cachedFullName = `${req.body.lastName} ${req.body.firstName} ${req.body.middleName || ""}`.trim();
-    const studentDir = path.join(destinationRoot, cachedFullName);
+
+    const settleDate = req.query.moveInDate;
+    if (!settleDate) {
+      console.error("❌ Не указана дата заселения");
+      return cb(new Error("Не указана дата заселения — невозможно определить учебный год"), null);
+    }
+
+    const academicFolder = getAcademicYearFolder(settleDate);
+    const academicPath = path.join(destinationRoot, academicFolder);
+    const studentDir = path.join(academicPath, cachedFullName);
+
+    if (!fs.existsSync(academicPath)) {
+      fs.mkdirSync(academicPath, { recursive: true });
+    }
 
     if (!clearedDirs.has(studentDir)) {
       if (fs.existsSync(studentDir)) {
@@ -56,7 +78,10 @@ const storage = multer.diskStorage({
       name = `${file.fieldname} ${cachedFullName}${ext}`;
     }
 
-    const studentDir = path.join(destinationRoot, cachedFullName);
+    const settleDate = req.query.moveInDate;
+    const academicFolder = getAcademicYearFolder(settleDate);
+    const studentDir = path.join(destinationRoot, academicFolder, cachedFullName);
+
     const baseName = name.replace(ext, "");
     const existingFiles = fs.readdirSync(studentDir);
     existingFiles.forEach(file => {

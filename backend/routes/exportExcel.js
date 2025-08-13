@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const ExcelJS = require('exceljs');
-const fs = require('fs');
-const path = require('path');
 
 router.get('/', async (req, res) => {
   try {
@@ -15,6 +13,7 @@ router.get('/', async (req, res) => {
         s.university,
         s.relative_type,
         s.relative_phone,
+        s.card_number,
         d.document_number,
         d.document_issue_date,
         d.document_issuer,
@@ -23,6 +22,7 @@ router.get('/', async (req, res) => {
         d.email,
         d.registration_city,
         d.registration_address,
+        d.contract_number,
         a.move_in_date,
         a.rental_period,
         a.payment,
@@ -72,6 +72,8 @@ router.get('/', async (req, res) => {
 
       { header: 'Выпускник', key: 'is_graduate', width: 10 },
       { header: 'Инвалидность', key: 'has_disability', width: 10 },
+      { header: '№ договора', key: 'contract_number', width: 12 },
+      { header: 'Номер карточки', key: 'card_number', width: 15 },
     ];
 
     students.sort((a, b) => a.fio.localeCompare(b.fio, 'ru'));
@@ -80,6 +82,8 @@ router.get('/', async (req, res) => {
       worksheet.addRow({
         index: i + 1,
         ...s,
+        contract_number: s.contract_number || '–',
+        card_number: s.card_number || '–',
         has_left: s.has_left ? 'Да' : 'Нет',
         is_graduate: s.is_graduate ? 'Да' : 'Нет',
         has_disability: s.has_disability ? 'Да' : 'Нет',

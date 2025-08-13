@@ -633,6 +633,10 @@
       // --- Определяем selfieUpload только после всех innerHTML ---
       const selfieUpload = document.getElementById("selfieUpload");
 
+      // Получаем дату заселения из localStorage
+      const personalData = JSON.parse(localStorage.getItem("studentFormData") || "{}");
+      const settlementDate = personalData.moveInDate || "";
+
       form.onsubmit = function (e) {
         e.preventDefault();
 
@@ -831,7 +835,6 @@
             return;
           }
           const formData = new FormData();
-          // Добавляем ФИО из personalData
           formData.append("firstName", personalData.firstName);
           formData.append("lastName", personalData.lastName);
           formData.append("middleName", personalData.middleName || "");
@@ -857,7 +860,8 @@
           formData.append("documentIssuer", documentIssuerInput.value.trim());
           formData.append("isGraduate", isGraduateInput.value);
           formData.append("hasDisability", hasDisabilityInput.value);
-
+          // --- Добавляем settlementDate ---
+          formData.append("settlementDate", settlementDate);
           // --- Добавляем поля из form-personal.html и form-documents.html ---
           formData.append("iin", personalData.iin || "");
           formData.append("phone", personalData.phone || "");
@@ -870,8 +874,9 @@
           // Отправка на сервер
           console.log("📤 Отправляем данные на сервер...");
           const baseURL = location.origin;
-          console.log("🌐 fetch URL:", baseURL + "/api/upload");
-          fetch(baseURL + "/api/upload", {
+          const uploadUrl = `${baseURL}/api/upload?moveInDate=${encodeURIComponent(personalData.moveInDate || "")}`;
+          console.log("🌐 fetch URL:", uploadUrl);
+          fetch(uploadUrl, {
             method: "POST",
             body: formData,
           })

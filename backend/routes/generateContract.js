@@ -22,6 +22,21 @@ function saveContractNumber(outputFolder, contractNumber) {
   fs.writeFileSync(numberFile, number.toString(), "utf-8");
 }
 
+function logGeneratedContract(outputFolder, fileName) {
+  const logFile = path.join(outputFolder, "generated-contracts-log.txt");
+  const now = new Date();
+  const dateStr = now.toLocaleString("ru-RU", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+  const logEntry = `[${dateStr}] ${fileName}\n`;
+  fs.appendFileSync(logFile, logEntry, "utf-8");
+}
+
 function formatDate(dateString) {
   const d = new Date(dateString);
   if (isNaN(d)) return dateString || "";
@@ -94,12 +109,71 @@ async function generateContract(data, outputFolder) {
 
   const safeIin = data.iin || "без_iin";
   const safeFio = (data.fio || "без_имени").replace(/[\\/:*?"<>|]/g, "_");
-  const fileName = `Договор ${safeFio} (${safeIin}).docx`;
+  // В имени файла добавляем номер договора. Меняем латинскую "a" на кириллическую "а" в конце.
+  const displayContractNumber = contractNumber.replace(/a$/, "а");
+  const fileName = `Договор ${displayContractNumber} ${safeFio} (${safeIin}).docx`;
   const outputPath = path.join(outputFolder, fileName);
 
   fs.writeFileSync(outputPath, buf);
+  logGeneratedContract(outputFolder, fileName);
   saveContractNumber(outputFolder, contractNumber);
+  // Сохраняем номер договора в таблицу documents как 1a (без скобок)
+  const dbContractNumber = contractNumber.replace("(a)", "a");
+  try {
+    await db.query(
+      `UPDATE documents SET contract_number = $1 WHERE student_id = $2`,
+      [dbContractNumber, data.studentId]
+    );
+  } catch (err) {
+    console.error("❌ Ошибка сохранения номера договора в documents:", err.message);
+  }
   return outputPath;
+}
+
+function findExistingContractByIin(folderPath, safeIin) {
+  if (!fs.existsSync(folderPath)) return null;
+  try {
+    const files = fs.readdirSync(folderPath);
+    // Ищем файлы формата: "Договор ... (...safeIin...).docx"
+    const candidates = files
+      .filter(name => name.startsWith("Договор ") && name.endsWith(`(${safeIin}).docx`))
+      .map(name => {
+        const full = path.join(folderPath, name);
+        let mtime = 0;
+        try {
+          mtime = fs.statSync(full).mtimeMs || 0;
+        } catch { /* ignore */ }
+        return { name, full, mtime };
+      });
+    if (candidates.length === 0) return null;
+    // Берём самый свежий по дате изменения
+    candidates.sort((a, b) => b.mtime - a.mtime);
+    return candidates[0].full;
+  } catch (e) {
+    console.warn("⚠️ Ошибка при поиске существующего договора:", e.message);
+    return null;
+  }
+}
+
+function sendDocx(res, filePath) {
+  const fileName = path.basename(filePath);
+  const encoded = encodeURIComponent(fileName)
+    .replace(/['()]/g, escape)
+    .replace(/\*/g, "%2A");
+  try {
+    const stat = fs.statSync(filePath);
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    );
+    // Fallback ASCII filename and RFC5987 UTF-8 filename*
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${fileName}"; filename*=UTF-8''${encoded}`
+    );
+    res.setHeader("Content-Length", stat.size);
+  } catch (_) {}
+  return res.sendFile(filePath);
 }
 
 const express = require("express");
@@ -121,6 +195,7 @@ router.get("/contracts/:iin", async (req, res) => {
     result = await db.query(
       `
       SELECT 
+        s.id AS student_id,
         s.fio, s.iin, s.phone, s.university,
         d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability,
         d.email, d.registration_address, d.registration_city,
@@ -176,6 +251,7 @@ router.get("/contracts/:iin", async (req, res) => {
     registrationAddress: student.registration_address || "",
     registrationCity: student.registration_city || "",
     shortFio: shortFio,
+    studentId: student.student_id,
   };
 
   console.log("📦 Подготовленные данные для шаблона:");
@@ -189,30 +265,32 @@ router.get("/contracts/:iin", async (req, res) => {
 
   const folderPath = baseDir;
   console.log("🔧 Подготовка папки:", folderPath);
+
   const safeIin = data.iin || "без_iin";
   const safeFio = (data.fio || "без_имени").replace(/[\\/:*?"<>|]/g, "_");
-  const fileName = `Договор ${safeFio} (${safeIin}).docx`;
-  const filePath = path.join(folderPath, fileName);
 
-  if (!fs.existsSync(filePath)) {
-    console.log("📄 Договор не найден — генерируем...");
-    try {
-      await generateContract(data, folderPath);
-      if (!fs.existsSync(filePath)) {
-        console.error("❌ Не удалось создать договор:", filePath);
-        return res.status(500).send("Ошибка: файл не был создан");
-      }
-    } catch (e) {
-      console.error("❌ Ошибка при генерации .doc:", e.message);
-      console.error("❌ Полный стек ошибки:", e.stack);
-      return res.status(500).send("Ошибка генерации договора");
-    }
-  } else {
-    console.log("📄 Договор уже существует — используем готовый файл:", filePath);
+  // 1) Сначала пробуем найти уже существующий договор по IIN
+  const existingPath = findExistingContractByIin(folderPath, safeIin);
+  if (existingPath && fs.existsSync(existingPath)) {
+    console.log("📄 Найден ранее созданный договор — скачиваем без генерации:", existingPath);
+    return sendDocx(res, existingPath);
   }
 
-  console.log("📄 Договор успешно создан:", filePath);
-  res.download(filePath, path.basename(filePath));
+  // 2) Если не нашли — генерируем новый и скачиваем
+  console.log("📄 Договор не найден — генерируем новый");
+  try {
+    const generatedPath = await generateContract(data, folderPath);
+    if (!fs.existsSync(generatedPath)) {
+      console.error("❌ Не удалось создать договор:", generatedPath);
+      return res.status(500).send("Ошибка: файл не был создан");
+    }
+    console.log("📄 Договор успешно создан:", generatedPath);
+    return sendDocx(res, generatedPath);
+  } catch (e) {
+    console.error("❌ Ошибка при генерации .doc:", e.message);
+    console.error("❌ Полный стек ошибки:", e.stack);
+    return res.status(500).send("Ошибка генерации договора");
+  }
 });
 
 module.exports = { generateContract, contractRouter: router };

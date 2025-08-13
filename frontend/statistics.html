@@ -53,6 +53,9 @@
           <span class="close" id="closeDepartedModal">&times;</span>
         </div>
         <div class="modal-body">
+          <div style="margin-bottom: 10px;">
+            <input type="text" id="departedSearchInput" class="modal-search" placeholder="Поиск по ФИО или ИИН..." oninput="filterDepartedList(this.value)">
+          </div>
           <div id="departedContent"></div>
         </div>
       </div>
@@ -65,14 +68,17 @@
           <span class="close" id="closeNotificationsModal">&times;</span>
         </div>
         <div class="modal-body">
+          <input type="text" id="notificationsSearchInput" class="modal-search" placeholder="Поиск по ФИО или ИИН..." oninput="filterNotificationsTab(this.value)" style="margin-bottom: 10px;">
           <div class="tabs">
             <button id="expiredTab" class="tab-btn">Истекли</button>
             <button id="expiringTab" class="tab-btn">Истекают</button>
             <button id="noCardTab" class="tab-btn">Без карточки</button>
+            <button id="paymentStatusTab" class="tab-btn">Статус оплаты</button>
           </div>
           <div id="expiredContent" class="tab-content"></div>
           <div id="expiringContent" class="tab-content" style="display: none;"></div>
           <div id="noCardContent" class="tab-content" style="display: none;"></div>
+          <div id="paymentStatusContent" class="tab-content" style="display: none;"></div>
         </div>
       </div>
     </div>
@@ -84,6 +90,9 @@
           <span class="close" id="closeTodayAddedModal">&times;</span>
         </div>
         <div class="modal-body">
+          <div style="margin-bottom: 10px;">
+            <input type="text" id="todaySearchInput" class="modal-search" placeholder="Поиск по ФИО или ИИН..." oninput="filterTodayAddedList(this.value)">
+          </div>
           <div id="todayAddedContent"></div>
         </div>
       </div>
@@ -520,7 +529,9 @@ socket.addEventListener("message", function (event) {
               relativePhone: student.relativePhone || "",
               rentalPeriod: student.rentalPeriod || "",
               moveInDate: student.moveInDate || "",
-              date_added: now.toDateString()
+              date_added: now.toDateString(),
+              cardNumber: student.card_number,
+              contractNumber: student.contractNumber,
             };
 
             if (!students[roomId]) students[roomId] = [];
@@ -749,6 +760,9 @@ socket.addEventListener("message", function (event) {
         console.log("🔍 В модалке активные студенты:");
         (activeStudents || []).forEach(s => console.log("  →", s.fio));
 
+        // Debug log for cardNumber/card_number fields
+        console.log("🧪 Студенты для модалки (поля cardNumber/card_number):", activeStudents.map(s => ({ fio: s.fio, cardNumber: s.cardNumber, card_number: s.card_number })));
+
         state.currentRoom = room;
         const departedStudents = filtered !== null ? filtered.filter(s => s.left) : roomStudents.filter(s => s.left);
         // Сортировка выбывших студентов по дате заселения (от новых к старым)
@@ -799,6 +813,21 @@ socket.addEventListener("message", function (event) {
               moveOutDateFormatted = temp.toISOString().split("T")[0];
             }
 
+            // Определяем статус оплаты для активных студентов
+            let paymentStatusHtml = '';
+            if (student.paid === true) {
+              paymentStatusHtml = `<p><strong>Статус оплаты:</strong>
+                <span style="color: green;">Оплачено</span>
+              </p>`;
+            } else {
+              paymentStatusHtml = `<p><strong>Статус оплаты:</strong>
+                <span style="color: red;">Не оплачено</span>
+              </p>`;
+            }
+
+            // Safely resolve card number from camelCase or snake_case
+            const cardNum = student.cardNumber ?? student.card_number ?? "—";
+
             dossierContent.innerHTML += `
               <div class="student-entry" ${highlight}>
                 <p><strong>ФИО:</strong> ${student.fio}</p>
@@ -808,13 +837,14 @@ socket.addEventListener("message", function (event) {
                 <p><strong>Родственник:</strong> ${student.relative}</p>
                 <p><strong>Телефон родственника:</strong> ${student.relativePhone}</p>
                 <p><strong>Сумма оплаты:</strong> ${Number(student.payment).toLocaleString("ru-RU")} ₸</p>
+                ${paymentStatusHtml}
                 <p><strong>Дата заселения:</strong> ${moveInDateFormatted}</p>
                 <p><strong>Срок аренды:</strong> ${student.rentalPeriod} мес.</p>
                 <p><strong>Окончание аренды:</strong> ${moveOutDateFormatted}</p>
                 <p><strong>Номер карточки:</strong>
-                  <span class="card-number-span">${student.cardNumber || "—"}</span>
+                  <span class="card-number-span">${cardNum}</span>
                   <button class="btn btn-sm btn-secondary" onclick="editCardNumber('${room}', '${student.iin}')">
-                    ${student.cardNumber ? "Редактировать" : "Добавить"}
+                    ${cardNum !== "—" ? "Редактировать" : "Добавить"}
                   </button>
                 </p>
                 <p><strong>Статус:</strong> Активен</p>
@@ -989,59 +1019,48 @@ socket.addEventListener("message", function (event) {
         document.getElementById("addStudentModal").style.display = "flex";
       }
 
-      function deleteStudent(room, iin) {
-        if (confirm(`Удалить студента с ИИН ${iin} из комнаты ${room}?`)) {
-          // --- ДОБАВЛЕНО: удаление папки документов по ФИО ---
-          const student = students[room]?.find((s) => s.iin === iin);
-          const fullName = student?.fio?.trim() || (
-            `${student?.lastName || ""} ${student?.firstName || ""} ${student?.middleName || ""}`.trim()
-          );
-          console.log("📂 Удаление папки для:", fullName);
-          if (fullName) {
-            fetch("/api/upload/delete-folder", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ fullName })
-            }).then(res => {
-              if (!res.ok) {
-                console.warn("❌ Не удалось удалить папку с документами для:", fullName);
-              }
-            });
-          }
-          fetch(`/api/students/delete/${encodeURIComponent(iin)}`, {
-            method: "DELETE"
-          })
+      function deleteStudent(roomId, iin) {
+        if (!confirm(`Удалить студента с ИИН ${iin}?`)) return;
+
+        fetch(`/api/students/delete/${encodeURIComponent(iin)}`, {
+          method: "DELETE"
+        })
           .then(res => {
             if (res.ok) {
-              showToast("Студент удален!", "info");
-              if (students[room]) {
-                const index = students[room].findIndex((s) => s.iin === iin);
-                if (index !== -1) {
-                  students[room].splice(index, 1);
-                }
-              }
-              generateBlocks();
-              const searchQuery = document.getElementById("searchInput").value.trim().toLowerCase();
-              if (searchQuery) {
-                const filtered = (students[room] || []).filter(
-                  (s) =>
-                    s.fio.toLowerCase().includes(searchQuery) ||
-                    s.iin.toLowerCase().includes(searchQuery)
-                );
-                openDossierModal(room, filtered);
-              } else {
-                openDossierModal(room);
-              }
+              showToast("🗑️ Студент удалён", "info");
+              openNotificationsModal(); // обновить модалку
             } else {
-              showToast("Ошибка при удалении студента", "error");
+              showToast("❌ Ошибка при удалении", "error");
             }
           })
           .catch(err => {
-            console.error("❌ Ошибка удаления студента:", err);
-            showToast("Ошибка при удалении студента", "error");
+            console.error("Ошибка удаления:", err);
+            showToast("❌ Сетевая ошибка", "error");
           });
-        }
       }
+      // --- Дополнительные функции для работы со студентами ---
+      function markStudentAsPaid(iin, roomId) {
+        fetch("/api/students/mark-paid", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ iin })
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              showToast("✅ Оплата подтверждена", "success");
+              openNotificationsModal(); // обновить модалку
+            } else {
+              showToast("❌ Ошибка при обновлении оплаты", "error");
+            }
+          })
+          .catch(err => {
+            console.error("Ошибка оплаты:", err);
+            showToast("❌ Сетевая ошибка", "error");
+          });
+      }
+
+      // (Удалён дублирующийся блок функции deleteStudent)
 
       function markStudentLeft(room, iin) {
         if (students[room]) {
@@ -1236,6 +1255,8 @@ socket.addEventListener("message", function (event) {
         const noCardContent = document.getElementById('noCardContent');
         if (noCardContent) noCardContent.innerHTML = '';
 
+        const paymentStatusContent = document.getElementById("paymentStatusContent");
+        if (paymentStatusContent) paymentStatusContent.innerHTML = "";
         const expired = [];
         const expiring = [];
 
@@ -1370,7 +1391,6 @@ socket.addEventListener("message", function (event) {
           expiringContent.innerHTML = '<p>Нет студентов с истекающим сроком аренды.</p>';
         }
 
-
         // --- Секция "Без карточки" ---
         const noCardStudents = [];
         Object.entries(students).forEach(([roomId, arr]) => {
@@ -1411,45 +1431,116 @@ socket.addEventListener("message", function (event) {
           }
         }
 
+        // --- Секция "Статус оплаты" — только для вкладки "Статус оплаты" ---
+        const unpaidStudents = [];
+        Object.entries(students).forEach(([roomId, arr]) => {
+          arr.forEach(student => {
+            if (!student.left && student.paid !== true) {
+              unpaidStudents.push({
+                room: roomId,
+                full_name: student.fio || "",
+                iin: student.iin || "",
+                student
+              });
+            }
+          });
+        });
+        if (paymentStatusContent) {
+          paymentStatusContent.innerHTML = "";
+          if (unpaidStudents.length > 0) {
+            unpaidStudents.forEach(({ room, full_name, iin, student }) => {
+              const container = document.createElement("div");
+              container.style.marginBottom = "10px";
+              const payment = Number(student.payment || 0).toLocaleString("ru-RU");
+              container.innerHTML = `
+                <div>
+                  <strong>${full_name}</strong> (${iin}) — комната ${room}<br>
+                  <span style="color: #555;">Сумма оплаты: ${payment} ₸</span>
+                </div>
+              `;
+
+              const paidBtn = document.createElement("button");
+              paidBtn.textContent = "Оплачено";
+              paidBtn.className = "btn btn-sm btn-primary";
+              paidBtn.onclick = () => markStudentAsPaid(iin, room);
+
+              const deleteBtn = document.createElement("button");
+              deleteBtn.textContent = "Удалить";
+              deleteBtn.className = "btn btn-sm btn-danger";
+              deleteBtn.style.marginLeft = "8px";
+              deleteBtn.onclick = () => deleteStudent(room, iin);
+
+              const actions = document.createElement("div");
+              actions.style.marginTop = "6px";
+              actions.appendChild(paidBtn);
+              actions.appendChild(deleteBtn);
+              container.appendChild(actions);
+
+              paymentStatusContent.appendChild(container);
+            });
+          } else {
+            paymentStatusContent.innerHTML = "<p>Все студенты оплатили.</p>";
+          }
+        }
+
         // Отображение модального окна и табов
         modal.style.display = 'flex';
         // Табы
         const expiredTab = document.getElementById("expiredTab");
         const expiringTab = document.getElementById("expiringTab");
-        const cardTab = document.getElementById("cardTab");
         const noCardTab = document.getElementById("noCardTab");
+        const paymentStatusTab = document.getElementById("paymentStatusTab");
+        // По умолчанию активная вкладка: expiredTab, остальные скрыты
         expiredTab.classList.add("active");
         expiringTab.classList.remove("active");
         if (noCardTab) noCardTab.classList.remove("active");
+        paymentStatusTab.classList.remove("active");
         expiredContent.style.display = "block";
         expiringContent.style.display = "none";
         if (noCardContent) noCardContent.style.display = "none";
+        if (paymentStatusContent) paymentStatusContent.style.display = "none";
         expiredTab.onclick = () => {
           expiredTab.classList.add("active");
           expiringTab.classList.remove("active");
           if (noCardTab) noCardTab.classList.remove("active");
+          paymentStatusTab.classList.remove("active");
           expiredContent.style.display = "block";
           expiringContent.style.display = "none";
           if (noCardContent) noCardContent.style.display = "none";
+          if (paymentStatusContent) paymentStatusContent.style.display = "none";
         };
         expiringTab.onclick = () => {
           expiredTab.classList.remove("active");
           expiringTab.classList.add("active");
           if (noCardTab) noCardTab.classList.remove("active");
+          paymentStatusTab.classList.remove("active");
           expiredContent.style.display = "none";
           expiringContent.style.display = "block";
           if (noCardContent) noCardContent.style.display = "none";
+          if (paymentStatusContent) paymentStatusContent.style.display = "none";
         };
         if (noCardTab) {
           noCardTab.onclick = () => {
             expiredTab.classList.remove("active");
             expiringTab.classList.remove("active");
             noCardTab.classList.add("active");
+            paymentStatusTab.classList.remove("active");
             expiredContent.style.display = "none";
             expiringContent.style.display = "none";
             if (noCardContent) noCardContent.style.display = "block";
+            if (paymentStatusContent) paymentStatusContent.style.display = "none";
           };
         }
+        paymentStatusTab.onclick = () => {
+          expiredTab.classList.remove("active");
+          expiringTab.classList.remove("active");
+          if (noCardTab) noCardTab.classList.remove("active");
+          paymentStatusTab.classList.add("active");
+          expiredContent.style.display = "none";
+          expiringContent.style.display = "none";
+          if (noCardContent) noCardContent.style.display = "none";
+          if (paymentStatusContent) paymentStatusContent.style.display = "block";
+        };
       }
 
       function closeNotificationsModal() {
@@ -1535,25 +1626,38 @@ socket.addEventListener("message", function (event) {
       // --- Функция генерации договора ---
       function generateContract(room, iin) {
         fetch(`/contracts/${encodeURIComponent(iin)}`)
-          .then(response => {
-            if (response.ok) {
-              return response.blob();
-            } else {
+          .then(async (response) => {
+            if (!response.ok) {
               throw new Error("Файл не найден");
             }
-          })
-          .then(blob => {
+
+            // Считываем имя файла с бэка (RFC5987 filename*)
+            const dispo = response.headers.get("Content-Disposition") || "";
+            let fileName = `Договор ${iin}.docx`;
+            const starMatch = dispo.match(/filename\*=UTF-8''([^;\n]+)/i);
+            if (starMatch && starMatch[1]) {
+              try {
+                fileName = decodeURIComponent(starMatch[1]);
+              } catch (_) {}
+            } else {
+              const plainMatch = dispo.match(/filename="?([^";]+)"?/i);
+              if (plainMatch && plainMatch[1]) {
+                fileName = plainMatch[1];
+              }
+            }
+
+            const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = `Договор ${iin}.docx`;
+            a.download = fileName; // ← полное имя из папки «договоры студентов»
             document.body.appendChild(a);
             a.click();
             a.remove();
             window.URL.revokeObjectURL(url);
             showToast("📄 Договор загружен", "success");
           })
-          .catch(err => {
+          .catch((err) => {
             console.error("Ошибка при загрузке договора:", err);
             showToast("❌ Не удалось скачать договор", "error");
           });
@@ -1722,7 +1826,15 @@ function openAccountingModal() {
     const div = document.createElement("div");
     div.style.padding = "6px 0";
     div.style.borderBottom = "1px dashed #ddd";
-    div.innerHTML = `<strong>${year}: ${monthName}</strong> — ${Number(sum).toLocaleString("ru-RU")} ₸`;
+    // Новый код: считаем студентов для месяца (учитываем всех выбывших, даже если payment = 0)
+    const count = allStudents.filter(s => {
+      if (!s.moveInDate || !s.rentalPeriod) return false;
+      const moveIn = new Date(s.moveInDate);
+      const keyCheck = `${moveIn.getFullYear()}-${moveIn.getMonth()}`;
+      return keyCheck === key;
+    }).length;
+
+    div.innerHTML = `<strong>${year}: ${monthName}</strong> — ${Number(sum).toLocaleString("ru-RU")} ₸ <span style="color: #777;">(${count} студент${count === 1 ? "" : "а"})</span>`;
     income.appendChild(div);
   });
 
@@ -1778,6 +1890,26 @@ document.getElementById("closeAccountingModal").addEventListener("click", closeA
       }
 
       // --- Обновлённая функция updateBlockStats ---
+
+      // --- Функция фильтрации для архива выбывших ---
+      function filterDepartedList(query) {
+        const value = query.trim().toLowerCase();
+        const items = document.querySelectorAll("#departedContent > div");
+        items.forEach(item => {
+          const text = item.innerText.toLowerCase();
+          item.style.display = text.includes(value) ? "block" : "none";
+        });
+      }
+
+      // --- Функция фильтрации для "Сегодня добавили" ---
+      function filterTodayAddedList(query) {
+        const value = query.trim().toLowerCase();
+        const items = document.querySelectorAll("#todayAddedContent > div");
+        items.forEach(item => {
+          const text = item.innerText.toLowerCase();
+          item.style.display = text.includes(value) ? "block" : "none";
+        });
+      }
       function updateBlockStats(blockDiv) {
         if (!blockDiv) return;
         const statsEl = blockDiv.querySelector(".block-stats");
@@ -2360,6 +2492,91 @@ document.getElementById("exportExcelBtn").addEventListener("click", () => {
         current = new Date(y, m + 1, 1);
       }
       return breakdown;
+    }
+  </script>
+  <script>
+    const paymentStatusTab = document.getElementById("paymentStatusTab");
+    const paymentStatusContent = document.getElementById("paymentStatusContent");
+
+    paymentStatusTab.onclick = () => {
+      // переключаем табы
+      document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+      document.querySelectorAll(".tab-content").forEach(el => el.style.display = "none");
+      paymentStatusTab.classList.add("active");
+      paymentStatusContent.style.display = "block";
+
+      // рендерим студентов
+      renderUnpaidStudents();
+    };
+
+    function renderUnpaidStudents() {
+      const container = document.getElementById("paymentStatusContent");
+      container.innerHTML = "";
+
+      // Собираем всех студентов из всех комнат
+      const allStudents = Object.entries(students).flatMap(([room, arr]) =>
+        arr.map(s => ({ ...s, room }))
+      );
+
+      // Оставляем только активных и не оплативших
+      const unpaid = allStudents.filter(s =>
+        !s.left && s.paid !== true
+      );
+
+      if (unpaid.length === 0) {
+        container.innerHTML = "<p>Нет студентов со статусом 'Не оплачено'.</p>";
+        return;
+      }
+
+      unpaid.forEach(s => {
+        const block = document.createElement("div");
+        block.className = "student-payment-entry";
+        block.style.padding = "10px";
+        block.style.borderBottom = "1px solid #ccc";
+
+        block.innerHTML = `
+          <strong>${s.fio}</strong> (${s.iin}) — комната ${s.room}<br>
+          <button class="btn btn-sm btn-success" onclick="markStudentPaid('${s.room}', '${s.iin}')">Оплачено</button>
+          <button class="btn btn-sm btn-danger" style="margin-left: 8px;" onclick="deleteStudent('${s.room}', '${s.iin}')">Удалить</button>
+        `;
+
+        container.appendChild(block);
+      });
+    }
+
+    function markStudentPaid(room, iin) {
+      fetch("/api/payment-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ iin, status: true })
+      }).then(res => res.json()).then(data => {
+        showToast("Студент отмечен как оплаченный", "success");
+        const student = students[room]?.find(s => s.iin === iin);
+        if (student) student.payment = 1;
+        renderUnpaidStudents();
+      });
+    }
+  </script>
+  <script>
+    function filterNotificationsTab(query) {
+      const value = query.trim().toLowerCase();
+
+      const tabContents = {
+        expiredContent: document.getElementById("expiredContent"),
+        expiringContent: document.getElementById("expiringContent"),
+        noCardContent: document.getElementById("noCardContent"),
+        paymentStatusContent: document.getElementById("paymentStatusContent")
+      };
+
+      for (const [id, container] of Object.entries(tabContents)) {
+        if (!container || container.style.display === "none") continue;
+
+        const items = Array.from(container.children);
+        items.forEach((item) => {
+          const text = item.innerText.toLowerCase();
+          item.style.display = text.includes(value) ? "block" : "none";
+        });
+      }
     }
   </script>
   </body>

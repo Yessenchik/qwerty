@@ -869,7 +869,7 @@
           if (iinExists) {
             console.log("❌ ИИН уже существует в базе:", currentIin);
             showError(iin, "Такой ИИН уже существует");
-            isValid = false;
+            return; // Stop further processing and do not submit form
           } else {
             console.log("✅ ИИН свободен:", currentIin);
           }
