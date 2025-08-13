@@ -1211,3 +1211,27 @@
       RETURNING student_id
     
 [2025-07-28 10:37:40] ERROR: ❌ Ошибка при обновлении срока аренды: null value in column "rental_period" of relation "accommodation" violates not-null constraint
+[2025-08-12 11:25:43] ERROR: ❌ SQL Error: duplicate key value violates unique constraint "students_pkey"
+Запрос: INSERT INTO students (fio, iin, gender, phone, university, relative_type, relative_phone, card_number)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id
+[2025-08-12 11:25:43] ERROR: Ошибка при добавлении студента: duplicate key value violates unique constraint "students_pkey"
+[2025-08-12 11:26:28] ERROR: ❌ SQL Error: duplicate key value violates unique constraint "students_pkey"
+Запрос: INSERT INTO students (fio, iin, gender, phone, university, relative_type, relative_phone, card_number)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id
+[2025-08-12 11:26:28] ERROR: Ошибка при добавлении студента: duplicate key value violates unique constraint "students_pkey"
+[2025-08-12 11:27:10] ERROR: ❌ SQL Error: duplicate key value violates unique constraint "students_pkey"
+Запрос: INSERT INTO students (fio, iin, gender, phone, university, relative_type, relative_phone, card_number)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id
+[2025-08-12 11:27:10] ERROR: Ошибка при добавлении студента: duplicate key value violates unique constraint "students_pkey"
+[2025-08-12 11:27:32] ERROR: ❌ SQL Error: duplicate key value violates unique constraint "selections_pkey"
+Запрос: INSERT INTO selections (student_id, room_id, selected_at)
+       VALUES ($1, $2, CURRENT_TIMESTAMP)
+[2025-08-12 11:27:32] ERROR: Ошибка при добавлении студента: duplicate key value violates unique constraint "selections_pkey"
+[2025-08-12 11:28:20] ERROR: ❌ SQL Error: duplicate key value violates unique constraint "selections_pkey"
+Запрос: INSERT INTO selections (student_id, room_id, selected_at)
+       VALUES ($1, $2, CURRENT_TIMESTAMP)
+[2025-08-12 11:28:20] ERROR: Ошибка при добавлении студента: duplicate key value violates unique constraint "selections_pkey"
+[2025-08-12 11:30:15] ERROR: ❌ SQL Error: duplicate key value violates unique constraint "selections_pkey"
+Запрос: INSERT INTO selections (student_id, room_id, selected_at)
+       VALUES ($1, $2, CURRENT_TIMESTAMP)
+[2025-08-12 11:30:15] ERROR: Ошибка при добавлении студента: duplicate key value violates unique constraint "selections_pkey"

@@ -38,7 +38,7 @@ router.get('/', async (req, res) => {
     const result = await db.query(`
       SELECT 
         s.*, s.card_number,
-        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
         a.move_in_date, a.rental_period, a.payment, a.has_left, a.left_date,
         sel.room_id
       FROM students s
@@ -48,7 +48,9 @@ router.get('/', async (req, res) => {
     `);
     const studentsWithCyrillicBlock = result.rows.map(student => ({
       ...student,
-      block: convertBlockToCyrillic(student.block)
+      block: convertBlockToCyrillic(student.block),
+      contractNumber: student.contract_number,
+      cardNumber: student.card_number
     }));
     res.json(studentsWithCyrillicBlock);
   } catch (err) {
@@ -65,6 +67,7 @@ router.post('/', async (req, res) => {
     moveInDate,
     email, registration_city, registration_address,
     card_number,
+    contract_number,
   } = req.body;
 
   logger.info("📥 Получен запрос на добавление студента:");
@@ -83,11 +86,11 @@ router.post('/', async (req, res) => {
     await db.query(
       `INSERT INTO documents (
         student_id, document_number, document_issue_date, document_issuer, is_graduate, has_disability,
-        email, registration_city, registration_address
+        email, registration_city, registration_address, contract_number
       )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
       [studentId, document_number, document_issue_date, document_issuer, is_graduate, has_disability,
-       email, registration_city, registration_address]
+       email, registration_city, registration_address, contract_number]
     );
 
     await db.query(
@@ -107,7 +110,7 @@ router.post('/', async (req, res) => {
         s.fio, s.iin, s.gender, s.phone, s.university, s.relative_type, s.relative_phone,
         s.card_number,
         d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability,
-        d.email, d.registration_city, d.registration_address,
+        d.email, d.registration_city, d.registration_address, d.contract_number,
         a.move_in_date, a.rental_period, a.payment, a.has_left, a.left_date,
         sel.room_id
       FROM students s
@@ -141,7 +144,8 @@ router.post('/', async (req, res) => {
       moveInDate: fullStudent.move_in_date,
       rentalPeriod: fullStudent.rental_period,
       left: fullStudent.has_left,
-      leftDate: fullStudent.left_date
+      leftDate: fullStudent.left_date,
+      contractNumber: fullStudent.contract_number
     };
 
     broadcastNewStudent(frontendStudent, normalizedRoomId);

@@ -529,7 +529,9 @@ socket.addEventListener("message", function (event) {
               relativePhone: student.relativePhone || "",
               rentalPeriod: student.rentalPeriod || "",
               moveInDate: student.moveInDate || "",
-              date_added: now.toDateString()
+              date_added: now.toDateString(),
+              cardNumber: student.card_number,
+              contractNumber: student.contractNumber,
             };
 
             if (!students[roomId]) students[roomId] = [];
@@ -758,6 +760,9 @@ socket.addEventListener("message", function (event) {
         console.log("🔍 В модалке активные студенты:");
         (activeStudents || []).forEach(s => console.log("  →", s.fio));
 
+        // Debug log for cardNumber/card_number fields
+        console.log("🧪 Студенты для модалки (поля cardNumber/card_number):", activeStudents.map(s => ({ fio: s.fio, cardNumber: s.cardNumber, card_number: s.card_number })));
+
         state.currentRoom = room;
         const departedStudents = filtered !== null ? filtered.filter(s => s.left) : roomStudents.filter(s => s.left);
         // Сортировка выбывших студентов по дате заселения (от новых к старым)
@@ -820,6 +825,9 @@ socket.addEventListener("message", function (event) {
               </p>`;
             }
 
+            // Safely resolve card number from camelCase or snake_case
+            const cardNum = student.cardNumber ?? student.card_number ?? "—";
+
             dossierContent.innerHTML += `
               <div class="student-entry" ${highlight}>
                 <p><strong>ФИО:</strong> ${student.fio}</p>
@@ -834,9 +842,9 @@ socket.addEventListener("message", function (event) {
                 <p><strong>Срок аренды:</strong> ${student.rentalPeriod} мес.</p>
                 <p><strong>Окончание аренды:</strong> ${moveOutDateFormatted}</p>
                 <p><strong>Номер карточки:</strong>
-                  <span class="card-number-span">${student.cardNumber || "—"}</span>
+                  <span class="card-number-span">${cardNum}</span>
                   <button class="btn btn-sm btn-secondary" onclick="editCardNumber('${room}', '${student.iin}')">
-                    ${student.cardNumber ? "Редактировать" : "Добавить"}
+                    ${cardNum !== "—" ? "Редактировать" : "Добавить"}
                   </button>
                 </p>
                 <p><strong>Статус:</strong> Активен</p>
@@ -1618,25 +1626,38 @@ socket.addEventListener("message", function (event) {
       // --- Функция генерации договора ---
       function generateContract(room, iin) {
         fetch(`/contracts/${encodeURIComponent(iin)}`)
-          .then(response => {
-            if (response.ok) {
-              return response.blob();
-            } else {
+          .then(async (response) => {
+            if (!response.ok) {
               throw new Error("Файл не найден");
             }
-          })
-          .then(blob => {
+
+            // Считываем имя файла с бэка (RFC5987 filename*)
+            const dispo = response.headers.get("Content-Disposition") || "";
+            let fileName = `Договор ${iin}.docx`;
+            const starMatch = dispo.match(/filename\*=UTF-8''([^;\n]+)/i);
+            if (starMatch && starMatch[1]) {
+              try {
+                fileName = decodeURIComponent(starMatch[1]);
+              } catch (_) {}
+            } else {
+              const plainMatch = dispo.match(/filename="?([^";]+)"?/i);
+              if (plainMatch && plainMatch[1]) {
+                fileName = plainMatch[1];
+              }
+            }
+
+            const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = `Договор ${iin}.docx`;
+            a.download = fileName; // ← полное имя из папки «договоры студентов»
             document.body.appendChild(a);
             a.click();
             a.remove();
             window.URL.revokeObjectURL(url);
             showToast("📄 Договор загружен", "success");
           })
-          .catch(err => {
+          .catch((err) => {
             console.error("Ошибка при загрузке договора:", err);
             showToast("❌ Не удалось скачать договор", "error");
           });
