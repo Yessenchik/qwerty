@@ -41249,3 +41249,764 @@
       LEFT JOIN accommodation a ON s.id = a.student_id
       LEFT JOIN selections sel ON s.id = sel.student_id
     
+[2025-08-13 12:14:54] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-13 13:14:54] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-13 14:14:55] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-13 15:14:55] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-13 16:14:55] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-13 17:14:55] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-13 18:22:20] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-13 19:26:52] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-13 20:41:59] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-13 21:43:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-13 22:44:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-13 23:45:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 00:46:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 01:47:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 02:48:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 03:49:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 04:50:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 05:51:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 06:52:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 07:53:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 08:54:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 09:55:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 10:55:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 11:55:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 12:55:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 13:55:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 14:55:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 15:55:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 16:55:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 18:10:27] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 19:25:22] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 20:25:58] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 21:26:24] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 22:31:27] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-14 23:45:10] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-15 00:47:48] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-15 01:51:42] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-15 03:04:15] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-15 04:06:18] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-15 05:08:01] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-15 06:25:30] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-15 07:37:14] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-15 08:37:36] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-15 09:39:16] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-15 10:39:15] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-15 11:39:15] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-15 12:39:15] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-15 13:42:20] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-15 14:42:20] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-15 15:42:20] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-15 16:42:20] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-15 17:42:20] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-15 18:42:20] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-15 19:44:33] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-15 20:53:31] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-15 21:59:53] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-15 23:04:54] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-16 00:09:57] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-16 01:10:38] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-16 02:10:39] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-16 03:18:54] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-16 04:22:20] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-16 05:33:28] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-16 06:40:37] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-16 07:42:07] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-16 08:44:47] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-16 09:58:57] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-16 11:12:55] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-16 12:16:56] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-16 13:28:09] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-16 14:29:09] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-16 15:30:09] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-16 16:31:09] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-16 17:32:10] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-16 18:32:48] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-16 19:39:21] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-16 20:45:57] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-16 21:59:09] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-16 23:15:28] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-17 00:20:06] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-17 01:26:12] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-17 02:32:24] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-17 03:42:04] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-17 04:45:06] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-17 05:52:42] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-17 07:01:27] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-17 08:08:20] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-17 09:16:04] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-17 10:25:43] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-17 11:27:05] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-17 12:29:08] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-17 13:45:48] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-17 14:46:33] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-17 15:46:56] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-17 16:47:50] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-17 17:48:50] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-17 18:54:59] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-17 19:55:15] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-17 21:07:26] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-17 22:23:19] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-17 23:29:22] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-18 00:30:49] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-18 01:37:38] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-18 02:49:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-18 04:03:15] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-18 05:08:35] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-18 06:21:53] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-18 07:24:10] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-18 08:25:44] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-18 09:36:44] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-18 10:36:44] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-18 11:36:44] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-18 12:36:44] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-18 13:36:44] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-18 14:36:44] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-18 15:36:44] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-18 16:36:44] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-18 17:36:44] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-18 18:40:32] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-18 19:41:56] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-18 20:42:58] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-18 21:50:56] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-18 23:00:21] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 00:06:33] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 01:12:06] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 02:24:48] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 03:27:20] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 04:38:20] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 05:39:20] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 06:40:20] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 07:41:20] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 08:42:20] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 09:42:20] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 10:42:20] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 11:42:20] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 12:42:20] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 13:54:47] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 14:54:47] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 16:06:59] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 17:12:16] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 18:14:12] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 19:20:55] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 20:27:24] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 21:27:24] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 22:29:10] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-19 23:31:57] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-20 00:46:52] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-20 01:08:56] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-20 01:08:56] INFO: 🟢 WebSocket сервер запущен
+[2025-08-20 01:30:41] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-20 01:30:41] INFO: 👥 Всего подключено клиентов: 1
+[2025-08-20 01:30:41] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-20 01:30:41] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-20 01:30:41] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-20 01:30:41] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        a.move_in_date, a.rental_period, a.payment, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
