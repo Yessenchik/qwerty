@@ -42876,3 +42876,245 @@
       WHERE s.iin = $1
     
 [2025-08-20 15:00:22] INFO: 🧾 SQL Query: UPDATE documents SET contract_number = $1 WHERE student_id = $2
+[2025-08-20 15:13:09] INFO: 🧾 SQL Query: 
+      SELECT
+        s.fio,
+        s.iin,
+        s.gender,
+        s.phone,
+        s.university,
+        s.relative_type,
+        s.relative_phone,
+        s.card_number,
+        d.document_number,
+        d.document_issue_date,
+        d.document_issuer,
+        d.is_graduate,
+        d.has_disability,
+        d.email,
+        d.registration_city,
+        d.registration_address,
+        d.contract_number,
+        a.move_in_date,
+        a.rental_period,
+        a.payment,
+        a.has_left,
+        a.left_date,
+        r.block,
+        r.floor,
+        r.id as room_id
+      FROM students s
+      LEFT JOIN documents d ON d.student_id = s.id
+      LEFT JOIN accommodation a ON a.student_id = s.id
+      LEFT JOIN selections sel ON sel.student_id = s.id
+      LEFT JOIN rooms r ON r.id = sel.room_id
+    
+[2025-08-20 15:13:13] INFO: 🧾 SQL Query: 
+      SELECT
+        s.fio,
+        s.iin,
+        s.gender,
+        s.phone,
+        s.university,
+        s.relative_type,
+        s.relative_phone,
+        s.card_number,
+        d.document_number,
+        d.document_issue_date,
+        d.document_issuer,
+        d.is_graduate,
+        d.has_disability,
+        d.email,
+        d.registration_city,
+        d.registration_address,
+        d.contract_number,
+        a.move_in_date,
+        a.rental_period,
+        a.payment,
+        a.has_left,
+        a.left_date,
+        r.block,
+        r.floor,
+        r.id as room_id
+      FROM students s
+      LEFT JOIN documents d ON d.student_id = s.id
+      LEFT JOIN accommodation a ON a.student_id = s.id
+      LEFT JOIN selections sel ON sel.student_id = s.id
+      LEFT JOIN rooms r ON r.id = sel.room_id
+    
+[2025-08-20 15:17:44] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-20 15:17:44] INFO: 🟢 WebSocket сервер запущен
+[2025-08-20 15:17:56] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-20 15:17:56] INFO: 👥 Всего подключено клиентов: 1
+[2025-08-20 15:17:56] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-20 15:17:56] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-20 15:17:56] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-20 15:17:56] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-20 15:18:00] INFO: 🧾 SQL Query: 
+      SELECT
+        s.fio,
+        s.iin,
+        s.gender,
+        s.phone,
+        s.university,
+        s.relative_type,
+        s.relative_phone,
+        s.card_number,
+        d.document_number,
+        d.document_issue_date,
+        d.document_issuer,
+        d.is_graduate,
+        d.has_disability,
+        d.email,
+        d.registration_city,
+        d.registration_address,
+        d.contract_number,
+        a.move_in_date,
+        a.rental_period,
+        a.payment,
+        a.has_left,
+        a.left_date,
+        a.paid,
+        r.block,
+        r.floor,
+        r.id as room_id
+      FROM students s
+      LEFT JOIN documents d ON d.student_id = s.id
+      LEFT JOIN accommodation a ON a.student_id = s.id
+      LEFT JOIN selections sel ON sel.student_id = s.id
+      LEFT JOIN rooms r ON r.id = sel.room_id
+    
+[2025-08-20 15:18:39] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-20 15:18:39] INFO: 👥 Осталось подключено: 0
+[2025-08-20 15:18:39] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-20 15:18:39] INFO: 👥 Всего подключено клиентов: 1
+[2025-08-20 15:18:39] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-20 15:18:39] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-20 15:18:39] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-20 15:18:39] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-20 15:32:23] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-20 15:32:23] INFO: 🟢 WebSocket сервер запущен
+[2025-08-20 15:32:28] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-20 15:32:28] INFO: 👥 Всего подключено клиентов: 1
+[2025-08-20 15:32:28] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-20 15:32:28] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-20 15:32:28] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-20 15:32:28] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-20 15:32:54] INFO: 🧾 SQL Query: SELECT 1 FROM students WHERE iin = $1
+[2025-08-20 15:38:27] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-20 15:38:27] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-20 15:38:27] INFO: 👥 Всего подключено клиентов: 2
+[2025-08-20 15:38:27] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-20 15:38:27] INFO: 🧾 SQL Query: 
+      SELECT 
+        r.id,
+        r.places,
+        COUNT(a.*) FILTER (WHERE a.has_left = false) AS occupied
+      FROM rooms r
+      LEFT JOIN selections s ON s.room_id = r.id
+      LEFT JOIN accommodation a ON a.student_id = s.student_id
+      GROUP BY r.id, r.places
+    
+[2025-08-20 15:38:27] INFO: 📊 Получен актуальный статус занятости комнат (/api/rooms/status)
+[2025-08-20 15:38:46] INFO: 📥 Получен запрос на добавление студента:
+[2025-08-20 15:38:46] INFO: registration_city:
+[2025-08-20 15:38:46] INFO: registration_address:
+[2025-08-20 15:38:46] INFO: email:
+[2025-08-20 15:38:46] INFO: 🧾 SQL Query: INSERT INTO students (fio, iin, gender, phone, university, relative_type, relative_phone, card_number)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id
+[2025-08-20 15:38:46] INFO: 🧾 SQL Query: INSERT INTO documents (
+        student_id, document_number, document_issue_date, document_issuer, is_graduate, has_disability,
+        email, registration_city, registration_address, contract_number
+      )
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+[2025-08-20 15:38:46] INFO: 🧾 SQL Query: INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, paid, added_by, has_left, left_date)
+       VALUES ($1, $2, $3, $4, false, 'system', false, $2::date + make_interval(months => $3 - 1))
+[2025-08-20 15:38:46] INFO: 🧾 SQL Query: INSERT INTO selections (student_id, room_id, selected_at)
+       VALUES ($1, $2, CURRENT_TIMESTAMP)
+[2025-08-20 15:38:46] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.fio, s.iin, s.gender, s.phone, s.university, s.relative_type, s.relative_phone,
+        s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability,
+        d.email, d.registration_city, d.registration_address, d.contract_number,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+      WHERE s.id = $1
+    
+[2025-08-20 15:38:46] INFO: 📤 Отправлено событие newStudent для комнаты A-301
+[2025-08-20 15:38:46] INFO: 🧾 SQL Query: SELECT id, occupied, places FROM rooms WHERE id = $1
+[2025-08-20 15:38:46] INFO: 📤 Отправлено событие globalUpdate
+[2025-08-20 15:38:46] INFO: 📤 Рассылаем обновление комнаты A-301: 2/7
+[2025-08-20 15:38:46] INFO: 📨 Получено сообщение от клиента: {"type":"roomUpdate","roomId":"A-301"}
+[2025-08-20 15:38:46] INFO: 🔁 Запрос обновления комнаты: A-301
+[2025-08-20 15:38:46] INFO: 🧾 SQL Query: SELECT id, occupied, places FROM rooms WHERE id = $1
+[2025-08-20 15:38:46] INFO: 🧾 SQL Query: 
+      SELECT 
+        r.id,
+        r.places,
+        COUNT(a.*) FILTER (WHERE a.has_left = false) AS occupied
+      FROM rooms r
+      LEFT JOIN selections s ON s.room_id = r.id
+      LEFT JOIN accommodation a ON a.student_id = s.student_id
+      GROUP BY r.id, r.places
+    
+[2025-08-20 15:38:46] INFO: 📤 Рассылаем обновление комнаты A-301: 2/7
+[2025-08-20 15:38:46] INFO: 📊 Получен актуальный статус занятости комнат (/api/rooms/status)
+[2025-08-20 15:38:46] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-20 15:38:46] INFO: 👥 Осталось подключено: 1
+[2025-08-20 15:38:46] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-20 15:38:46] INFO: 📦 Комнаты успешно получены (/api/rooms/all)

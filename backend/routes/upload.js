@@ -74,6 +74,8 @@ const storage = multer.diskStorage({
       name = `Фото ${cachedFullName}${ext}`;
     } else if (file.fieldname === "fluorography") {
       name = `Снимок флюорографии ${cachedFullName}${ext}`;
+    } else if (file.fieldname === "dormReferral") {
+      name = `Направление в общежитие ${cachedFullName}${ext}`;
     } else {
       name = `${file.fieldname} ${cachedFullName}${ext}`;
     }
@@ -105,6 +107,7 @@ router.post(
     { name: "universityProof", maxCount: 1 },
     { name: "selfie", maxCount: 1 },
     { name: "fluorography", maxCount: 1 },
+    { name: "dormReferral", maxCount: 1 },
   ]),
   (req, res) => {
     console.log("📥 Получен POST-запрос на загрузку файлов");
@@ -143,13 +146,15 @@ router.post(
     const proofOk = req.files?.universityProof?.length > 0;
     const selfieOk = req.files?.selfie?.length > 0;
     const fluorographyOk = req.files?.fluorography?.length > 0;
+    const dormReferralOk = req.files?.dormReferral?.length > 0;
 
-    if (!idCardOk || !proofOk || !selfieOk || !fluorographyOk) {
+    if (!idCardOk || !proofOk || !selfieOk || !fluorographyOk || !dormReferralOk) {
       console.warn("⚠️ Пропущенные файлы:", {
         idCard: idCardOk,
         universityProof: proofOk,
         selfie: selfieOk,
-        fluorography: fluorographyOk
+        fluorography: fluorographyOk,
+        dormReferral: dormReferralOk,
       });
       console.warn("⚠️ Информация о загруженных файлах:", req.files);
       console.error("❌ Ошибка: не все документы были загружены. Файлы:", Object.keys(req.files || {}));
@@ -212,7 +217,7 @@ router.post(
       });
     });
 
-    console.log("✅ Все 4 документа успешно получены и сохранены");
+    console.log("✅ Все 5 документов успешно получены и сохранены");
     console.log("📤 Ответ отправлен клиенту");
     res.json({ success: true, message: "Документы и договор успешно загружены" });
   }

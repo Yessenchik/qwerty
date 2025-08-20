@@ -28,6 +28,7 @@ router.get('/', async (req, res) => {
         a.payment,
         a.has_left,
         a.left_date,
+        a.paid,
         r.block,
         r.floor,
         r.id as room_id
@@ -70,6 +71,7 @@ router.get('/', async (req, res) => {
       { header: 'Выбыл?', key: 'has_left', width: 10 },
       { header: 'Дата выбытия', key: 'left_date', width: 15 },
 
+      { header: 'Статус оплаты', key: 'payment_status', width: 15 },
       { header: 'Выпускник', key: 'is_graduate', width: 10 },
       { header: 'Инвалидность', key: 'has_disability', width: 10 },
       { header: '№ договора', key: 'contract_number', width: 12 },
@@ -85,6 +87,7 @@ router.get('/', async (req, res) => {
         contract_number: s.contract_number || '–',
         card_number: s.card_number || '–',
         has_left: s.has_left ? 'Да' : 'Нет',
+        payment_status: s.paid ? 'Оплачено' : 'Не оплачено',
         is_graduate: s.is_graduate ? 'Да' : 'Нет',
         has_disability: s.has_disability ? 'Да' : 'Нет',
       });
