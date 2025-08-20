@@ -193,6 +193,26 @@
         }
       };
 
+      // === Helpers to normalize truthy/falsey payment values from API/DB ===
+      function isPaid(value) {
+        if (value === true) return true;
+        if (typeof value === "number") return value === 1;
+        if (typeof value === "string") {
+          const s = value.trim().toLowerCase();
+          return s === "1" || s === "true" || s === "yes" || s === "y";
+        }
+        return false;
+      }
+
+      function normalizePaidEverywhere() {
+        for (const room in students) {
+          students[room] = (students[room] || []).map(s => ({
+            ...s,
+            paid: isPaid(s.paid)
+          }));
+        }
+      }
+
       function addMonths(date, months) {
         let d = new Date(date);
         d.setMonth(d.getMonth() + months);
@@ -532,6 +552,8 @@ socket.addEventListener("message", function (event) {
               date_added: now.toDateString(),
               cardNumber: student.card_number,
               contractNumber: student.contractNumber,
+              // normalize paid from DB (true/1/"1" -> true)
+              paid: isPaid(student.paid),
             };
 
             if (!students[roomId]) students[roomId] = [];
@@ -813,17 +835,15 @@ socket.addEventListener("message", function (event) {
               moveOutDateFormatted = temp.toISOString().split("T")[0];
             }
 
-            // Определяем статус оплаты для активных студентов
-            let paymentStatusHtml = '';
-            if (student.paid === true) {
-              paymentStatusHtml = `<p><strong>Статус оплаты:</strong>
+            // Определяем статус оплаты для активных студентов (надёжная нормализация)
+            const paidBool = isPaid(student.paid);
+            const paymentStatusHtml = paidBool
+              ? `<p><strong>Статус оплаты:</strong>
                 <span style="color: green;">Оплачено</span>
-              </p>`;
-            } else {
-              paymentStatusHtml = `<p><strong>Статус оплаты:</strong>
+              </p>`
+              : `<p><strong>Статус оплаты:</strong>
                 <span style="color: red;">Не оплачено</span>
               </p>`;
-            }
 
             // Safely resolve card number from camelCase or snake_case
             const cardNum = student.cardNumber ?? student.card_number ?? "—";
@@ -908,6 +928,9 @@ socket.addEventListener("message", function (event) {
               }, 2500);
             }
 
+            // Определяем статус оплаты для выбывших (надёжная нормализация)
+            const paidBoolDeparted = isPaid(student.paid);
+
             studentDiv.innerHTML = `
               <p><strong>ФИО:</strong> ${student.fio}</p>
               <p><strong>ИИН:</strong> ${student.iin}</p>
@@ -919,6 +942,7 @@ socket.addEventListener("message", function (event) {
               <p><strong>Срок аренды:</strong> ${student.rentalPeriod} мес.</p>
               <p><strong>Плановая дата окончания аренды:</strong> ${moveOutDateFormatted}</p>
               <p><strong>Фактическая дата выбытия:</strong> ${leftDateFormatted}</p>
+              <p><strong>Статус оплаты:</strong> <span style="color: ${paidBoolDeparted ? 'green' : 'red'};">${paidBoolDeparted ? 'Оплачено' : 'Не оплачено'}</span></p>
               <p><strong>Статус:</strong> Выбывший</p>
               <button class="btn btn-danger" onclick="deleteStudent('${room}', '${student.iin}')">Удалить</button>
               <hr>
@@ -1039,6 +1063,44 @@ socket.addEventListener("message", function (event) {
           });
       }
       // --- Дополнительные функции для работы со студентами ---
+
+      // --- Ингест данных студентов с бэкенда (нормализация полей и статусов) ---
+      // Ожидает массив вида [{ fio, iin, phone, university, payment, paid, has_left, left_date, move_in_date, rental_period, room_id, ... }]
+      function ingestStudentsFromApi(rawList) {
+        if (!Array.isArray(rawList)) return;
+        const byRoom = {};
+        rawList.forEach((x) => {
+          const room = normalizeRoomId(x.room_id || x.roomId || x.room || "");
+          if (!room) return;
+          const normalized = {
+            fio: x.fio || "",
+            iin: x.iin || "",
+            phone: x.phone || "",
+            university: x.university || "",
+            relative: x.relative_type || x.relative || "",
+            relativePhone: x.relative_phone || x.relativePhone || "",
+            payment: Number(x.payment || 0),
+            paid: isPaid(x.paid),
+            left: Boolean(x.has_left || x.left),
+            leftDate: x.left_date || x.leftDate || "",
+            moveInDate: x.move_in_date || x.moveInDate || "",
+            rentalPeriod: x.rental_period || x.rentalPeriod || "",
+            cardNumber: x.cardNumber ?? x.card_number ?? null,
+            contractNumber: x.contractNumber ?? x.contract_number ?? null,
+            room_number: x.room_id || x.room_number || "",
+          };
+          if (!byRoom[room]) byRoom[room] = [];
+          byRoom[room].push(normalized);
+        });
+        // Сливаем в глобальный объект students
+        for (const room in byRoom) {
+          if (!students[room]) students[room] = [];
+          // Заменяем список по комнате на свежие данные от API
+          students[room] = byRoom[room];
+        }
+        normalizePaidEverywhere();
+        updateGlobalStats();
+      }
       function markStudentAsPaid(iin, roomId) {
         fetch("/api/students/mark-paid", {
           method: "POST",
@@ -1049,6 +1111,14 @@ socket.addEventListener("message", function (event) {
           .then(data => {
             if (data.success) {
               showToast("✅ Оплата подтверждена", "success");
+              // локально обновляем статус оплаты
+              const list = students[roomId] || [];
+              const st = list.find(s => s.iin === iin);
+              if (st) st.paid = true;
+              // если сейчас открыта модалка досье по этой комнате — перерисуем
+              if (document.getElementById("dossierModal").style.display === "flex" && currentRoom === roomId) {
+                openDossierModal(roomId);
+              }
               openNotificationsModal(); // обновить модалку
             } else {
               showToast("❌ Ошибка при обновлении оплаты", "error");
@@ -1395,7 +1465,8 @@ socket.addEventListener("message", function (event) {
         const noCardStudents = [];
         Object.entries(students).forEach(([roomId, arr]) => {
           arr.forEach(student => {
-            if (!student.left && (!student.cardNumber || student.cardNumber === "—")) {
+            const cardNumLocal = student.cardNumber ?? student.card_number ?? "";
+            if (!student.left && (!cardNumLocal || cardNumLocal === "—")) {
               noCardStudents.push({
                 room: roomId,
                 full_name: student.fio || "",
@@ -1435,7 +1506,7 @@ socket.addEventListener("message", function (event) {
         const unpaidStudents = [];
         Object.entries(students).forEach(([roomId, arr]) => {
           arr.forEach(student => {
-            if (!student.left && student.paid !== true) {
+            if (!student.left && !isPaid(student.paid)) {
               unpaidStudents.push({
                 room: roomId,
                 full_name: student.fio || "",

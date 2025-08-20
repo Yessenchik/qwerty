@@ -46,30 +46,79 @@ function formatDate(dateString) {
   return `${day}.${month}.${year}`;
 }
 
+function normalizeTemplateErrors(err) {
+  if (!err) return [];
+  const errs = (err.properties && Array.isArray(err.properties.errors))
+    ? err.properties.errors
+    : [err];
+  return errs.map((e) => ({
+    id: e.properties && e.properties.id || e.id || "",
+    name: e.name || "",
+    message: e.message || "",
+    explanation: e.properties && e.properties.explanation || "",
+    file: e.properties && e.properties.file || "",
+    xtag: e.properties && e.properties.xtag || "",
+    context: e.properties && e.properties.context || "",
+    offset: e.properties && typeof e.properties.offset === 'number' ? e.properties.offset : null,
+    stack: e.stack || "",
+  }));
+}
+
+function writeTemplateErrorReport(outputFolder, report) {
+  try {
+    if (!fs.existsSync(outputFolder)) fs.mkdirSync(outputFolder, { recursive: true });
+    const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+    const file = path.join(outputFolder, `docxtemplater-error-${stamp}.json`);
+    fs.writeFileSync(file, JSON.stringify(report, null, 2), 'utf-8');
+    return file;
+  } catch (_) {
+    return null;
+  }
+}
+
 async function generateContract(data, outputFolder) {
   const now = new Date();
   const day = now.getDate().toString().padStart(2, "0");
-  const month = now.toLocaleString("ru-RU", { month: "long" });
+  const monthIndex = now.getMonth(); // 0-11
+  const monthRu = [
+    "январь", "февраль", "март", "апрель", "май", "июнь",
+    "июль", "август", "сентябрь", "октябрь", "ноябрь", "декабрь"
+  ][monthIndex];
+  const monthKz = [
+    "қаңтар", "ақпан", "наурыз", "сәуір", "мамыр", "маусым",
+    "шілде", "тамыз", "қыркүйек", "қазан", "қараша", "желтоқсан"
+  ][monthIndex];
   const year = now.getFullYear();
   const contractNumber = getNextContractNumber(outputFolder);
 
   const templatePath = path.resolve(
     __dirname,
-    "../templates/1contract-template.docx"
+    "../templates/pph.docx"
   );
   const content = fs.readFileSync(templatePath, "binary");
 
   const zip = new PizZip(content);
-  const doc = new Docxtemplater(zip, {
-    paragraphLoop: true,
-    linebreaks: true,
-    delimiters: { start: '<<', end: '>>' },
-  });
+  let doc;
+  try {
+    doc = new Docxtemplater(zip, {
+      paragraphLoop: true,
+      linebreaks: true,
+      delimiters: { start: '<<', end: '>>' },
+    });
+  } catch (error) {
+    const norm = normalizeTemplateErrors(error);
+    const report = { stage: 'constructor', error: norm };
+    const saved = writeTemplateErrorReport(outputFolder, report);
+    console.error(JSON.stringify(report, null, 2));
+    if (saved) console.error(`📄 Подробный отчёт об ошибке сохранён: ${saved}`);
+    throw error;
+  }
 
   doc.setData({
     contractNumber,
     day,
-    month,
+    monthRu,
+    monthKz,
     year,
     fio: data.fio,
     shortFio: data.shortFio,
@@ -91,13 +140,11 @@ async function generateContract(data, outputFolder) {
   try {
     doc.render();
   } catch (error) {
-    const e = {
-      message: error.message,
-      name: error.name,
-      stack: error.stack,
-      properties: error.properties,
-    };
-    console.error("❌ Ошибка генерации шаблона:", JSON.stringify(e, null, 2));
+    const norm = normalizeTemplateErrors(error);
+    const report = { stage: 'render', error: norm };
+    const saved = writeTemplateErrorReport(outputFolder, report);
+    console.error(JSON.stringify(report, null, 2));
+    if (saved) console.error(`📄 Подробный отчёт об ошибке сохранён: ${saved}`);
     throw error;
   }
 
@@ -130,7 +177,15 @@ async function generateContract(data, outputFolder) {
   return outputPath;
 }
 
-function findExistingContractByIin(folderPath, safeIin) {
+/*************  ✨ Windsurf Command ⭐  *************/
+  /**
+   * Find existing contract by IIN in a given folder.
+   *
+   * @param {string} folderPath - Path to the folder where to search.
+   * @param {string} safeIin - IIN without special characters.
+   * @returns {string} Path to the existing contract or null if not found.
+   */
+/*******  61d0fc4f-b4b2-4ab2-95ae-5d56f3aefa67  *******/function findExistingContractByIin(folderPath, safeIin) {
   if (!fs.existsSync(folderPath)) return null;
   try {
     const files = fs.readdirSync(folderPath);
@@ -289,6 +344,13 @@ router.get("/contracts/:iin", async (req, res) => {
   } catch (e) {
     console.error("❌ Ошибка при генерации .doc:", e.message);
     console.error("❌ Полный стек ошибки:", e.stack);
+    const normalized = normalizeTemplateErrors(e);
+    if (normalized.length) {
+      return res.status(500).json({
+        error: normalized,
+        hint: "Проверьте теги в шаблоне .docx. Каждый плейсхолдер должен быть в формате <<name>> без лишних символов."
+      });
+    }
     return res.status(500).send("Ошибка генерации договора");
   }
 });

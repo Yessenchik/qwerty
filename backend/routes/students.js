@@ -39,7 +39,7 @@ router.get('/', async (req, res) => {
       SELECT 
         s.*, s.card_number,
         d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
-        a.move_in_date, a.rental_period, a.payment, a.has_left, a.left_date,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
         sel.room_id
       FROM students s
       LEFT JOIN documents d ON s.id = d.student_id
@@ -94,8 +94,8 @@ router.post('/', async (req, res) => {
     );
 
     await db.query(
-      `INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, added_by, has_left, left_date)
-       VALUES ($1, $2, $3, $4, 'system', false, $2::date + make_interval(months => $3 - 1))`,
+      `INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, paid, added_by, has_left, left_date)
+       VALUES ($1, $2, $3, $4, false, 'system', false, $2::date + make_interval(months => $3 - 1))`,
       [studentId, moveInDate, rental_period, payment]
     );
 
@@ -111,7 +111,7 @@ router.post('/', async (req, res) => {
         s.card_number,
         d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability,
         d.email, d.registration_city, d.registration_address, d.contract_number,
-        a.move_in_date, a.rental_period, a.payment, a.has_left, a.left_date,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
         sel.room_id
       FROM students s
       LEFT JOIN documents d ON s.id = d.student_id
@@ -141,6 +141,7 @@ router.post('/', async (req, res) => {
       registrationCity: fullStudent.registration_city,
       registrationAddress: fullStudent.registration_address,
       payment: fullStudent.payment,
+      paid: fullStudent.paid,
       moveInDate: fullStudent.move_in_date,
       rentalPeriod: fullStudent.rental_period,
       left: fullStudent.has_left,
