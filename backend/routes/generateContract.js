@@ -228,7 +228,9 @@ function sendDocx(res, filePath) {
     );
     res.setHeader("Content-Length", stat.size);
   } catch (_) {}
-  return res.sendFile(filePath);
+  // Ensure absolute path for Express' res.sendFile
+  const absolutePath = path.resolve(filePath);
+  return res.sendFile(absolutePath);
 }
 
 const express = require("express");
@@ -238,7 +240,8 @@ router.get("/contracts/:iin", async (req, res) => {
   const iin = String(req.params.iin).trim();
   console.log("📥 Получен запрос на скачивание договора для IIN:", iin);
 
-  const baseDir = "/Users/yessenzhumagali/Desktop/contract";
+  // Use an absolute, cross-platform path relative to the project
+  const baseDir = path.resolve(__dirname, "../../contract");
 
   if (!fs.existsSync(baseDir)) {
     fs.mkdirSync(baseDir, { recursive: true });

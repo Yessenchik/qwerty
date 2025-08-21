@@ -825,10 +825,11 @@ socket.addEventListener("message", function (event) {
               highlight = 'style="background-color: #cce5ff;"';
             }
 
-            // Безопасная обработка moveInDate
+            // Безопасная обработка moveInDate (+1 день для отображения в модалке)
             const moveInDateObj = student.moveInDate ? new Date(student.moveInDate) : null;
             let moveInDateFormatted = "—";
             if (moveInDateObj && !isNaN(moveInDateObj)) {
+              moveInDateObj.setDate(moveInDateObj.getDate() + 1);
               moveInDateFormatted = moveInDateObj.toISOString().split("T")[0];
             }
             // Безопасная обработка moveOutDate
@@ -896,10 +897,11 @@ socket.addEventListener("message", function (event) {
             const plannedPayment = parseInt(student.rentalPeriod || "0") * 30 * 1000;
             const actualAmount = student.payment;
 
-            // Безопасная обработка moveInDate
+            // Безопасная обработка moveInDate (+1 день для отображения в модалке)
             const moveInDateObj = student.moveInDate ? new Date(student.moveInDate) : null;
             let moveInDateFormatted = "—";
             if (moveInDateObj && !isNaN(moveInDateObj)) {
+              moveInDateObj.setDate(moveInDateObj.getDate() + 1);
               moveInDateFormatted = moveInDateObj.toISOString().split("T")[0];
             }
             // Плановая дата окончания аренды (новая логика)
