@@ -668,7 +668,10 @@ socket.addEventListener("message", function (event) {
                 students[room].splice(index, 1);
                 showToast(`Студент удалён: ИИН ${data.iin}`, "info");
                 // generateBlocks(); // ❌ Удалено: мешает раскрытым этажам
-                if (currentRoom === room) openDossierModal(room);
+                const dossierModalEl = document.getElementById("dossierModal");
+                if (dossierModalEl && dossierModalEl.style.display === "flex" && currentRoom === room) {
+                  openDossierModal(room);
+                }
               }
             }
           }
@@ -684,7 +687,10 @@ socket.addEventListener("message", function (event) {
             }
             showToast(`Студент обновлён: ${data.student.fio}`, "info");
             // generateBlocks(); // ❌ Удалено: мешает раскрытым этажам
-            if (currentRoom === room) openDossierModal(room);
+            const dossierModalEl2 = document.getElementById("dossierModal");
+            if (dossierModalEl2 && dossierModalEl2.style.display === "flex" && currentRoom === room) {
+              openDossierModal(room);
+            }
             updateGlobalStats();
           }
           // === Новый блок: обработка события leftStudent ===
@@ -700,7 +706,10 @@ socket.addEventListener("message", function (event) {
             }
             showToast(`🚪 Студент выбыл: ${data.student?.fio || "Неизвестный"} из комнаты ${data.roomId}`, "warning");
             // Можно добавить обновление комнаты, если нужно (например, updateSingleRoom)
-            if (currentRoom === roomId) openDossierModal(roomId);
+            const dossierModalEl3 = document.getElementById("dossierModal");
+            if (dossierModalEl3 && dossierModalEl3.style.display === "flex" && currentRoom === roomId) {
+              openDossierModal(roomId);
+            }
             updateGlobalStats();
           }
 
@@ -820,7 +829,6 @@ socket.addEventListener("message", function (event) {
             const moveInDateObj = student.moveInDate ? new Date(student.moveInDate) : null;
             let moveInDateFormatted = "—";
             if (moveInDateObj && !isNaN(moveInDateObj)) {
-              moveInDateObj.setDate(moveInDateObj.getDate() + 1);
               moveInDateFormatted = moveInDateObj.toISOString().split("T")[0];
             }
             // Безопасная обработка moveOutDate
@@ -830,8 +838,8 @@ socket.addEventListener("message", function (event) {
               temp.setDate(temp.getDate() + 1);
               moveOutDateFormatted = temp.toISOString().split("T")[0];
             } else if (student.moveInDate && !isNaN(new Date(student.moveInDate))) {
-              const temp = addMonths(new Date(student.moveInDate), parseInt(student.rentalPeriod));
-              temp.setDate(temp.getDate() + 1);
+              const base = new Date(student.moveInDate);
+              const temp = addMonths(base, parseInt(student.rentalPeriod) - 1);
               moveOutDateFormatted = temp.toISOString().split("T")[0];
             }
 
@@ -892,24 +900,19 @@ socket.addEventListener("message", function (event) {
             const moveInDateObj = student.moveInDate ? new Date(student.moveInDate) : null;
             let moveInDateFormatted = "—";
             if (moveInDateObj && !isNaN(moveInDateObj)) {
-              moveInDateObj.setDate(moveInDateObj.getDate() + 1);
               moveInDateFormatted = moveInDateObj.toISOString().split("T")[0];
             }
             // Плановая дата окончания аренды (новая логика)
             let moveOutDateFormatted = "—";
             if (student.moveInDate && !isNaN(new Date(student.moveInDate)) && student.rentalPeriod) {
               const moveIn = new Date(student.moveInDate);
-              moveIn.setMonth(moveIn.getMonth() - 1); // на месяц назад
-              const moveOut = new Date(moveIn);
-              moveOut.setMonth(moveOut.getMonth() + parseInt(student.rentalPeriod));
-              moveOut.setDate(moveOut.getDate() + 1);
+              const moveOut = addMonths(moveIn, parseInt(student.rentalPeriod) - 1);
               moveOutDateFormatted = moveOut.toISOString().split("T")[0];
             }
             // Фактическая дата выбытия
             let leftDateFormatted = "—";
             if (student.leftDate && !isNaN(new Date(student.leftDate))) {
               const leftDateObj = new Date(student.leftDate);
-              leftDateObj.setDate(leftDateObj.getDate() + 1);
               leftDateFormatted = leftDateObj.toISOString().split("T")[0];
             }
 
@@ -984,7 +987,10 @@ socket.addEventListener("message", function (event) {
           return;
         }
 
-        student.rentalPeriod = String(parseInt(student.rentalPeriod || "0") + extraMonths);
+        const newMonths = parseInt(student.rentalPeriod || "0") + extraMonths;
+        student.rentalPeriod = String(newMonths);
+        // Мгновенно обновим локальную сумму оплаты, чтобы UI отобразил верное значение
+        student.payment = newMonths * 30000;
 
         // Лог перед отправкой запроса
         console.log("📤 Подтверждение продления:", { room, iin, newPeriod: student.rentalPeriod });
@@ -1051,8 +1057,35 @@ socket.addEventListener("message", function (event) {
         })
           .then(res => {
             if (res.ok) {
+              // 1) Обновляем локальное состояние
+              if (students[roomId]) {
+                const idx = students[roomId].findIndex(s => s.iin === iin);
+                if (idx !== -1) {
+                  students[roomId].splice(idx, 1);
+                }
+              }
+
               showToast("🗑️ Студент удалён", "info");
-              openNotificationsModal(); // обновить модалку
+
+              // 2) Если открыта модалка досье по этой комнате — перерисуем её
+              const dossierModalEl = document.getElementById("dossierModal");
+              if (dossierModalEl && dossierModalEl.style.display === "flex" && currentRoom === roomId) {
+                openDossierModal(roomId);
+              }
+
+              // 3) Обновим счётчик комнаты и глобальные статусы
+              const activeCount = (students[roomId] || []).filter(s => !s.left).length;
+              updateSingleRoom(roomId, {
+                places: roomCapacities[roomId] || 0,
+                occupied: activeCount
+              });
+              updateGlobalStats();
+
+              // 4) Если модалка уведомлений УЖЕ открыта — просто перерисуем её (но не открываем заново)
+              const notifModal = document.getElementById("notificationsModal");
+              if (notifModal && notifModal.style.display === "flex") {
+                openNotificationsModal();
+              }
             } else {
               showToast("❌ Ошибка при удалении", "error");
             }
@@ -1345,8 +1378,7 @@ socket.addEventListener("message", function (event) {
             let rent_end = null;
             const parsedDate = new Date(student.moveInDate);
             if (!isNaN(parsedDate) && student.rentalPeriod) {
-              rent_end = addMonths(parsedDate, parseInt(student.rentalPeriod));
-              rent_end.setDate(rent_end.getDate() + 1);
+              rent_end = addMonths(parsedDate, parseInt(student.rentalPeriod) - 1);
               rent_end.setHours(0, 0, 0, 0);
             }
             if (!rent_end || isNaN(rent_end)) return;
@@ -1368,12 +1400,10 @@ socket.addEventListener("message", function (event) {
             const rent_end_str = (() => {
               if (hasLeft && student.leftDate && !isNaN(new Date(student.leftDate))) {
                 const leftDateObj = new Date(student.leftDate);
-                leftDateObj.setDate(leftDateObj.getDate() + 1);
                 return leftDateObj.toISOString().split("T")[0];
               } else if (student.moveInDate && !isNaN(new Date(student.moveInDate)) && student.rentalPeriod) {
                 const moveIn = new Date(student.moveInDate);
-                const end = addMonths(moveIn, parseInt(student.rentalPeriod));
-                end.setDate(end.getDate() + 1);
+                const end = addMonths(moveIn, parseInt(student.rentalPeriod) - 1);
                 return end.toISOString().split("T")[0];
               }
               return "—";

@@ -95,7 +95,7 @@ router.post('/', async (req, res) => {
 
     await db.query(
       `INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, paid, added_by, has_left, left_date)
-       VALUES ($1, $2, $3, $4, false, 'system', false, $2::date + make_interval(months => $3 - 1))`,
+       VALUES ($1, $2, $3, $4, false, 'system', false, ($2::date + make_interval(months => ($3::int - 1))))`,
       [studentId, moveInDate, rental_period, payment]
     );
 
@@ -237,31 +237,71 @@ router.patch('/leave/:iin', async (req, res) => {
 
 // Обновление срока аренды
 router.post('/update-rental', async (req, res) => {
-  const { iin, room, rentalPeriod } = req.body;
-  logger.info(`✏️ Обновление срока аренды: ИИН = ${iin}, срок = ${rentalPeriod} мес.`);
-
+  // Ожидает: { iin, rentalPeriod }
   try {
-    const updateRes = await db.query(`
-      UPDATE accommodation
-      SET rental_period = $1,
-          left_date = move_in_date + make_interval(months => $1)
-      WHERE student_id = (SELECT id FROM students WHERE iin = $2)
-      RETURNING student_id
-    `, [rentalPeriod, iin]);
-
-    if (updateRes.rowCount === 0) {
-      return res.status(404).json({ success: false, error: "Студент не найден" });
+    const { iin, rentalPeriod } = req.body;
+    if (!iin || !rentalPeriod) {
+      return res.status(400).json({ success: false, error: 'iin and rentalPeriod are required' });
     }
 
-    const normalizedRoomId = normalizeRoomId(room);
-    broadcastRoomUpdate(normalizedRoomId);
-    broadcastGlobalUpdate();
-    broadcastStudentUpdated({ iin, rentalPeriod }, normalizedRoomId);
+    const months = parseInt(rentalPeriod, 10);
+    if (!Number.isInteger(months) || months <= 0) {
+      return res.status(400).json({ success: false, error: 'rentalPeriod must be a positive integer' });
+    }
 
-    res.json({ success: true });
+    // Логика:
+    // - rental_period := months
+    // - payment := months * 30000
+    // - left_date := если has_left=true, оставить как есть; иначе move_in_date + (months - 1) месяцев (тот же день месяца)
+    const result = await db.query(
+      `UPDATE accommodation
+         SET rental_period = $1,
+             payment = ($1::int * 30000),
+             left_date = CASE
+                           WHEN has_left THEN left_date
+                           ELSE (move_in_date + make_interval(months => ($1::int - 1)))
+                         END
+       WHERE student_id = (SELECT id FROM students WHERE iin = $2)
+       RETURNING student_id`,
+      [months, iin]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ success: false, error: 'student not found' });
+    }
+
+    // Получаем актуальные поля студента и комнату для рассылки по WS
+    const { rows: infoRows } = await db.query(
+      `SELECT s.iin, s.fio,
+              a.rental_period, a.payment, a.left_date, a.move_in_date,
+              sel.room_id
+       FROM students s
+       JOIN accommodation a ON a.student_id = s.id
+       LEFT JOIN selections sel ON sel.student_id = s.id
+       WHERE s.id = $1`,
+      [result.rows[0].student_id]
+    );
+
+    if (infoRows.length) {
+      const r = infoRows[0];
+      const normalizedRoomId = normalizeRoomId(r.room_id || '');
+      // Рассылаем обновления: комната, сам студент и глобальная статистика
+      broadcastRoomUpdate(normalizedRoomId);
+      broadcastStudentUpdated({
+        iin: r.iin,
+        fio: r.fio,
+        rentalPeriod: String(r.rental_period),
+        payment: Number(r.payment || 0),
+        leftDate: r.left_date,
+        moveInDate: r.move_in_date
+      }, normalizedRoomId);
+      broadcastGlobalUpdate();
+    }
+
+    return res.json({ success: true, student_id: result.rows[0].student_id });
   } catch (err) {
-    logger.error("❌ Ошибка при обновлении срока аренды: " + err.message);
-    res.status(500).json({ success: false, error: "Ошибка при обновлении срока аренды" });
+    console.error('update-rental error:', err);
+    return res.status(500).json({ success: false, error: 'internal_error' });
   }
 });
 
