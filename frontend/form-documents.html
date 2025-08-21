@@ -268,12 +268,23 @@
           />
         </label>
 
+
         <label>
           Снимок флюрографии:
           <input type="file" id="fluorographyScan" accept="image/*,application/pdf" />
           <img
             id="fluorographyPreview"
             alt="Предпросмотр флюорографии"
+            style="display: none; max-height: 150px; margin-top: 10px"
+          />
+        </label>
+
+        <label>
+          Направление в общежитие:
+          <input type="file" id="dormReferral" accept="image/*,application/pdf" />
+          <img
+            id="dormReferralPreview"
+            alt="Предпросмотр направления"
             style="display: none; max-height: 150px; margin-top: 10px"
           />
         </label>
@@ -396,12 +407,18 @@
       const fluorographyPreview = document.getElementById("fluorographyPreview");
       const selfieInput = document.getElementById("selfieUpload");
       const selfiePreview = document.getElementById("selfiePreview");
+      const dormReferralInput = document.getElementById("dormReferral");
+      const dormReferralPreview = document.getElementById("dormReferralPreview");
       // Превью для fluorography
       fluorographyInput.addEventListener("change", () => {
         previewFile(fluorographyInput, fluorographyPreview);
       });
       selfieInput.addEventListener("change", () => {
         previewFile(selfieInput, selfiePreview);
+      });
+      // Превью для Направления в общежитие
+      dormReferralInput.addEventListener("change", () => {
+        previewFile(dormReferralInput, dormReferralPreview);
       });
       const universityProofInput = document.getElementById("universityProof");
       const idCardPreview = document.getElementById("idCardPreview");
@@ -468,6 +485,8 @@
         universityProofPreview.style.display = "none";
         fluorographyPreview.src = "";
         fluorographyPreview.style.display = "none";
+        dormReferralPreview.src = "";
+        dormReferralPreview.style.display = "none";
         document.querySelectorAll(".field-error").forEach((e) => e.remove());
         document.querySelectorAll(".field-error-input").forEach((el) => {
           el.classList.remove("field-error-input");
@@ -633,6 +652,10 @@
       // --- Определяем selfieUpload только после всех innerHTML ---
       const selfieUpload = document.getElementById("selfieUpload");
 
+      // Получаем дату заселения из localStorage
+      const personalData = JSON.parse(localStorage.getItem("studentFormData") || "{}");
+      const settlementDate = personalData.moveInDate || "";
+
       form.onsubmit = function (e) {
         e.preventDefault();
 
@@ -710,6 +733,7 @@
         console.log("🪪 Удостоверение личности:", idCardInput?.files?.[0]);
         console.log("🏫 Справка с места учёбы:", universityProofInput?.files?.[0]);
         console.log("🩻 Снимок флюрографии:", fluorographyInput?.files?.[0]);
+        console.log("🏨 Направление в общежитие:", dormReferralInput?.files?.[0]);
         console.log("📸 Селфи:", selfieUpload?.files?.[0]);
 
 
@@ -733,6 +757,11 @@
         // 1. fluorographyInput
         if (!fluorographyInput.files.length) {
           showError(fluorographyInput, "Загрузите снимок флюорографии");
+          hasErrors = true;
+        }
+        // 1.c dormReferral (Направление в общежитие)
+        if (!dormReferralInput.files.length) {
+          showError(dormReferralInput, "Загрузите направление в общежитие");
           hasErrors = true;
         }
         // 2. selfieUpload (селфи)
@@ -825,19 +854,20 @@
             !idCardInput.files[0] ||
             !universityProofInput.files[0] ||
             !fluorographyInput.files[0] ||
+            !dormReferralInput.files[0] ||
             !selfieUpload.files[0]
           ) {
-            alert("❌ Один или несколько файлов отсутствуют. Загрузите все 4 документа.");
+            alert("❌ Один или несколько файлов отсутствуют. Загрузите все 5 документов.");
             return;
           }
           const formData = new FormData();
-          // Добавляем ФИО из personalData
           formData.append("firstName", personalData.firstName);
           formData.append("lastName", personalData.lastName);
           formData.append("middleName", personalData.middleName || "");
           formData.append("idCard", idCardInput.files[0]);
           formData.append("universityProof", universityProofInput.files[0]);
           formData.append("fluorography", fluorographyInput.files[0]);
+          formData.append("dormReferral", dormReferralInput.files[0]);
           // Формируем selfieBlob и добавляем в formData
           if (selfieUpload.files.length) {
             const selfieFile = selfieUpload.files[0];
@@ -857,7 +887,8 @@
           formData.append("documentIssuer", documentIssuerInput.value.trim());
           formData.append("isGraduate", isGraduateInput.value);
           formData.append("hasDisability", hasDisabilityInput.value);
-
+          // --- Добавляем settlementDate ---
+          formData.append("settlementDate", settlementDate);
           // --- Добавляем поля из form-personal.html и form-documents.html ---
           formData.append("iin", personalData.iin || "");
           formData.append("phone", personalData.phone || "");
@@ -870,8 +901,9 @@
           // Отправка на сервер
           console.log("📤 Отправляем данные на сервер...");
           const baseURL = location.origin;
-          console.log("🌐 fetch URL:", baseURL + "/api/upload");
-          fetch(baseURL + "/api/upload", {
+          const uploadUrl = `${baseURL}/api/upload?moveInDate=${encodeURIComponent(personalData.moveInDate || "")}`;
+          console.log("🌐 fetch URL:", uploadUrl);
+          fetch(uploadUrl, {
             method: "POST",
             body: formData,
           })

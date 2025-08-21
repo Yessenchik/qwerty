@@ -7,11 +7,20 @@ const fs = require("fs");
 const router = express.Router();
 
 // 📁 Папка для хранения документов
-const destinationRoot = "/Users/yessenzhumagali/Desktop/2025";
+const destinationRoot = "/Users/yessenzhumagali/Desktop/studentsdocs"; // 🔧 Укажи свою корневую папку
 
 // Кеш для ФИО
 let cachedFullName = "неизвестный";
 const clearedDirs = new Set();
+
+function getAcademicYearFolder(settleDateStr) {
+  const settleDate = new Date(settleDateStr);
+  const year = settleDate.getFullYear();
+  const month = settleDate.getMonth() + 1;
+  const startYear = month >= 8 ? year : year - 1;
+  const endYear = startYear + 1;
+  return `${startYear} - ${endYear}`;
+}
 
 // ⚙️ Настройка multer
 const storage = multer.diskStorage({
@@ -21,7 +30,20 @@ const storage = multer.diskStorage({
       return cb(new Error("Некорректное имя/фамилия — невозможно создать директорию"), null);
     }
     cachedFullName = `${req.body.lastName} ${req.body.firstName} ${req.body.middleName || ""}`.trim();
-    const studentDir = path.join(destinationRoot, cachedFullName);
+
+    const settleDate = req.query.moveInDate;
+    if (!settleDate) {
+      console.error("❌ Не указана дата заселения");
+      return cb(new Error("Не указана дата заселения — невозможно определить учебный год"), null);
+    }
+
+    const academicFolder = getAcademicYearFolder(settleDate);
+    const academicPath = path.join(destinationRoot, academicFolder);
+    const studentDir = path.join(academicPath, cachedFullName);
+
+    if (!fs.existsSync(academicPath)) {
+      fs.mkdirSync(academicPath, { recursive: true });
+    }
 
     if (!clearedDirs.has(studentDir)) {
       if (fs.existsSync(studentDir)) {
@@ -52,11 +74,16 @@ const storage = multer.diskStorage({
       name = `Фото ${cachedFullName}${ext}`;
     } else if (file.fieldname === "fluorography") {
       name = `Снимок флюорографии ${cachedFullName}${ext}`;
+    } else if (file.fieldname === "dormReferral") {
+      name = `Направление в общежитие ${cachedFullName}${ext}`;
     } else {
       name = `${file.fieldname} ${cachedFullName}${ext}`;
     }
 
-    const studentDir = path.join(destinationRoot, cachedFullName);
+    const settleDate = req.query.moveInDate;
+    const academicFolder = getAcademicYearFolder(settleDate);
+    const studentDir = path.join(destinationRoot, academicFolder, cachedFullName);
+
     const baseName = name.replace(ext, "");
     const existingFiles = fs.readdirSync(studentDir);
     existingFiles.forEach(file => {
@@ -80,6 +107,7 @@ router.post(
     { name: "universityProof", maxCount: 1 },
     { name: "selfie", maxCount: 1 },
     { name: "fluorography", maxCount: 1 },
+    { name: "dormReferral", maxCount: 1 },
   ]),
   (req, res) => {
     console.log("📥 Получен POST-запрос на загрузку файлов");
@@ -118,13 +146,15 @@ router.post(
     const proofOk = req.files?.universityProof?.length > 0;
     const selfieOk = req.files?.selfie?.length > 0;
     const fluorographyOk = req.files?.fluorography?.length > 0;
+    const dormReferralOk = req.files?.dormReferral?.length > 0;
 
-    if (!idCardOk || !proofOk || !selfieOk || !fluorographyOk) {
+    if (!idCardOk || !proofOk || !selfieOk || !fluorographyOk || !dormReferralOk) {
       console.warn("⚠️ Пропущенные файлы:", {
         idCard: idCardOk,
         universityProof: proofOk,
         selfie: selfieOk,
-        fluorography: fluorographyOk
+        fluorography: fluorographyOk,
+        dormReferral: dormReferralOk,
       });
       console.warn("⚠️ Информация о загруженных файлах:", req.files);
       console.error("❌ Ошибка: не все документы были загружены. Файлы:", Object.keys(req.files || {}));
@@ -187,7 +217,7 @@ router.post(
       });
     });
 
-    console.log("✅ Все 4 документа успешно получены и сохранены");
+    console.log("✅ Все 5 документов успешно получены и сохранены");
     console.log("📤 Ответ отправлен клиенту");
     res.json({ success: true, message: "Документы и договор успешно загружены" });
   }
