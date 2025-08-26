@@ -39,6 +39,7 @@ router.get('/', async (req, res) => {
       SELECT 
         s.*, s.card_number,
         d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
         a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
         sel.room_id
       FROM students s
@@ -95,7 +96,7 @@ router.post('/', async (req, res) => {
 
     await db.query(
       `INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, paid, added_by, has_left, left_date)
-       VALUES ($1, $2, $3, $4, false, 'system', false, ($2::date + make_interval(months => ($3::int - 1))))`,
+       VALUES ($1, $2, $3, $4, false, 'system', false, ($2::date + make_interval(months => $3::int)))`,
       [studentId, moveInDate, rental_period, payment]
     );
 
@@ -208,7 +209,8 @@ router.patch('/leave/:iin', async (req, res) => {
       UPDATE accommodation
       SET has_left = true,
           left_date = CURRENT_DATE,
-          payment = $2
+          payment = $2,
+          paid = true
       WHERE student_id = (SELECT id FROM students WHERE iin = $1)
       RETURNING student_id
     `, [iin, payment]);
@@ -252,14 +254,14 @@ router.post('/update-rental', async (req, res) => {
     // Логика:
     // - rental_period := months
     // - payment := months * 30000
-    // - left_date := если has_left=true, оставить как есть; иначе move_in_date + (months - 1) месяцев (тот же день месяца)
+    // - left_date := если has_left=true, оставить как есть; иначе move_in_date + (months) месяцев (тот же день месяца)
     const result = await db.query(
       `UPDATE accommodation
          SET rental_period = $1,
              payment = ($1::int * 30000),
              left_date = CASE
                            WHEN has_left THEN left_date
-                           ELSE (move_in_date + make_interval(months => ($1::int - 1)))
+                           ELSE (move_in_date + make_interval(months => $1::int))
                          END
        WHERE student_id = (SELECT id FROM students WHERE iin = $2)
        RETURNING student_id`,
@@ -364,6 +366,45 @@ router.post('/mark-paid', async (req, res) => {
   } catch (err) {
     logger.error("❌ Ошибка при обновлении оплаты: " + err.message);
     res.status(500).json({ success: false, error: "Ошибка при обновлении оплаты" });
+  }
+});
+
+// Массовая установка paid=true по истёкшим срокам аренды
+router.post('/mark-expired-paid', async (req, res) => {
+  logger.info('⏰ Проверка истёкших арен: установка paid=true');
+
+  try {
+    const updateRes = await db.query(`
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    `);
+
+    const updatedIds = updateRes.rows.map(r => r.student_id);
+
+    for (const studentId of updatedIds) {
+      const { rows } = await db.query(`
+        SELECT s.iin, s.fio, sel.room_id
+        FROM students s
+        LEFT JOIN selections sel ON sel.student_id = s.id
+        WHERE s.id = $1
+      `, [studentId]);
+
+      const info = rows[0] || {};
+      const normalizedRoomId = normalizeRoomId(info.room_id || '');
+      broadcastRoomUpdate(normalizedRoomId);
+      broadcastStudentUpdated({ iin: info.iin, paid: true }, normalizedRoomId);
+    }
+
+    if (updatedIds.length > 0) {
+      broadcastGlobalUpdate();
+    }
+
+    res.json({ success: true, updatedCount: updatedIds.length });
+  } catch (err) {
+    logger.error('❌ Ошибка при массовом обновлении paid: ' + err.message);
+    res.status(500).json({ success: false, error: 'Ошибка при обновлении статуса оплаты' });
   }
 });
 

@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Редактирование студентов</title>
+  <style>
+    :root { --gap: 12px; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:#f6f7f9; color:#111; }
+    header { position: sticky; top:0; z-index: 10; background: #fff; border-bottom: 1px solid #e6e8eb; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 16px; }
+
+    .search-bar { display:flex; gap: var(--gap); align-items:center; }
+    .search-bar input[type="text"]{ flex:1; padding: 12px 14px; border:1px solid #d0d7de; border-radius:10px; font-size: 16px; outline: none; }
+    .search-bar button{ padding: 12px 16px; border:1px solid #0a66c2; background:#0a66c2; color:#fff; border-radius:10px; font-size: 15px; cursor:pointer; }
+    .search-bar button:disabled{ opacity:.6; cursor:not-allowed; }
+
+    .list { display:block; margin-top:16px; }
+    .row { display:flex; gap:16px; align-items:center; padding:10px 12px; background:#fff; border:1px solid #e6e8eb; border-radius:10px; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+    .row + .row { margin-top:8px; }
+    .row.header { background:#f3f4f6; font-weight:600; box-shadow:none; }
+    .cell { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .cell.iin { flex:0 0 160px; }
+    .cell.room { flex:0 0 140px; }
+    .cell.id { flex:0 0 80px; }
+    .cell.status { flex:0 0 160px; display:flex; align-items:center; }
+    .badge{ display:inline-block; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:600; border:1px solid transparent; }
+    .badge.success{ color:#065f46; background:#d1fae5; border-color:#10b981; }
+    .badge.danger{ color:#7f1d1d; background:#fee2e2; border-color:#ef4444; }
+
+    .skeleton { animation: pulse 1.2s infinite ease-in-out; background: linear-gradient(90deg,#eee,#f5f5f5,#eee); background-size: 200% 100%; }
+    @keyframes pulse { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+    .btn{ padding:10px 14px; border-radius:10px; border:1px solid #d0d7de; background:#fff; cursor:pointer; }
+    .btn.primary{ background:#0a66c2; border-color:#0a66c2; color:#fff; }
+    .btn.danger{ background:#d92d20; border-color:#d92d20; color:#fff; }
+    .btn.warning{ background:#f59e0b; border-color:#f59e0b; color:#fff; }
+    .btn.success{ background:#16a34a; border-color:#16a34a; color:#fff; }
+
+    .stack{ display:flex; gap:var(--gap); flex-wrap: wrap; }
+
+    .empty{ text-align:center; color:#777; padding:40px 0; }
+    .error{ color:#c0392b; margin-top:8px; }
+    .hint{ color:#6b7280; font-size: 12px; }
+    .card{ border-radius:10px; }
+    /* === New clean modal === */
+    .dialog{ position:fixed; inset:0; display:none; place-items:center; padding:24px; z-index:1000; }
+    .dialog[aria-hidden="false"]{ display:grid; }
+    .dialog__backdrop{ position:absolute; inset:0; background:rgba(15,23,42,.55); backdrop-filter: blur(2px); animation: fadeIn .18s ease both; }
+    .dialog__panel{ position:relative; width:min(960px, 96vw); max-height:92vh; background:#fff; border:1px solid #e6e8eb; border-radius:14px; box-shadow:0 18px 48px rgba(0,0,0,.22); overflow:hidden; animation: popIn .18s ease both; display:flex; flex-direction:column; }
+    .dialog__header{ padding:14px 16px; border-bottom:1px solid #e6e8eb; display:flex; align-items:center; justify-content:space-between; }
+    .dialog__title{ margin:0; font-size:18px; }
+    .dialog__body{ padding:16px; overflow:auto; }
+    .dialog__footer{ padding:12px 16px; border-top:1px solid #e6e8eb; display:flex; gap:12px; justify-content:flex-end; }
+
+    .kv-grid{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:14px; }
+    @media (max-width: 720px){ .kv-grid{ grid-template-columns: 1fr; } .dialog{ padding:8px; } }
+    .kv{ background:#fff; border:1px solid #e6e8eb; border-radius:10px; padding:14px 16px; }
+    .kv__label{ font-size:12px; color:#6b7280; margin-bottom:6px; }
+    .kv__value{ font-size:15px; word-break:break-word; line-height:1.5; }
+    /* Inline edit visuals */
+    .kv--editable{ cursor:text; position:relative; }
+    .kv--editable:hover{ box-shadow:0 0 0 2px rgba(10,102,194,.12) inset; }
+    .kv--dirty{ box-shadow:0 0 0 2px rgba(10,102,194,.35) inset; }
+    .kv__value .inline-input{ width:100%; padding:11px 12px; border:1px solid #cfd7df; border-radius:10px; font-size:15px; line-height:1.4; outline:none; transition:border-color .15s, box-shadow .15s; background:#fff; }
+    .kv__value .inline-input:focus{ border-color:#0a66c2; box-shadow:0 0 0 3px rgba(10,102,194,.15); }
+    .kv__value .inline-input::placeholder{ color:#9aa3af; }
+    /* states: editing / changed */
+    .kv--editing{ border-color:#0a66c2 !important; box-shadow:0 0 0 2px rgba(10,102,194,.18) inset; }
+    .kv--changed{ border-color:#16a34a !important; box-shadow:0 0 0 2px rgba(22,163,74,.18) inset; }
+    /* error state */
+    .kv--error{ border-color:#dc2626 !important; box-shadow:0 0 0 2px rgba(220,38,38,.18) inset; }
+    .kv__error{ margin-top:6px; color:#dc2626; font-size:12px; line-height:1.3; }
+    /* form fields inside the dialog */
+    .form{ margin-top:12px; display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px; }
+    .field{ display:flex; flex-direction:column; gap:6px; }
+    .field label{ font-size:12px; color:#6b7280; }
+    .field input{ padding:12px 14px; border:1px solid #d0d7de; border-radius:10px; font-size:14px; outline:none; background:#fff; }
+    .dialog__footer .btn{ min-width: auto; }
+    .dialog__header .dialog__title{ padding-left:4px; }
+    @media (max-width: 720px){ .form{ grid-template-columns: 1fr; } }
+
+    @keyframes popIn{ from{ opacity:0; transform: translateY(10px) scale(.98); } to{ opacity:1; transform:none; } }
+    @keyframes fadeIn{ from{ opacity:0; } to{ opacity:1; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <form class="search-bar" id="searchForm">
+        <input id="q" type="text" placeholder="Поиск по ФИО или ИИН" autocomplete="off" />
+      </form>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="results" class="list" aria-live="polite"></div>
+    <div id="emptyState" class="empty" hidden>Начните с поиска студента по ФИО или ИИН.</div>
+  </main>
+
+
+  <!-- Новый диалог с данными студента -->
+  <div id="dialog" class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle" aria-hidden="true">
+    <div class="dialog__backdrop" data-close></div>
+    <div class="dialog__panel">
+      <div class="dialog__header">
+        <h2 id="dialogTitle" class="dialog__title">Данные студента</h2>
+        <div class="dialog__header-actions" style="display:flex; gap:8px; align-items:center;">
+          <button class="btn" data-close aria-label="Закрыть">✕</button>
+        </div>
+      </div>
+      <div class="dialog__body">
+        <div id="dialogGrid" class="kv-grid"></div>
+      </div>
+      <!-- Inline edit controls -->
+      <div class="dialog__footer" style="justify-content: space-between;">
+        <div class="footer-left" style="display:flex; gap:8px;">
+          <button id="btnMarkLeft" class="btn warning" title="Отметить как выбывшего">Отметить как выбывшего</button>
+          <button id="btnMarkPaid" class="btn success" title="Отметить как оплачено">Оплачено</button>
+          <button id="btnDeleteStudent" class="btn danger" title="Удалить студента">Удалить</button>
+        </div>
+        <div class="footer-right">
+          <button id="btnSaveAll" class="btn primary" title="Сохранить изменения">Сохранить изменения</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Используем единый префикс для бэкенда (если роутер смонтирован как app.use('/api/students', ...))
+    const API_PREFIX = '/api'; // поменяй на '' если без префикса
+    // === Работаем с текущими маршрутами backend ===
+    // GET   ${API_PREFIX}/students/           -> все студенты (будем фильтровать на клиенте)
+    // POST  ${API_PREFIX}/students/update-rental -> { iin, rentalPeriod }
+    // POST  ${API_PREFIX}/students/update-card   -> { iin, room, cardNumber }
+    // POST  ${API_PREFIX}/students/mark-paid    -> { iin }
+    // PATCH ${API_PREFIX}/students/leave/:iin   -> { payment }
+    // DELETE ${API_PREFIX}/students/delete/:iin
+
+    const resultsEl = document.getElementById('results');
+    const emptyEl = document.getElementById('emptyState');
+    const form = document.getElementById('searchForm');
+    const qInput = document.getElementById('q');
+
+    const dialog = document.getElementById('dialog');
+    const dialogGrid = document.getElementById('dialogGrid');
+    const btnDeleteStudent = document.getElementById('btnDeleteStudent');
+    const btnMarkLeft = document.getElementById('btnMarkLeft');
+    const btnMarkPaid = document.getElementById('btnMarkPaid');
+
+    const btnSaveAll = document.getElementById('btnSaveAll');
+
+    btnMarkPaid.addEventListener('click', async ()=>{
+      if(!currentStudent) return;
+      const iin = currentStudent.iin;
+      if(!iin) return alert('Неизвестен ИИН студента');
+      if(!confirm(`Отметить оплату для студента?\n${currentStudent.fio || ''}\nИИН: ${iin}`)) return;
+      try{
+        setLoading(btnMarkPaid, true);
+        await apiPost(`${API_PREFIX}/students/mark-paid`, { iin });
+        // Локально подсветим статус оплаты и перерисуем
+        pendingUpdates = {}; // очистим черновики, чтобы не мешали
+        await refreshAfterUpdate();
+        alert('Статус оплаты обновлён');
+      }catch(err){
+        alert(err.message || 'Ошибка при обновлении оплаты');
+      }finally{
+        setLoading(btnMarkPaid, false);
+      }
+    });
+
+btnMarkLeft.addEventListener('click', async ()=>{
+  if(!currentStudent) return;
+  const iin = currentStudent.iin;
+  if(!iin) return alert('Неизвестен ИИН студента');
+
+  // Текущее значение оплаты из UI/черновиков/модели
+  const originalPaymentRaw = pendingUpdates.payment ?? currentStudent.payment ?? 0;
+  const originalPayment = Number(String(originalPaymentRaw).replace(/\s/g,'').replace(',', '.')) || 0;
+
+  // Дата заселения и дата выбытия (сегодня)
+  const moveInStr = currentStudent.move_in_date || currentStudent.moveInDate || '';
+  const moveIn = moveInStr ? new Date(moveInStr) : null;
+  const endDate = new Date();
+  if(!moveIn || isNaN(moveIn)){
+    // если нет даты заселения, просто спросим сумму возврата от общей оплаты
+    const refundStr = prompt(`Введите сумму возврата (в ₸):`, '0');
+    if(refundStr === null) return;
+    const refund = parseInt(refundStr);
+    if (isNaN(refund) || refund < 0) { alert('Неверная сумма возврата'); return; }
+    const adjustedPayment = Math.max(0, originalPayment - refund);
+    await markLeftRequest(iin, adjustedPayment);
+    return;
+  }
+
+  // Нормализуем даты (00:00)
+  const start = new Date(moveIn);
+  const end = new Date(endDate);
+  start.setHours(0,0,0,0);
+  end.setHours(0,0,0,0);
+
+  // Подсчёт фактической суммы по дням проживания (30 000 / дней в месяце)
+  let totalCalculated = 0;
+  let current = new Date(start);
+  while(current <= end){
+    const y = current.getFullYear();
+    const m = current.getMonth();
+    const daysInMonth = new Date(y, m + 1, 0).getDate();
+    const startDay = (y === start.getFullYear() && m === start.getMonth()) ? start.getDate() : 1;
+    const endDay = (y === end.getFullYear() && m === end.getMonth()) ? end.getDate() : daysInMonth;
+    const livedDays = endDay - startDay + 1;
+    const perDay = 30000 / daysInMonth;
+    totalCalculated += perDay * livedDays;
+    current = new Date(y, m + 1, 1);
+  }
+
+  const actualAmount = Math.round(totalCalculated);
+  const refundSuggested = Math.max(0, originalPayment - actualAmount);
+
+  const refundStr = prompt(
+    `Прожито с ${start.toLocaleDateString('ru-RU')} по ${end.toLocaleDateString('ru-RU')}\n` +
+    `Прожитые дни: ${Math.ceil((end - start) / (1000*60*60*24)) + 1} дней\n` +
+    `Сумма оплаты: ${originalPayment.toLocaleString('ru-RU')} ₸\n` +
+    `Фактическая сумма: ${actualAmount.toLocaleString('ru-RU')} ₸\n` +
+    `Сумма возврата: ${refundSuggested.toLocaleString('ru-RU')} ₸\n\n` +
+    `Введите сумму возврата (в ₸):`,
+    String(refundSuggested)
+  );
+  if(refundStr === null) return;
+
+  const refund = parseInt(refundStr);
+  if (isNaN(refund) || refund < 0) { alert('Неверная сумма возврата'); return; }
+
+  const adjustedPayment = Math.max(0, originalPayment - refund);
+  await markLeftRequest(iin, adjustedPayment);
+});
+
+async function markLeftRequest(iin, paymentNum){
+  try{
+    setLoading(btnMarkLeft, true);
+    await fetch(`${API_PREFIX}/students/leave/${encodeURIComponent(iin)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ payment: paymentNum })
+    }).then(res=>{
+      if(!res.ok) return res.json().then(j=>{ throw new Error(j.error || 'Ошибка при отметке как выбывшего'); });
+      return res.json();
+    });
+    pendingUpdates = {};
+    await refreshAfterUpdate();
+    alert('Студент отмечен как выбывший');
+  }catch(err){
+    alert(err.message || 'Ошибка при отметке как выбывшего');
+  }finally{
+    setLoading(btnMarkLeft, false);
+  }
+}
+    let currentStudent = null;
+    let pendingUpdates = {};
+    // Черновик для ФИО (фамилия, имя, отчество)
+    let fioDraft = { last: '', first: '', middle: '' };
+    function splitFio(str){
+      const parts = String(str || '').trim().replace(/\s+/g,' ').split(' ').filter(Boolean);
+      return {
+        last: parts[0] || '',
+        first: parts[1] || '',
+        middle: parts.slice(2).join(' ') || ''
+      };
+    }
+
+let cache = { students: [], loaded: false };
+    let dicts = { universities: [], loaded: false };
+    async function ensureUniversities(){
+      if (dicts.loaded && Array.isArray(dicts.universities) && dicts.universities.length) return;
+      try{
+        const res = await fetch('/data/universities.json', { cache: 'no-store' });
+        if(!res.ok) throw new Error('Не удалось загрузить список университетов');
+        const data = await res.json();
+        dicts.universities = Array.isArray(data) ? data.filter(Boolean) : [];
+        dicts.loaded = true;
+      }catch(e){
+        // Тихо игнорируем: оставим пустой список, будут подхвачены значения из базы
+        dicts.universities = [];
+        dicts.loaded = true;
+      }
+    }
+    function openDialog(){ dialog.setAttribute('aria-hidden','false'); }
+    function closeDialog(){ dialog.setAttribute('aria-hidden','true'); }
+    // close by backdrop / button / ESC
+    dialog.addEventListener('click', (e)=>{ if(e.target.matches('[data-close]')) closeDialog(); });
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeDialog(); });
+
+    function renderSkeleton(count=8){
+      resultsEl.innerHTML = '';
+      for(let i=0;i<count;i++){
+        const div = document.createElement('div');
+        div.className = 'card skeleton';
+        div.style.height = '44px';
+        resultsEl.appendChild(div);
+      }
+    }
+
+    function renderEmpty(text='Ничего не найдено'){
+      resultsEl.innerHTML = '';
+      emptyEl.textContent = text;
+      emptyEl.hidden = false;
+    }
+
+    function renderList(students){
+      resultsEl.innerHTML = '';
+      emptyEl.hidden = true;
+      if(!students || students.length===0){ renderEmpty(); return; }
+
+      const frag = document.createDocumentFragment();
+      // header
+      const header = document.createElement('div');
+      header.className = 'row header';
+      header.innerHTML = `
+        <div class="cell id">ID</div>
+        <div class="cell">ФИО</div>
+        <div class="cell iin">ИИН</div>
+        <div class="cell room">Комната</div>
+        <div class="cell status">Статус оплаты</div>
+      `;
+      frag.appendChild(header);
+
+      students.forEach(s=>{
+        const row = document.createElement('div');
+        row.className = 'row';
+        const id = escapeHtml(String(s.id ?? '—'));
+        const fio = escapeHtml(s.fio || '—');
+        const iin = escapeHtml(s.iin || '—');
+        const room = escapeHtml(toCyrillicRoom(String(s.room_id || '—')));
+        const paid = Boolean(s.paid);
+        const statusHtml = paid
+          ? '<span class="badge success">Оплачено</span>'
+          : '<span class="badge danger">Не оплачено</span>';
+        row.innerHTML = `
+          <div class="cell id" title="${id}">${id}</div>
+          <div class="cell" title="${fio}">${fio}</div>
+          <div class="cell iin" title="${iin}">${iin}</div>
+          <div class="cell room" title="${room}">${room}</div>
+          <div class="cell status">${statusHtml}</div>
+        `;
+        row.addEventListener('click', ()=> openStudent(s));
+        frag.appendChild(row);
+      });
+      resultsEl.appendChild(frag);
+    }
+
+    function sortByIdDesc(list){
+      return (list || []).slice().sort((a,b)=>{
+        const ai = Number(a && a.id || 0);
+        const bi = Number(b && b.id || 0);
+        return bi - ai; // desc
+      });
+    }
+
+    function toCyrillicRoom(room){
+      // заменяем только ведущую латинскую букву блока
+      return room.replace(/^([ABV])-/i, (m, p1)=>{
+        const map = { 'A':'А', 'B':'Б', 'V':'В' };
+        const repl = map[p1.toUpperCase()] || p1;
+        return repl + '-';
+      });
+    }
+
+    // ===== Русификация полей карточки =====
+    const RU_LABELS = {
+      // базовые
+      fio: 'ФИО',
+      iin: 'ИИН',
+      phone: 'Телефон',
+      email: 'Email',
+      document_email: 'Email из документов',
+      university: 'Университет',
+      room_id: 'Номер комнаты',
+      room: 'Комната',
+      // новые поля
+      rental_period: 'Срок аренды',
+      relative_type: 'Родсвенник',
+      relative_phone: 'Телефон номер родственника',
+      document_issuer: 'Орган выдавший документ',
+      registration_city: 'Город регистрации',
+      registration_address: 'Адрес регистрации',
+      // статусы/булевые
+      paid: 'Оплачено',
+      has_left: 'Статус',
+      is_graduate: 'Магистрант',
+      has_disability: 'Инвалидность',
+      gender: 'Пол',
+      // даты
+      document_issue_date: 'Дата выдачи документа',
+      move_in_date: 'Дата заселения',
+      left_date: 'Дата окончание аренды',
+      // деньги/номера
+      payment: 'Сумма оплаты',
+      contract_number: 'Номер договора',
+      contractNumber: 'Номер договора',
+      document_number: 'Номер документа',
+      card_number: 'Номер карты',
+      cardNumber: 'Номер карты',
+      created_at: 'Создан',
+      updated_at: 'Обновлён',
+      planned_payment: 'Плановая сумма оплаты',
+      actual_payment: 'Фактическая сумма оплаты',
+      planned_left_date: 'Плановая дата окончания',
+      actual_left_date: 'Фактическая дата окончания'
+    };
+
+    function ruLabel(key){
+      if (RU_LABELS[key]) return RU_LABELS[key];
+      // Fallback: key_with_underscores -> "Key with underscores"
+      const pretty = key.replace(/_/g,' ').replace(/\b\w/g, m=>m.toUpperCase());
+      return pretty;
+    }
+
+    // Какие поля редактируем как "только цифры"
+    const NUMERIC_EDITABLE_KEYS = new Set(['iin','card_number','cardNumber']);
+    const PHONE_KEYS = new Set(['phone','relative_phone']);
+    const NUMERIC_MAXLEN = { iin: 12, card_number: 10, cardNumber: 10 };
+    const PRICE_PER_MONTH = 30000; // 30 000 тг за месяц
+    function addMonths(date, months){
+      const d = new Date(date.getTime());
+      const day = d.getDate();
+      d.setMonth(d.getMonth() + months);
+      // корректировка для конца месяцев (31 -> 30/28 и т.п.)
+      if (d.getDate() < day) d.setDate(0);
+      return d;
+    }
+    function computePlannedFields(student){
+      const moveInStr = student.move_in_date || student.moveInDate;
+      const months = Number(student.rental_period || student.rentalPeriod || 0);
+      if(!moveInStr || !months || Number.isNaN(months)) return null;
+      const start = new Date(moveInStr);
+      if(isNaN(start)) return null;
+      const plannedEnd = addMonths(start, months);
+      const plannedPayment = months * PRICE_PER_MONTH;
+      return { plannedEnd, plannedPayment };
+    }
+
+    // Поля, редактируемые через select
+    const SELECT_EDITABLE_KEYS = new Set(['relative_type','university','gender','is_graduate','has_disability','rental_period']);
+
+    function uniqueNonEmpty(list){
+      return Array.from(new Set(list.map(v => String(v ?? '').trim()).filter(Boolean)));
+    }
+
+    // Подбор опций: фиксированные для пола/булевых, динамические — из кэша — для остальных
+    function getSelectOptionsForKey(key){
+      if(key === 'gender'){
+        return [
+          { value: 'male', label: 'Мужчина' },
+          { value: 'female', label: 'Женщина' }
+        ];
+      }
+      if(key === 'is_graduate' || key === 'has_disability'){
+        return [
+          { value: 'true', label: 'Да' },
+          { value: 'false', label: 'Нет' }
+        ];
+      }
+      if(key === 'university'){
+        const list = Array.isArray(dicts.universities) ? dicts.universities : [];
+        const opts = list.map(u => ({ value: String(u), label: String(u) }));
+        // на всякий случай добавим текущее значение, если его нет в словаре
+        const cur = String(currentStudent?.university ?? '').trim();
+        if(cur && !list.includes(cur)) opts.unshift({ value: cur, label: cur });
+        return opts;
+      }
+      if(key === 'rental_period'){
+        // 1–12 (только число в качестве label)
+        const months = Array.from({length:12}, (_,i)=> i+1);
+        return months.map(n => ({ value: String(n), label: String(n) }));
+      }
+      const values = uniqueNonEmpty((cache.students || []).map(s => s && s[key]));
+      if(currentStudent && currentStudent[key]){
+        const cur = String(currentStudent[key]).trim();
+        if(cur && !values.includes(cur)) values.unshift(cur);
+      }
+      return values.map(v => ({ value: v, label: v }));
+    }
+
+    function pluralMonths(n){
+      n = Number(n);
+      const mod10 = n % 10, mod100 = n % 100;
+      if(mod10 === 1 && mod100 !== 11) return `${n} месяц`;
+      if(mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return `${n} месяца`;
+      return `${n} месяцев`;
+    }
+    // Нормализация значения перед сохранением, чтобы типы совпадали с уже хранимыми
+    function normalizeSelectCommit(key, selectedValue){
+      if(key === 'is_graduate' || key === 'has_disability'){
+        const wasBool = typeof (currentStudent?.[key]) === 'boolean';
+        const asBool = (selectedValue === 'true' || selectedValue === true || selectedValue === 'Да');
+        return wasBool ? asBool : (asBool ? 'Да' : 'Нет');
+      }
+      if(key === 'gender'){
+        const raw = String(selectedValue);
+        const asRu = raw === 'male' ? 'Мужчина' : raw === 'female' ? 'Женщина' : raw;
+        const asEn = asRu === 'Мужчина' ? 'male' : asRu === 'Женщина' ? 'female' : raw;
+        const wasEn = ['male','female','m','f'].includes(String(currentStudent?.gender || '').toLowerCase());
+        return wasEn ? asEn : asRu;
+      }
+      if(key === 'rental_period'){
+        const prev = currentStudent?.rental_period;
+        const asNum = Number(selectedValue);
+        if(!Number.isNaN(asNum) && typeof prev === 'number') return asNum;
+        return String(selectedValue);
+      }
+      return selectedValue;
+    }
+
+    function formatRuValue(key, value){
+      if (value === null || value === undefined || value === '') return '—';
+      // Деньги: форматировать оплату как "60 000"
+      if (key === 'payment'){
+        const raw = String(value ?? '').replace(/\s/g, '');
+        const num = Number(raw.replace(',', '.'));
+        if (!Number.isNaN(num)){
+          // Intl в ru-RU даёт узкий неразрывный пробел, заменим его на обычный пробел
+          return new Intl.NumberFormat('ru-RU', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+            .format(num)
+            .replace(/[\u00A0\u202F]/g, ' ');
+        }
+        return String(value);
+      }
+      if (key === 'planned_payment' || key === 'actual_payment'){
+        return formatRuValue('payment', value);
+      }
+      if (key === 'planned_left_date' || key === 'actual_left_date'){
+        const d = new Date(value);
+        if(!isNaN(d)) return d.toLocaleDateString('ru-RU', { year:'numeric', month:'long', day:'numeric' });
+        return String(value);
+      }
+      if (key === 'rental_period'){
+        const n = Number(String(value).replace(/\D+/g,''));
+        if(!Number.isNaN(n) && n>0) return String(n);
+        return String(value);
+      }
+      // Статус выбытия: Активный / Выбывший
+      if (key === 'has_left'){
+        const b = (value === true || value === 'true' || value === 1 || value === '1');
+        return b ? 'Выбывший' : 'Активный';
+      }
+      // Boolean → Да/Нет
+      if (typeof value === 'boolean'){
+        return value ? 'Да' : 'Нет';
+      }
+      // Пол
+      if (key === 'gender'){
+        const v = String(value).trim().toLowerCase();
+        if (['male','m','м','муж','мужчина'].includes(v)) return 'Мужчина';
+        if (['female','f','ж','жен','женщина'].includes(v)) return 'Женщина';
+        // если пришло уже по-русски — вернуть как есть
+        return String(value);
+      }
+      // Даты по окончанию ключа _date
+      if (/(_date|At|_at)$/i.test(key)){
+        const d = new Date(value);
+        if (!isNaN(d)){
+          return d.toLocaleString('ru-RU', { year:'numeric', month:'long', day:'numeric' });
+        }
+      }
+      // Комната: латиницу в блоке → кириллица
+      if (key === 'room_id' || key === 'room'){
+        return toCyrillicRoom(String(value));
+      }
+      // Числа денег: просто отображаем как есть (бэкенд решает формат)
+      return String(value);
+    }
+
+    async function ensureLoaded(){
+      if (cache.loaded) return;
+      renderSkeleton();
+      const res = await fetch(`${API_PREFIX}/students/`);
+      if(!res.ok) throw new Error('Ошибка загрузки списка');
+      const data = await res.json();
+      cache.students = Array.isArray(data) ? data : [];
+      cache.students = sortByIdDesc(cache.students);
+      cache.loaded = true;
+    }
+
+
+    // Живой поиск по мере ввода (клиентский, без запросов на бэк)
+    const debounced = debounce(async () => {
+      try{
+        await ensureLoaded();
+        const raw = qInput.value.trim();
+        const base = raw ? filterStudents(cache.students, raw) : cache.students;
+        const list = sortByIdDesc(base);
+        renderList(list);
+      }catch(err){ console.error('[search error]', err); renderEmpty(err.message || 'Ошибка загрузки'); }
+    }, 150);
+
+    qInput.addEventListener('input', debounced);
+
+    function debounce(fn, wait){
+      let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn.apply(null,args), wait); };
+    }
+
+    // Helpers for search
+    function normalizeFio(str){
+      return String(str || '').toLowerCase().replace(/\s+/g,' ').trim();
+    }
+    function onlyDigits(str){
+      return String(str || '').replace(/\D+/g,'');
+    }
+
+    function normalizeKZPhoneDigits(raw){
+      let digits = String(raw||'').replace(/\D+/g,'');
+      if(!digits) return '';
+      if(digits[0] === '8') digits = '7' + digits.slice(1);
+      if(digits[0] !== '7') digits = '7' + digits;
+      return digits.slice(0,11);
+    }
+    function formatKZPhonePretty(digits){
+      const d = normalizeKZPhoneDigits(digits);
+      const a = d.slice(1,4);
+      const b = d.slice(4,7);
+      const c = d.slice(7,11);
+      let out = '+7';
+      if(a) out += ' ' + a;
+      if(b) out += ' ' + b;
+      if(c) out += ' ' + c;
+      return out.trim();
+    }
+
+    // Letters-only validation (supports all Unicode letters)
+    function isLettersOnly(str){
+      return /^[\p{L}]+$/u.test(String(str || '').trim());
+    }
+
+    // === Проверка уникальности ИИН ===
+    function isSameIin(iin){
+      return String(iin || '') === String(currentStudent?.iin || '');
+    }
+    async function isIinUnique(iin){
+      if(isSameIin(iin)) return true; // своё старое значение — ок
+      try{
+        const data = await apiFetch(`${API_PREFIX}/check-iin?iin=${encodeURIComponent(iin)}`);
+        return !data.exists; // true — уникален
+      }catch(err){
+        // пробросим ошибку наверх, чтобы показать в UI
+        throw err;
+      }
+    }
+
+    // ====== Error helpers and validation ======
+    function showFieldError(kvEl, message){
+      if(!kvEl) return;
+      kvEl.classList.add('kv--error');
+      let err = kvEl.querySelector('.kv__error');
+      if(!err){
+        err = document.createElement('div');
+        err.className = 'kv__error';
+        kvEl.appendChild(err);
+      }
+      err.textContent = message || '';
+    }
+    function clearFieldError(kvEl){
+      if(!kvEl) return;
+      kvEl.classList.remove('kv--error');
+      const err = kvEl.querySelector('.kv__error');
+      if(err){ err.remove(); }
+    }
+
+    function validateField(key, value){
+      // value — уже цифры (для телефонов — 11 цифр начиная с 7)
+      if(key === 'iin'){
+        if(!value) return 'ИИН обязателен';
+        if(value.length !== 12) return 'ИИН должен состоять из 12 цифр';
+        return null;
+      }
+      if(key === 'card_number' || key === 'cardNumber'){
+        if(!value) return null; // карта может быть пустой
+        if(value.length !== 10) return 'Номер карты должен состоять из 10 цифр';
+        return null;
+      }
+      if(key === 'phone'){
+        if(!value) return 'Телефон обязателен';
+        if(value.length !== 11 || value[0] !== '7') return 'Телефон должен содержать 11 цифр и начинаться с 7';
+        // проверка дубликата с relative_phone
+        const other = normalizeKZPhoneDigits(pendingUpdates.relative_phone ?? currentStudent?.relative_phone ?? '');
+        if(other && value === other) return 'Телефон номер и Телефон номер родственника не должны совпадать';
+        return null;
+      }
+      if(key === 'relative_phone'){
+        if(!value) return 'Телефон родственника обязателен';
+        if(value.length !== 11 || value[0] !== '7') return 'Телефон родственника: 11 цифр и начинается с 7';
+        // проверка дубликата с phone
+        const other = normalizeKZPhoneDigits(pendingUpdates.phone ?? currentStudent?.phone ?? '');
+        if(other && value === other) return 'Телефон номер и Телефон номер родственника не должны совпадать';
+        return null;
+      }
+      return null;
+    }
+    function validatePhoneDuplicates(){
+      const phoneVal = normalizeKZPhoneDigits(pendingUpdates.phone ?? currentStudent?.phone ?? '');
+      const relVal = normalizeKZPhoneDigits(pendingUpdates.relative_phone ?? currentStudent?.relative_phone ?? '');
+      const kvPhone = document.querySelector('.kv[data-key="phone"]');
+      const kvRel = document.querySelector('.kv[data-key="relative_phone"]');
+      if(phoneVal && relVal && phoneVal === relVal){
+        if(kvPhone) showFieldError(kvPhone, 'Телефон номер и Телефон номер родственника не должны совпадать');
+        if(kvRel) showFieldError(kvRel, 'Телефон номер и Телефон номер родственника не должны совпадать');
+        return false;
+      } else {
+        if(kvPhone) clearFieldError(kvPhone);
+        if(kvRel) clearFieldError(kvRel);
+        return true;
+      }
+    }
+
+    function enforceRequiredBeforeSave(updates){
+      const requiredKeys = ['iin','phone','relative_phone'];
+      let hasError = false;
+      requiredKeys.forEach((k)=>{
+        // вычисляем итоговое значение после сохранения
+        let val = updates.hasOwnProperty(k) ? updates[k] : (currentStudent?.[k] ?? '');
+        if(k === 'phone' || k === 'relative_phone') val = normalizeKZPhoneDigits(val);
+        if(k === 'iin') val = onlyDigits(val);
+        const err = validateField(k, String(val||''));
+        const kv = document.querySelector(`.kv[data-key="${k}"]`);
+        if(err && kv){ showFieldError(kv, err); hasError = true; }
+        if(!err && kv){ clearFieldError(kv); }
+      });
+      return !hasError;
+    }
+
+    function filterStudents(list, raw){
+      const q = String(raw || '').toLowerCase();
+      const letterTokens = q
+        .split(/[\s,;]+/)
+        .map(t => t.trim())
+        .filter(t => t && /[a-zа-яё]/i.test(t));
+      const qDigits = onlyDigits(q); // все цифры из запроса слепляются
+
+      if (letterTokens.length === 0 && !qDigits) return list.slice();
+
+      return list.filter(s => {
+        // ФИО: префиксное совпадение по каждому фрагменту
+        const fioParts = normalizeFio(s.fio).split(' ').filter(Boolean);
+        let fioOk = true;
+        if (letterTokens.length > 0) {
+          fioOk = letterTokens.every(tok => fioParts.some(part => part.startsWith(tok)));
+        }
+
+        // ИИН: префикс
+        const iin = onlyDigits(s.iin);
+        let iinOk = true;
+        if (qDigits) {
+          iinOk = iin.startsWith(qDigits);
+        }
+
+        // Если есть и буквы, и цифры — нужны оба условия; если есть только одно — достаточно его
+        if (letterTokens.length > 0 && qDigits) return fioOk && iinOk;
+        if (letterTokens.length > 0) return fioOk;
+        return iinOk; // осталось только число
+      });
+    }
+
+    function openStudent(student){
+      currentStudent = student;
+      // (Optional visual) Update title to include ID, ФИО, ИИН и номер комнаты
+      const title = document.getElementById('dialogTitle');
+      title.textContent = `id: ${student.id ?? '—'}  ${student.fio || '—'}  · ИИН ${student.iin || '—'}  · Комната ${toCyrillicRoom(String(student.room_id ?? student.room ?? '—'))}`;
+      // Генерация карточки ключ→значение на русском
+      const entries = Object.entries(student || {});
+      const keysSet = new Set(entries.map(([k]) => k));
+      if(entries.length===0){ dialogGrid.innerHTML = '<div class="hint">Нет данных</div>'; openDialog(); return; }
+      // Подготовим черновик ФИО и рендерим сначала его тройкой полей
+      fioDraft = splitFio(student.fio);
+      pendingUpdates = {};
+
+      // Дополнительные поля: добавляем в entries, чтобы сортировка FIELD_ORDER сработала
+      let extraEntries = [];
+      const isLeft = Boolean(student.has_left === true || student.has_left === 'true' || student.has_left === 1 || String(student.status||'').toLowerCase()==='выбывший');
+      if (isLeft){
+        const plan = computePlannedFields(student);
+        extraEntries.push(['planned_payment', plan ? plan.plannedPayment : null]);
+        extraEntries.push(['actual_payment', student.payment ?? null]);
+        extraEntries.push(['planned_left_date', plan ? plan.plannedEnd : null]);
+        extraEntries.push(['actual_left_date', student.left_date || student.leftDate || null]);
+      }
+      const listEntries = entries.concat(extraEntries);
+
+      const fioHtml = `
+        <div class="kv kv--editable" data-key="fio_last">
+          <div class="kv__label">Фамилия</div>
+          <div class="kv__value">${escapeHtml(fioDraft.last || '—')}</div>
+        </div>
+        <div class="kv kv--editable" data-key="fio_first">
+          <div class="kv__label">Имя</div>
+          <div class="kv__value">${escapeHtml(fioDraft.first || '—')}</div>
+        </div>
+        <div class="kv kv--editable" data-key="fio_middle">
+          <div class="kv__label">Отчество</div>
+          <div class="kv__value">${escapeHtml(fioDraft.middle || '—')}</div>
+        </div>`;
+
+      const restHtml = listEntries
+        .filter(([k]) => k !== 'fio' && k !== 'block')
+        .filter(([k]) => !(isLeft && (k === 'payment' || k === 'left_date' || k === 'leftDate')))
+        .filter(([k]) => {
+          if (k === 'contractNumber' && keysSet.has('contract_number')) return false;
+          if (k === 'cardNumber' && keysSet.has('card_number')) return false;
+          return true;
+        })
+        .map(([k,v])=>{
+          const label = ruLabel(k);
+          const val = formatRuValue(k, v);
+          const editableClass = (NUMERIC_EDITABLE_KEYS.has(k) || PHONE_KEYS.has(k) || SELECT_EDITABLE_KEYS.has(k)) ? ' kv--editable' : '';
+          return `
+            <div class="kv${editableClass}" data-key="${k}">
+              <div class="kv__label">${label}</div>
+              <div class="kv__value">${escapeHtml(val)}</div>
+            </div>
+          `;
+        }).join('');
+
+      dialogGrid.innerHTML = fioHtml + restHtml;
+
+      // Hide "Отметить как выбывшего" and "Оплачено" if student is left
+      if (typeof isLeft !== 'undefined') {
+        if (isLeft) {
+          btnMarkLeft.style.display = 'none';
+          btnMarkPaid.style.display = 'none';
+        } else {
+          btnMarkLeft.style.display = '';
+          btnMarkPaid.style.display = '';
+        }
+      }
+
+      openDialog();
+    }
+    // === Inline edit: select-поля ===
+    dialogGrid.addEventListener('click', (e)=>{
+      const kv = e.target.closest('.kv');
+      if(!kv) return;
+      const key = kv.getAttribute('data-key');
+      if(!SELECT_EDITABLE_KEYS.has(key)) return;
+      const valEl = kv.querySelector('.kv__value');
+      if (!valEl || valEl.dataset.editing === '1') return;
+
+      const currentRaw = currentStudent?.[key] ?? '';
+      const initialDisplay = formatRuValue(key, currentRaw);
+
+      kv.classList.add('kv--editing');
+      valEl.dataset.editing = '1';
+
+      const options = getSelectOptionsForKey(key);
+      const selectHtml = [
+        `<select class="inline-input">`,
+        ...options.map(o => {
+          const isSelected = (String(o.value) === String(currentRaw)) || (String(o.label) === String(initialDisplay));
+          return `<option value="${escapeHtml(o.value)}" ${isSelected? 'selected':''}>${escapeHtml(o.label)}</option>`;
+        }),
+        `</select>`
+      ].join('');
+
+      valEl.innerHTML = selectHtml;
+      const selectEl = valEl.querySelector('select');
+      selectEl.focus();
+
+      const markChanged = () => {
+        const committed = normalizeSelectCommit(key, selectEl.value);
+        const initialNorm = normalizeSelectCommit(key, currentRaw);
+        if (String(committed) !== String(initialNorm)) { kv.classList.add('kv--changed'); }
+        else { kv.classList.remove('kv--changed'); }
+      };
+      selectEl.addEventListener('change', markChanged);
+
+      const commit = () => {
+        kv.classList.remove('kv--editing');
+        const committed = normalizeSelectCommit(key, selectEl.value);
+        const initialNorm = normalizeSelectCommit(key, currentRaw);
+        valEl.dataset.editing = '0';
+        valEl.textContent = formatRuValue(key, committed);
+        kv.classList.remove('kv--changed');
+        clearFieldError(kv);
+        if(String(committed) !== String(initialNorm)){
+          pendingUpdates[key] = committed;
+          kv.classList.add('kv--changed');
+        } else {
+          delete pendingUpdates[key];
+        }
+        // Если изменили срок аренды — пересчитать оплату (30 000 за месяц)
+        if(key === 'rental_period'){
+          const months = Number(String(committed).replace(/\D+/g,''));
+          if(!Number.isNaN(months) && months>0){
+            const newPayment = months * PRICE_PER_MONTH;
+            const kvPay = document.querySelector('.kv[data-key="payment"]');
+            const curPayRaw = pendingUpdates.payment ?? currentStudent?.payment ?? '';
+            const curPayNum = Number(String(curPayRaw).replace(/\s/g,'').replace(',', '.')) || 0;
+            if (newPayment !== curPayNum){
+              // Обновим pendingUpdates и отрисовку поля Оплата
+              pendingUpdates.payment = newPayment;
+              if(kvPay){
+                const valPay = kvPay.querySelector('.kv__value');
+                if(valPay){ valPay.textContent = formatRuValue('payment', newPayment); }
+                kvPay.classList.add('kv--changed');
+              }
+            }
+          }
+        }
+      };
+
+      const cancel = () => {
+        kv.classList.remove('kv--editing');
+        valEl.dataset.editing = '0';
+        valEl.textContent = initialDisplay || '—';
+      };
+
+      selectEl.addEventListener('keydown', (ev)=>{
+        if(ev.key === 'Enter'){ ev.preventDefault(); commit(); }
+        if(ev.key === 'Escape'){ ev.preventDefault(); cancel(); }
+      });
+      selectEl.addEventListener('blur', commit);
+    });
+
+    // === Inline edit: телефоны (+7 XXX XXX XXXX) ===
+    dialogGrid.addEventListener('click', (e)=>{
+      const kv = e.target.closest('.kv');
+      if(!kv) return;
+      const key = kv.getAttribute('data-key');
+      if(!PHONE_KEYS.has(key)) return;
+      const valEl = kv.querySelector('.kv__value');
+      if (!valEl || valEl.dataset.editing === '1') return;
+
+      const initialDigits = normalizeKZPhoneDigits((pendingUpdates[key] ?? currentStudent?.[key] ?? ''));
+      kv.classList.add('kv--editing');
+      valEl.dataset.editing = '1';
+      valEl.innerHTML = `<input class="inline-input" type="text" inputmode="tel" value="${escapeHtml(formatKZPhonePretty(initialDigits))}" placeholder="+7 XXX XXX XXXX" />`;
+      const input = valEl.querySelector('input');
+      input.focus(); input.select();
+
+      input.addEventListener('input', ()=>{
+        const d = normalizeKZPhoneDigits(input.value);
+        input.value = formatKZPhonePretty(d);
+        // Показать статус изменения во время ввода, не затрагивая ошибки до коммита
+        if (d !== initialDigits) { kv.classList.add('kv--changed'); } else { kv.classList.remove('kv--changed'); }
+      });
+
+      const commit = () => {
+        kv.classList.remove('kv--editing');
+        const digits = normalizeKZPhoneDigits(input.value);
+        const err = validateField(key, digits);
+        const pretty = formatKZPhonePretty(digits);
+        valEl.dataset.editing = '0';
+        valEl.textContent = digits ? pretty : '—';
+
+        // Сначала сбросим состояния
+        kv.classList.remove('kv--changed');
+        clearFieldError(kv);
+
+        if(err){
+          // Ошибка → красный бордер и подпись, изменения не отправляем
+          showFieldError(kv, err); // добавит kv--error
+          pendingUpdates[key] = digits; // держим черновик
+          return;
+        }
+        // Валидно → зелёный бордер только если есть изменение
+        if(digits !== initialDigits){
+          pendingUpdates[key] = digits;
+          kv.classList.add('kv--changed');
+        } else {
+          delete pendingUpdates[key];
+        }
+        // Доп. проверка дубликатов сразу после фиксации
+        validatePhoneDuplicates();
+      };
+      const cancel = () => { kv.classList.remove('kv--editing'); valEl.dataset.editing = '0'; valEl.textContent = initialDigits ? formatKZPhonePretty(initialDigits) : '—'; };
+
+      input.addEventListener('keydown', (ev)=>{
+        if(ev.key === 'Enter'){ ev.preventDefault(); commit(); }
+        if(ev.key === 'Escape'){ ev.preventDefault(); cancel(); }
+      });
+      input.addEventListener('blur', commit);
+    });
+
+
+    async function refreshAfterUpdate(){
+      cache.loaded = false;
+      await ensureLoaded();
+      const raw = qInput.value.trim();
+      const base = raw ? filterStudents(cache.students, raw) : cache.students;
+      renderList(sortByIdDesc(base));
+      const updated = cache.students.find(s => String(s.id) === String(currentStudent?.id));
+      if(updated){ currentStudent = updated; }
+      // перерисуем карточку
+      if(currentStudent){ openStudent(currentStudent); }
+    }
+
+    function setLoading(btn, on){
+      if(!btn) return; btn.disabled = !!on; btn.dataset.loading = on ? '1' : '0';
+    }
+
+    // === Inline edit: ФИО (3 поля) ===
+    dialogGrid.addEventListener('click', (e)=>{
+      const kv = e.target.closest('.kv');
+      if(!kv) return;
+      const key = kv.getAttribute('data-key');
+      if(!['fio_last','fio_first','fio_middle'].includes(key)) return;
+      const valEl = kv.querySelector('.kv__value');
+      if (!valEl || valEl.dataset.editing === '1') return;
+      kv.classList.add('kv--editing');
+      const initial = key==='fio_last' ? fioDraft.last : key==='fio_first' ? fioDraft.first : fioDraft.middle;
+      const norm = (s) => String(s || '').trim();
+      kv.dataset.initial = norm(initial);
+      valEl.dataset.editing = '1';
+      valEl.innerHTML = `<input class="inline-input" type="text" value="${escapeHtml(initial)}" placeholder="Введите значение" />`;
+      const input = valEl.querySelector('input');
+      input.focus(); input.select();
+
+      // Разрешаем ввод только букв (Unicode Letter) — для Фамилии/Имени/Отчества
+      input.addEventListener('input', ()=>{
+        const cleaned = (input.value || '').replace(/[^\p{L}]+/gu, '');
+        if (cleaned !== input.value) input.value = cleaned;
+      });
+
+      // Live input listener to помечать изменения (должен идти после фильтра, чтобы сравнение шло по очищенному значению)
+      input.addEventListener('input', ()=>{
+        const cur = String(input.value || '').trim();
+        if (cur !== initial) { kv.classList.add('kv--changed'); } else { kv.classList.remove('kv--changed'); }
+      });
+
+      const commit = () => {
+        kv.classList.remove('kv--editing');
+        const norm = (s) => String(s || '').trim();
+        const newVal = norm(input.value);
+        const initialNorm = kv.dataset.initial ?? norm(initial);
+
+        // Сброс состояний перед проверками
+        kv.classList.remove('kv--changed');
+        clearFieldError(kv);
+
+        // Обязательность для Фамилии и Имени
+        if ((key === 'fio_last' || key === 'fio_first') && !newVal) {
+          showFieldError(kv, key === 'fio_last' ? 'Фамилия обязательна' : 'Имя обязательно');
+          valEl.dataset.editing = '0';
+          valEl.textContent = '—';
+          if (key==='fio_last') fioDraft.last = '';
+          if (key==='fio_first') fioDraft.first = '';
+          return;
+        }
+        // Только буквы (строго) — для всех трёх полей
+        if (newVal && !isLettersOnly(newVal)) {
+          showFieldError(kv, 'Допустимы только буквы (латиница/кириллица)');
+          valEl.dataset.editing = '0';
+          valEl.textContent = newVal; // показываем, что ввёл пользователь
+          if (key==='fio_last') fioDraft.last = newVal;
+          if (key==='fio_first') fioDraft.first = newVal;
+          if (key==='fio_middle') fioDraft.middle = newVal;
+          return;
+        }
+
+        // Валидно — обновляем отображение и черновик
+        valEl.dataset.editing = '0';
+        valEl.textContent = newVal || '—';
+        if (key==='fio_last') fioDraft.last = newVal;
+        if (key==='fio_first') fioDraft.first = newVal;
+        if (key==='fio_middle') fioDraft.middle = newVal;
+
+        // Зелёная рамка, если изменилось относительно значения на входе в редактирование
+        const changed = newVal !== initialNorm;
+        kv.classList.toggle('kv--changed', changed);
+      };
+      const cancel = () => {
+        kv.classList.remove('kv--editing');
+        valEl.dataset.editing = '0';
+        valEl.textContent = initial || '—';
+      };
+
+      input.addEventListener('keydown', (ev)=>{
+        if(ev.key === 'Enter'){ ev.preventDefault(); commit(); }
+        if(ev.key === 'Escape'){ ev.preventDefault(); cancel(); }
+      });
+      input.addEventListener('blur', commit);
+    });
+
+    // === Inline edit: числовые поля (только цифры) ===
+    dialogGrid.addEventListener('click', (e)=>{
+      const kv = e.target.closest('.kv');
+      if(!kv) return;
+      const key = kv.getAttribute('data-key');
+      if(!NUMERIC_EDITABLE_KEYS.has(key) || PHONE_KEYS.has(key)) return;
+      const valEl = kv.querySelector('.kv__value');
+      if (!valEl || valEl.dataset.editing === '1') return;
+
+      // текущее значение -> только цифры, ограничить по max
+      const initialRaw = String(pendingUpdates[key] ?? (currentStudent?.[key] ?? '')).trim();
+      const max = NUMERIC_MAXLEN[key] || '';
+      const initial = initialRaw.replace(/\D+/g,'').slice(0, max || Infinity);
+
+      kv.classList.add('kv--editing');
+      valEl.dataset.editing = '1';
+      valEl.innerHTML = `<input class="inline-input" type="text" inputmode="numeric" pattern="\\d*" ${max?`maxlength="${max}"`:''} value="${escapeHtml(initial)}" placeholder="Введите цифры" />`;
+      const input = valEl.querySelector('input');
+      input.focus(); input.select();
+
+      // валидация на каждый ввод — оставляем только цифры, ограничить по max
+      input.addEventListener('input', ()=>{
+        const max = NUMERIC_MAXLEN[key] || Infinity;
+        const digits = input.value.replace(/\D+/g,'').slice(0, max);
+        input.value = digits;
+        // Помечаем как изменённое прямо при вводе
+        if (digits !== initial) { kv.classList.add('kv--changed'); } else { kv.classList.remove('kv--changed'); }
+      });
+
+      const commit = async () => {
+        kv.classList.remove('kv--editing');
+        const newVal = String(input.value || '').trim();
+        const err = validateField(key, newVal);
+        valEl.dataset.editing = '0';
+        valEl.textContent = newVal || '—';
+
+        // Сначала сбросим состояния
+        kv.classList.remove('kv--changed');
+        clearFieldError(kv);
+
+        if(err){
+          showFieldError(kv, err);
+          pendingUpdates[key] = newVal; // держим черновик на экране
+          return;
+        }
+        // Доп.проверка: уникальность ИИН
+        if(key === 'iin' && newVal){
+          try{
+            const ok = await isIinUnique(newVal);
+            if(!ok){
+              showFieldError(kv, 'Такой ИИН уже используется');
+              pendingUpdates[key] = newVal;
+              return;
+            }
+          }catch(apiErr){
+            showFieldError(kv, apiErr.message || 'Не удалось проверить уникальность ИИН');
+            pendingUpdates[key] = newVal;
+            return;
+          }
+        }
+        if(newVal !== initial){
+          pendingUpdates[key] = newVal;
+          kv.classList.add('kv--changed');
+        } else {
+          delete pendingUpdates[key];
+        }
+      };
+      const cancel = () => { kv.classList.remove('kv--editing'); valEl.dataset.editing = '0'; valEl.textContent = initial || '—'; };
+
+      input.addEventListener('keydown', (ev)=>{
+        if(ev.key === 'Enter'){ ev.preventDefault(); commit(); }
+        if(ev.key === 'Escape'){ ev.preventDefault(); cancel(); }
+      });
+      input.addEventListener('blur', commit);
+    });
+
+
+    btnSaveAll?.addEventListener('click', async ()=>{
+      if(!currentStudent) return;
+      // Принудительно завершим активные инлайн-редактирования, чтобы сработали их валидации
+      document.querySelectorAll('.kv .kv__value .inline-input').forEach(el => el.blur());
+      const updates = { ...pendingUpdates };
+      // ФИО: фамилия и имя обязательны
+      const kvLast = document.querySelector('.kv[data-key="fio_last"]');
+      const kvFirst = document.querySelector('.kv[data-key="fio_first"]');
+      let fioHasError = false;
+      if (!fioDraft.last) { showFieldError(kvLast, 'Фамилия обязательна'); fioHasError = true; }
+      else { clearFieldError(kvLast); }
+      if (!fioDraft.first) { showFieldError(kvFirst, 'Имя обязательно'); fioHasError = true; }
+      else { clearFieldError(kvFirst); }
+      if (fioHasError) { alert('Заполните ФИО: фамилия и имя обязательны'); return; }
+      const joinedFio = [fioDraft.last, fioDraft.first, fioDraft.middle].map(s=>String(s||'').trim()).filter(Boolean).join(' ');
+      const currentFio = String(currentStudent.fio || '').trim();
+      if(joinedFio && joinedFio !== currentFio){ updates.fio = joinedFio; }
+      // Валидируем все изменённые поля из updates (доп. защита, если пользователь сразу нажал "Сохранить")
+      let changedHasErrors = false;
+      for (const [k, v] of Object.entries(updates)){
+        let value = v;
+        if (k === 'phone' || k === 'relative_phone') value = normalizeKZPhoneDigits(value);
+        if (k === 'iin') value = onlyDigits(value);
+        const err = validateField(k, String(value || ''));
+        if (err){
+          const kv = document.querySelector(`.kv[data-key="${k}"]`);
+          if (kv) showFieldError(kv, err);
+          changedHasErrors = true;
+        }
+      }
+      if (changedHasErrors){
+        alert('Исправьте ошибки в изменённых полях');
+        return;
+      }
+      // Повторно проверим уникальность ИИН, если он изменён
+      if (updates.hasOwnProperty('iin')){
+        try{
+          const ok = await isIinUnique(String(updates.iin || ''));
+          if(!ok){
+            const kvIin = document.querySelector('.kv[data-key="iin"]');
+            if(kvIin) showFieldError(kvIin, 'Такой ИИН уже используется');
+            alert('ИИН должен быть уникальным');
+            return;
+          }
+        }catch(apiErr){
+          const kvIin = document.querySelector('.kv[data-key="iin"]');
+          if(kvIin) showFieldError(kvIin, apiErr.message || 'Не удалось проверить уникальность ИИН');
+          alert('Не удалось проверить уникальность ИИН');
+          return;
+        }
+      }
+      // проверяем обязательные поля (даже если пользователь их не редактировал)
+      if(!enforceRequiredBeforeSave(updates)){
+        alert('Заполните обязательные поля');
+        return;
+      }
+      // проверка на совпадение телефонов
+      if(!validatePhoneDuplicates()){
+        alert('Исправьте ошибки: телефоны совпадают');
+        return;
+      }
+      // если есть ошибки — блокируем сохранение
+      if(document.querySelector('.kv--error')){
+        alert('Исправьте ошибки в полях перед сохранением');
+        return;
+      }
+      // если после всех проверок изменений нет — сообщим
+      if(Object.keys(updates).length === 0){
+        alert('Нет изменений для сохранения');
+        return;
+      }
+      try{
+        setLoading(btnSaveAll, true);
+        // Универсальный endpoint для частичных обновлений. Бэкенд: обновить поля по id.
+        await apiPost(`${API_PREFIX}/students/update-fields`, { id: currentStudent.id, updates });
+        // Локально обновим и перерисуем
+        Object.assign(currentStudent, updates);
+        pendingUpdates = {};
+        await refreshAfterUpdate();
+        // очистим визуальные индикаторы изменённости
+        document.querySelectorAll('.kv--changed').forEach(el=> el.classList.remove('kv--changed'));
+        alert('Изменения сохранены');
+      }catch(err){
+        alert(err.message || 'Ошибка сохранения изменений');
+      }finally{
+        setLoading(btnSaveAll, false);
+      }
+    });
+
+    btnDeleteStudent.addEventListener('click', async ()=>{
+      if(!currentStudent) return;
+      const iin = currentStudent.iin;
+      const fio = currentStudent.fio || '';
+      if(!iin) return;
+      if(!confirm(`Удалить студента?\n${fio}\nИИН: ${iin}`)) return;
+      try{
+        await apiFetch(`${API_PREFIX}/students/delete/${encodeURIComponent(iin)}`, { method: 'DELETE' });
+        // Перезагрузим список
+        cache.loaded = false;
+        await ensureLoaded();
+        const raw = qInput.value.trim();
+        const base = raw ? filterStudents(cache.students, raw) : cache.students;
+        renderList(sortByIdDesc(base));
+        closeDialog();
+      }catch(err){
+        alert(err.message || 'Ошибка при удалении');
+      }
+    });
+
+    async function apiPost(url, body){
+      return apiFetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+    }
+
+    async function apiFetch(url, options={}){
+      const res = await fetch(url, options);
+      if(!res.ok){
+        const t = await safeJson(res).catch(()=>({}));
+        throw new Error(t.error || t.message || 'Ошибка запроса');
+      }
+      return res.json().catch(()=>({}));
+    }
+
+    async function safeJson(res){ try{ return await res.json(); } catch{ return {}; } }
+
+    function escapeHtml(str){
+      return String(str ?? '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[s]));
+    }
+
+    // При загрузке страницы сразу тянем список и рендерим
+    (async ()=>{ try{ await ensureLoaded(); await ensureUniversities(); renderList(cache.students); } catch(e){ /* игнор, отобразится пустое состояние */ } })();
+    // Пустое состояние при загрузке
+    renderEmpty('Начните с поиска студента по ФИО или ИИН.');
+  </script>
+</body>
+</html>

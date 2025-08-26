@@ -1797,6 +1797,41 @@ socket.addEventListener("message", function (event) {
         if (event.target === todayAddedModal) closeTodayAddedModal();
         if (event.target === accountingModal) closeAccountingModal();
       });
+
+      // === Обновлять paid при загрузке страницы ===
+      function markExpiredPaidOnLoad() {
+        fetch('/api/students/mark-expired-paid', { method: 'POST' })
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.success) {
+              if (typeof showToast === 'function') {
+                showToast(`✅ Обновлено оплачено у ${data.updatedCount || 0} студентов`, 'success');
+              } else {
+                console.log('✅ mark-expired-paid success:', data);
+              }
+              // опционально: обновим уведомления/блоки, если модалки открыты
+              try { if (state?.modals?.notifications) openNotificationsModal(); } catch(e){}
+              try { updateGlobalStats(); } catch(e){}
+            } else {
+              if (typeof showToast === 'function') {
+                showToast('⚠️ Не удалось обновить статусы оплаты', 'error');
+              } else {
+                console.warn('mark-expired-paid response:', data);
+              }
+            }
+          })
+          .catch(err => {
+            if (typeof showToast === 'function') {
+              showToast('❌ Ошибка запроса mark-expired-paid', 'error');
+            }
+            console.error('mark-expired-paid error:', err);
+          });
+      }
+
+      // Вызывать функцию при каждой перезагрузке statistics.html
+      window.addEventListener('load', () => {
+        markExpiredPaidOnLoad();
+      });
 function openAccountingModal() {
   const monthlyData = {};
   const modal = document.getElementById("accountingModal");

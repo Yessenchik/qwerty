@@ -46,6 +46,22 @@ function formatDate(dateString) {
   return `${day}.${month}.${year}`;
 }
 
+function toCyrillicBlock(value) {
+  if (!value) return value;
+  const map = { 'A': 'А', 'B': 'Б', 'V': 'В', 'a': 'А', 'b': 'Б', 'v': 'В' };
+  const s = String(value).trim();
+  // If it's a single letter (most common case)
+  if (s.length === 1 && map[s]) return map[s];
+  // Otherwise replace standalone A/B/V tokens if they appear
+  return s.replace(/\b([ABVabv])\b/g, (m) => map[m] || m);
+}
+
+function formatRoom(value) {
+  if (!value) return value;
+  // Remove prefixes like A-, B-, V- (with optional dot)
+  return String(value).trim().replace(/^[ABVabv][.-]?/, "");
+}
+
 function normalizeTemplateErrors(err) {
   if (!err) return [];
   const errs = (err.properties && Array.isArray(err.properties.errors))
@@ -131,8 +147,8 @@ async function generateContract(data, outputFolder) {
     documentIssuer: data.documentIssuer,
     hasDisability: data.hasDisability,
     isGraduate: data.isGraduate,
-    block: data.block,
-    room: data.room,
+    block: toCyrillicBlock(data.block),
+    room: formatRoom(data.room),
     registrationCity: data.registrationCity,
     registrationAddress: data.registrationAddress,
   });
@@ -304,8 +320,8 @@ router.get("/contracts/:iin", async (req, res) => {
     documentIssuer: student.document_issuer || "",
     hasDisability: student.has_disability ? "Да" : "Нет",
     isGraduate: student.is_graduate ? "Да" : "Нет",
-    block: student.block || "___",
-    room: student.room_id || "___",
+    block: toCyrillicBlock(student.block) || "___",
+    room: formatRoom(student.room_id) || "___",
     registrationAddress: student.registration_address || "",
     registrationCity: student.registration_city || "",
     shortFio: shortFio,
