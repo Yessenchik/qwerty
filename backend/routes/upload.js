@@ -7,16 +7,25 @@ const fs = require("fs");
 const router = express.Router();
 
 // 📁 Папка для хранения документов
-const destinationRoot = "/Users/yessenzhumagali/Desktop/studentsdocs"; // 🔧 Укажи свою корневую папку
+const destinationRoot = process.env.DESTINATION_ROOT || path.join(__dirname, '..', '..', '..', 'studentsdocs');
+fs.mkdirSync(destinationRoot, { recursive: true });
 
 // Кеш для ФИО
 let cachedFullName = "неизвестный";
-const clearedDirs = new Set();
+
+function sanitizeName(s) {
+  return String(s || '')
+    .replace(/[\\/:*?"<>|]/g, '_')     // запрещённые в файловых системах символы
+    .replace(/\.{2,}/g, '.')            // многоточия
+    .replace(/\s+/g, ' ')               // лишние пробелы
+    .trim();
+}
 
 function getAcademicYearFolder(settleDateStr) {
-  const settleDate = new Date(settleDateStr);
-  const year = settleDate.getFullYear();
-  const month = settleDate.getMonth() + 1;
+  const d = settleDateStr ? new Date(settleDateStr) : null;
+  if (!d || isNaN(d)) return 'unknown-year';
+  const year = d.getFullYear();
+  const month = d.getMonth() + 1;
   const startYear = month >= 8 ? year : year - 1;
   const endYear = startYear + 1;
   return `${startYear} - ${endYear}`;
@@ -25,35 +34,25 @@ function getAcademicYearFolder(settleDateStr) {
 // ⚙️ Настройка multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    if (!req.body.firstName || !req.body.lastName) {
-      console.error("❌ Неверное ФИО: firstName или lastName отсутствует", req.body);
-      return cb(new Error("Некорректное имя/фамилия — невозможно создать директорию"), null);
+    const ln = sanitizeName(req.body && req.body.lastName);
+    const fn = sanitizeName(req.body && req.body.firstName);
+    const mn = sanitizeName(req.body && req.body.middleName);
+    cachedFullName = `${ln} ${fn} ${mn}`.trim();
+    if (!cachedFullName) {
+      cachedFullName = `unknown-${Date.now()}`;
     }
-    cachedFullName = `${req.body.lastName} ${req.body.firstName} ${req.body.middleName || ""}`.trim();
 
-    const settleDate = req.query.moveInDate;
+    const settleDate = (req.query && req.query.moveInDate) || (req.body && (req.body.settlementDate || req.body.moveInDate));
     if (!settleDate) {
-      console.error("❌ Не указана дата заселения");
-      return cb(new Error("Не указана дата заселения — невозможно определить учебный год"), null);
+      console.warn('No move-in date provided; using fallback folder');
     }
 
     const academicFolder = getAcademicYearFolder(settleDate);
     const academicPath = path.join(destinationRoot, academicFolder);
     const studentDir = path.join(academicPath, cachedFullName);
 
-    if (!fs.existsSync(academicPath)) {
-      fs.mkdirSync(academicPath, { recursive: true });
-    }
-
-    if (!clearedDirs.has(studentDir)) {
-      if (fs.existsSync(studentDir)) {
-        fs.rmSync(studentDir, { recursive: true, force: true });
-      }
-      fs.mkdirSync(studentDir, { recursive: true });
-      clearedDirs.add(studentDir);
-    }
-
-    cb(null, studentDir);
+    fs.mkdirSync(studentDir, { recursive: true });
+    return cb(null, studentDir);
   },
 
   filename: (req, file, cb) => {
@@ -80,9 +79,10 @@ const storage = multer.diskStorage({
       name = `${file.fieldname} ${cachedFullName}${ext}`;
     }
 
-    const settleDate = req.query.moveInDate;
+    const settleDate = (req.query && req.query.moveInDate) || (req.body && (req.body.settlementDate || req.body.moveInDate));
     const academicFolder = getAcademicYearFolder(settleDate);
     const studentDir = path.join(destinationRoot, academicFolder, cachedFullName);
+    if (!fs.existsSync(studentDir)) fs.mkdirSync(studentDir, { recursive: true });
 
     const baseName = name.replace(ext, "");
     const existingFiles = fs.readdirSync(studentDir);
@@ -98,7 +98,15 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  limits: { fileSize: 50 * 1024 * 1024 } // 50MB на файл
+});
+
+// Health check for quick connectivity tests
+router.get('/health', (req, res) => {
+  res.json({ ok: true, uptime: process.uptime() });
+});
 
 router.post(
   "/",
@@ -133,10 +141,13 @@ router.post(
       registrationAddress
     } = req.body;
 
-    const fullName = `${lastName} ${firstName} ${middleName || ""}`.trim();
+    const fullName = sanitizeName(`${lastName} ${firstName} ${middleName || ""}`.trim());
+    const settleDate = (req.query && req.query.moveInDate) || (req.body && (req.body.settlementDate || req.body.moveInDate));
+    const academicFolder = getAcademicYearFolder(settleDate);
+    const studentDir = path.join(destinationRoot, academicFolder, fullName);
+
     console.log("🧾 req.body:", req.body);
     console.log("📂 req.files:", req.files);
-    const studentDir = path.join(destinationRoot, fullName);
 
     if (!firstName || !lastName) {
       return res.status(400).json({ success: false, message: "ФИО обязательно" });
@@ -222,5 +233,17 @@ router.post(
     res.json({ success: true, message: "Документы и договор успешно загружены" });
   }
 );
+
+// Multer & generic error handler for uploads
+// eslint-disable-next-line no-unused-vars
+router.use((err, req, res, next) => {
+  if (err && err.code === 'LIMIT_FILE_SIZE') {
+    return res.status(413).json({ success: false, message: 'Размер файла слишком большой. Максимум 50MB на файл.' });
+  }
+  if (err && err.message) {
+    return res.status(400).json({ success: false, message: err.message });
+  }
+  next(err);
+});
 
 module.exports = router;

@@ -25,10 +25,10 @@ app.use(cors({
   methods: ["GET","HEAD","POST","PUT","PATCH","DELETE","OPTIONS"],
 }));
 const server = http.createServer(app);
-// Настройки таймаутов для защиты от slowloris и зависаний
-server.requestTimeout = 30_000;      // 30s на весь запрос
-server.headersTimeout = 65_000;      // должен быть > keepAliveTimeout
-server.keepAliveTimeout = 60_000;    // idle timeout соединения
+// Увеличенные таймауты для стабильных загрузок и множества одновременных соединений
+server.requestTimeout = 0;             // отключить общий лимит на запрос
+server.headersTimeout = 6 * 60_000;    // 6 минут (должен быть > keepAliveTimeout)
+server.keepAliveTimeout = 6 * 60_000;  // 6 минут idle timeout соединения
 // server.maxRequestsPerSocket = 0;  // при необходимости ограничить запросы на сокет
 app.disable('x-powered-by');
 
@@ -197,6 +197,11 @@ app.get("/", (req, res) => {
 // 🔗 Короткий путь /st → statistics.html
 app.get("/st", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/statistics.html"));
+});
+
+// 🔗 Короткий путь /e → edit.html
+app.get("/e", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/edit.html"));
 });
 
 // 404 Not Found

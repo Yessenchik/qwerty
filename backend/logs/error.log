@@ -1235,3 +1235,6 @@
 Запрос: INSERT INTO selections (student_id, room_id, selected_at)
        VALUES ($1, $2, CURRENT_TIMESTAMP)
 [2025-08-12 11:30:15] ERROR: Ошибка при добавлении студента: duplicate key value violates unique constraint "selections_pkey"
+[2025-08-29 18:28:35] ERROR: ❌ SQL Error: column "updated_at" of relation "students" does not exist
+Запрос: UPDATE students SET "fio" = $1, updated_at = NOW() WHERE id = $2
+[2025-08-29 18:28:35] ERROR: ❌ update-fields error: column "updated_at" of relation "students" does not exist

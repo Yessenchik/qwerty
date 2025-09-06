@@ -408,4 +408,165 @@ router.post('/mark-expired-paid', async (req, res) => {
   }
 });
 
+// Частичное обновление полей студента из модалки
+// POST /api/students/update-fields  -> { id: number, updates: { key: value, ... } }
+router.post('/update-fields', async (req, res) => {
+  const { id, updates } = req.body || {};
+  logger.info(`✏️ update-fields: id=${id}`);
+
+  if (!id || !updates || typeof updates !== 'object') {
+    return res.status(400).json({ error: 'id и updates обязательны' });
+  }
+
+  // Карта разрешённых ключей по таблицам
+  const STUDENTS = new Map([
+    ['fio', 'fio'],
+    ['iin', 'iin'],
+    ['gender', 'gender'],
+    ['phone', 'phone'],
+    ['university', 'university'],
+    ['relative', 'relative_type'], // фронт может прислать relative
+    ['relative_type', 'relative_type'],
+    ['relative_phone', 'relative_phone'],
+    ['cardNumber', 'card_number'], // фронт может прислать cardNumber
+    ['card_number', 'card_number'],
+  ]);
+
+  const DOCUMENTS = new Map([
+    ['document_number', 'document_number'],
+    ['document_issue_date', 'document_issue_date'],
+    ['document_issuer', 'document_issuer'],
+    ['is_graduate', 'is_graduate'],
+    ['has_disability', 'has_disability'],
+    ['email', 'email'],
+    ['registration_city', 'registration_city'],
+    ['registrationCity', 'registration_city'],
+    ['registration_address', 'registration_address'],
+    ['registrationAddress', 'registration_address'],
+    ['contract_number', 'contract_number'],
+    ['contractNumber', 'contract_number'],
+  ]);
+
+  const ACCOMMODATION = new Map([
+    ['move_in_date', 'move_in_date'],
+    ['moveInDate', 'move_in_date'],
+    ['rental_period', 'rental_period'],
+    ['rentalPeriod', 'rental_period'],
+    ['payment', 'payment'],
+    ['paid', 'paid'],
+    ['has_left', 'has_left'],
+    ['left', 'has_left'],
+    ['left_date', 'left_date'],
+    ['leftDate', 'left_date'],
+  ]);
+
+  const SELECTIONS = new Map([
+    ['room_id', 'room_id'],
+    ['room', 'room_id'],
+  ]);
+
+  // Нормализация значений
+  const normalize = (k, v) => {
+    if (k === 'paid' || k === 'has_left' || k === 'left') {
+      if (typeof v === 'string') {
+        const s = v.trim().toLowerCase();
+        return (s === 'true' || s === '1' || s === 'да' || s === 'yes');
+      }
+      return !!v;
+    }
+    if (k === 'rental_period' || k === 'rentalPeriod') {
+      const n = Number(String(v).replace(/\D+/g, ''));
+      return Number.isFinite(n) ? n : null;
+    }
+    if (k === 'payment') {
+      const num = Number(String(v).replace(/[\s\u00A0\u202F]/g, '').replace(',', '.'));
+      return Number.isFinite(num) ? num : null;
+    }
+    if (k === 'registration_city' || k === 'registrationCity') {
+      // приведение к виду "г.Астана" (без пробела)
+      let s = String(v || '').trim();
+      s = s.replace(/^(г\.?|город)\s*/i, '');
+      s = s.replace(/\s+/g, ' ').trim();
+      return s ? `г.${s}` : 'г.';
+    }
+    return v;
+  };
+
+  // Подготовка наборов по таблицам
+  const sSets = []; const sVals = [];
+  const dSets = []; const dVals = [];
+  const aSets = []; const aVals = [];
+  const selSets = []; const selVals = [];
+
+  for (const [k, v] of Object.entries(updates)) {
+    const nv = normalize(k, v);
+
+    if (STUDENTS.has(k)) { sSets.push(`"${STUDENTS.get(k)}" = $${sVals.length + 1}`); sVals.push(nv); continue; }
+    if (DOCUMENTS.has(k)) { dSets.push(`"${DOCUMENTS.get(k)}" = $${dVals.length + 1}`); dVals.push(nv); continue; }
+    if (ACCOMMODATION.has(k)) { aSets.push(`"${ACCOMMODATION.get(k)}" = $${aVals.length + 1}`); aVals.push(nv); continue; }
+    if (SELECTIONS.has(k)) { selSets.push(`"${SELECTIONS.get(k)}" = $${selVals.length + 1}`); selVals.push(nv); continue; }
+  }
+
+  if (!sSets.length && !dSets.length && !aSets.length && !selSets.length) {
+    return res.status(400).json({ error: 'Нет допустимых полей для обновления' });
+  }
+
+  try {
+    await db.query('BEGIN');
+
+    // STUDENTS
+    if (sSets.length) {
+      const sql = `UPDATE students SET ${sSets.join(', ')} WHERE id = $${sVals.length + 1}`;
+      await db.query(sql, [...sVals, id]);
+    }
+
+    // DOCUMENTS
+    if (dSets.length) {
+      const sql = `UPDATE documents SET ${dSets.join(', ')} WHERE student_id = $${dVals.length + 1}`;
+      await db.query(sql, [...dVals, id]);
+    }
+
+    // ACCOMMODATION
+    if (aSets.length) {
+      const sql = `UPDATE accommodation SET ${aSets.join(', ')} WHERE student_id = $${aVals.length + 1}`;
+      await db.query(sql, [...aVals, id]);
+    }
+
+    // SELECTIONS (если меняем комнату — обновим selected_at)
+    if (selSets.length) {
+      selSets.push('selected_at = CURRENT_TIMESTAMP');
+      const sql = `UPDATE selections SET ${selSets.join(', ')} WHERE student_id = $${selVals.length + 1}`;
+      await db.query(sql, [...selVals, id]);
+    }
+
+    // Получаем актуальную комнату и ключевые поля для WS
+    const { rows: infoRows } = await db.query(
+      `SELECT s.iin, s.fio, sel.room_id
+         FROM students s
+         LEFT JOIN selections sel ON sel.student_id = s.id
+        WHERE s.id = $1`,
+      [id]
+    );
+
+    await db.query('COMMIT');
+
+    const info = infoRows[0] || {};
+    const roomId = info.room_id || '';
+    const normalizedRoomId = normalizeRoomId(roomId);
+
+    // WS оповещения
+    if (normalizedRoomId) {
+      broadcastRoomUpdate(normalizedRoomId);
+      broadcastStudentUpdated({ iin: info.iin, fio: info.fio, ...updates }, normalizedRoomId);
+    }
+    broadcastGlobalUpdate();
+
+    return res.json({ success: true });
+  } catch (err) {
+    await db.query('ROLLBACK');
+    logger.error('❌ update-fields error: ' + err.message);
+    return res.status(500).json({ error: 'Ошибка при обновлении данных' });
+  }
+});
+
 module.exports = router;

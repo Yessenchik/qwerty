@@ -4,7 +4,41 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Редактирование студентов</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
   <style>
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+main.container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 180px); /* adjust based on header+search height */
+  overflow-y: auto;
+}
+header h1 { text-align:center; color:#0a66c2; font-weight:700; font-size:28px; margin:0; }
+.header-btn { padding:8px 12px; border-radius:8px; border:none; cursor:pointer; }
+  /* Flatpickr theming to match form-personal.html */
+  .flatpickr-day.selected,
+  .flatpickr-day.startRange,
+  .flatpickr-day.endRange,
+  .flatpickr-day.selected:focus,
+  .flatpickr-day.selected:hover {
+    background: #004d99;
+    border-color: #004d99;
+    color: #fff;
+  }
+  /* calendar icon inside inline date inputs */
+  .kv__value .inline-input.date-input {
+    padding-right: 36px;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='%23004d99' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 20px 20px;
+    appearance: none;
+    -webkit-appearance: none;
+  }
     :root { --gap: 12px; }
     * { box-sizing: border-box; }
     body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:#f6f7f9; color:#111; }
@@ -24,7 +58,12 @@
     .cell.iin { flex:0 0 160px; }
     .cell.room { flex:0 0 140px; }
     .cell.id { flex:0 0 80px; }
-    .cell.status { flex:0 0 160px; display:flex; align-items:center; }
+    .cell.status {
+      flex: 0 0 200px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between; /* расположить в один ряд: бейдж слева, точка справа */
+    }
     .badge{ display:inline-block; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:600; border:1px solid transparent; }
     .badge.success{ color:#065f46; background:#d1fae5; border-color:#10b981; }
     .badge.danger{ color:#7f1d1d; background:#fee2e2; border-color:#ef4444; }
@@ -37,6 +76,16 @@
     .btn.danger{ background:#d92d20; border-color:#d92d20; color:#fff; }
     .btn.warning{ background:#f59e0b; border-color:#f59e0b; color:#fff; }
     .btn.success{ background:#16a34a; border-color:#16a34a; color:#fff; }
+
+    /* sorting chips (ID / ФИО / Комната) */
+    .chips{ display:flex; gap:8px; align-items:center; justify-content:flex-end; margin:6px 0 8px; }
+    .auth-buttons .btn {
+      padding: 8px 14px;
+      font-size: 14px;
+    }
+    .chip{ padding:6px 10px; border-radius:999px; border:1px solid #e6e8eb; background:#f3f4f6; font-size:12px; cursor:pointer; }
+    .chip.active{ color:#0a66c2; border-color:#0a66c2; background:#e9f2ff; }
+    .chip .arrow{ margin-left:6px; font-size:12px; }
 
     .stack{ display:flex; gap:var(--gap); flex-wrap: wrap; }
 
@@ -83,16 +132,30 @@
 
     @keyframes popIn{ from{ opacity:0; transform: translateY(10px) scale(.98); } to{ opacity:1; transform:none; } }
     @keyframes fadeIn{ from{ opacity:0; } to{ opacity:1; } }
+  .status-circle {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-left: 8px;
+  }
+  .status-circle.active {
+    background-color: #16a34a; /* зеленая метка */
+  }
+  .status-circle.left {
+    background-color: #dc2626; /* красная метка */
+  }
   </style>
 </head>
 <body>
-  <header>
-    <div class="container">
-      <form class="search-bar" id="searchForm">
-        <input id="q" type="text" placeholder="Поиск по ФИО или ИИН" autocomplete="off" />
-      </form>
-    </div>
+  <header style="position: relative; padding: 24px 0; min-height: 100px;">
+    <h1 style="margin:0; text-align:center; color:#0a66c2; font-weight:700;">Государственный фонд "Астана-20"</h1>
+    <button id="logoutBtn" class="header-btn" style="background-color:#d9534f; color:white; position:absolute; top:10px; right:10px; border:none; padding:8px 14px; border-radius:8px;">Выйти</button>
   </header>
+
+  <form class="search-bar" id="searchForm" style="margin: 10px auto; max-width: 980px; justify-content:center;">
+    <input id="q" type="text" placeholder="Поиск по ФИО или ИИН" autocomplete="off" />
+  </form>
 
   <main class="container">
     <div id="results" class="list" aria-live="polite"></div>
@@ -127,7 +190,13 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
   <script>
+    // Проверка авторизации (как в statistics.html)
+    if (localStorage.getItem('token') !== 'ok') {
+      window.location.href = 'login.html';
+    }
     // Используем единый префикс для бэкенда (если роутер смонтирован как app.use('/api/students', ...))
     const API_PREFIX = '/api'; // поменяй на '' если без префикса
     // === Работаем с текущими маршрутами backend ===
@@ -150,6 +219,11 @@
     const btnMarkPaid = document.getElementById('btnMarkPaid');
 
     const btnSaveAll = document.getElementById('btnSaveAll');
+    // === Auth: logout logic ===
+    document.getElementById("logoutBtn").addEventListener("click", function () {
+      localStorage.removeItem("token");
+      window.location.href = "login.html";
+    });
 
     btnMarkPaid.addEventListener('click', async ()=>{
       if(!currentStudent) return;
@@ -271,6 +345,31 @@ async function markLeftRequest(iin, paymentNum){
 
 let cache = { students: [], loaded: false };
     let dicts = { universities: [], loaded: false };
+    // === Sorting state ===
+    let sortState = { key: 'id', dir: 'desc' }; // keys: id|fio|room
+    function applySort(list){
+      const { key, dir } = sortState;
+      const mul = dir === 'asc' ? 1 : -1;
+      const arr = (list || []).slice();
+      if(key === 'id'){
+        arr.sort((a,b)=> (Number(a?.id||0) - Number(b?.id||0)) * mul);
+      } else if(key === 'fio'){
+        arr.sort((a,b)=> String(a?.fio||'').localeCompare(String(b?.fio||''), 'ru') * mul);
+      } else if(key === 'room'){
+        // compare normalized rooms (A-101, Б-202, etc.) by block then number
+        const norm = (r)=> String(r||'').toUpperCase().replace(/^([А-ЯA-Z])[-_]?/, (m,p)=>{
+          const map = { 'A':'А', 'B':'Б', 'V':'В' };
+          return (map[p]||p) + '-';
+        });
+        const aRooms = arr;
+        arr.sort((a,b)=>{
+          const ra = norm(a?.room_id || a?.room || '');
+          const rb = norm(b?.room_id || b?.room || '');
+          return ra.localeCompare(rb, 'ru') * mul;
+        });
+      }
+      return arr;
+    }
     async function ensureUniversities(){
       if (dicts.loaded && Array.isArray(dicts.universities) && dicts.universities.length) return;
       try{
@@ -312,6 +411,51 @@ let cache = { students: [], loaded: false };
       emptyEl.hidden = true;
       if(!students || students.length===0){ renderEmpty(); return; }
 
+      // Counter only during search
+      const qVal = (qInput?.value || '').trim();
+      if(qVal){
+        const counter = document.createElement('div');
+        counter.style.cssText = 'margin: 6px 0 8px; color:#475569; font-size:14px; text-align:center;';
+        counter.textContent = `Найдено: ${students.length}`;
+        resultsEl.appendChild(counter);
+      }
+
+      // sorting chips (look like before under the counter)
+      const chips = document.createElement('div');
+      chips.className = 'chips';
+      chips.innerHTML = `
+        <button type="button" class="chip" data-sort-key="id">ID<span class="arrow"></span></button>
+        <button type="button" class="chip" data-sort-key="fio">ФИО<span class="arrow"></span></button>
+        <button type="button" class="chip" data-sort-key="room">Комната<span class="arrow"></span></button>
+      `;
+      resultsEl.appendChild(chips);
+
+      function refreshChipStyles(){
+        chips.querySelectorAll('.chip').forEach(ch=>{
+          const key = ch.getAttribute('data-sort-key');
+          const active = (key === sortState.key);
+          ch.classList.toggle('active', active);
+          const ar = ch.querySelector('.arrow');
+          ar.textContent = active ? (sortState.dir === 'asc' ? '↑' : '↓') : '';
+        });
+      }
+      refreshChipStyles();
+
+      chips.querySelectorAll('.chip').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const key = btn.getAttribute('data-sort-key');
+          if(sortState.key === key){
+            sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
+          } else {
+            sortState.key = key;
+            sortState.dir = (key === 'fio' || key === 'room') ? 'asc' : 'desc';
+          }
+          refreshChipStyles();
+          const sorted = applySort(students);
+          renderList(sorted);
+        });
+      });
+
       const frag = document.createDocumentFragment();
       // header
       const header = document.createElement('div');
@@ -341,7 +485,10 @@ let cache = { students: [], loaded: false };
           <div class="cell" title="${fio}">${fio}</div>
           <div class="cell iin" title="${iin}">${iin}</div>
           <div class="cell room" title="${room}">${room}</div>
-          <div class="cell status">${statusHtml}</div>
+          <div class="cell status">
+            ${statusHtml}
+            ${s.has_left ? '<span class="status-circle left" title="Выбывший"></span>' : '<span class="status-circle active" title="Активный"></span>'}
+          </div>
         `;
         row.addEventListener('click', ()=> openStudent(s));
         frag.appendChild(row);
@@ -350,11 +497,8 @@ let cache = { students: [], loaded: false };
     }
 
     function sortByIdDesc(list){
-      return (list || []).slice().sort((a,b)=>{
-        const ai = Number(a && a.id || 0);
-        const bi = Number(b && b.id || 0);
-        return bi - ai; // desc
-      });
+      sortState = { key: 'id', dir: 'desc' };
+      return applySort(list);
     }
 
     function toCyrillicRoom(room){
@@ -385,7 +529,7 @@ let cache = { students: [], loaded: false };
       registration_city: 'Город регистрации',
       registration_address: 'Адрес регистрации',
       // статусы/булевые
-      paid: 'Оплачено',
+      paid: 'Оплачено(Статус Оплаты)',
       has_left: 'Статус',
       is_graduate: 'Магистрант',
       has_disability: 'Инвалидность',
@@ -420,6 +564,7 @@ let cache = { students: [], loaded: false };
     const NUMERIC_EDITABLE_KEYS = new Set(['iin','card_number','cardNumber']);
     const PHONE_KEYS = new Set(['phone','relative_phone']);
     const NUMERIC_MAXLEN = { iin: 12, card_number: 10, cardNumber: 10 };
+    const TEXT_EDITABLE_KEYS = new Set(['document_number','document_issuer','registration_city','registration_address','email']);
     const PRICE_PER_MONTH = 30000; // 30 000 тг за месяц
     function addMonths(date, months){
       const d = new Date(date.getTime());
@@ -440,8 +585,41 @@ let cache = { students: [], loaded: false };
       return { plannedEnd, plannedPayment };
     }
 
+    // Единый пересчёт даты окончания аренды по текущим черновикам/данным
+    function recomputeLeaseEnd(){
+      const moveInRaw = pendingUpdates.move_in_date ?? currentStudent?.move_in_date ?? currentStudent?.moveInDate;
+      const monthsRaw = pendingUpdates.rental_period ?? currentStudent?.rental_period ?? currentStudent?.rentalPeriod;
+      const months = Number(String(monthsRaw ?? '').replace(/\D+/g,'')) || 0;
+      const start = moveInRaw ? new Date(moveInRaw) : null;
+
+      const kvEnd = document.querySelector('.kv[data-key="left_date"]');
+      // Если недостаточно данных — очищаем pending и возвращаем исходное отображение
+      if(!start || isNaN(start) || months <= 0){
+        delete pendingUpdates.left_date;
+        if(kvEnd){
+          kvEnd.classList.remove('kv--changed');
+          const valEnd = kvEnd.querySelector('.kv__value');
+          if(valEnd){
+            const base = currentStudent?.left_date || currentStudent?.leftDate || '';
+            valEnd.textContent = base ? formatRuValue('left_date', base) : '—';
+          }
+        }
+        return;
+      }
+
+      const end = addMonths(start, months);
+      const endYmd = toYMD(end);
+      pendingUpdates.left_date = endYmd;
+      if(kvEnd){
+        const valEnd = kvEnd.querySelector('.kv__value');
+        if(valEnd){ valEnd.textContent = formatRuValue('left_date', end); }
+        // Автоматический пересчёт: без зелёной рамки, чтобы не путать пользователя
+        kvEnd.classList.remove('kv--changed');
+      }
+    }
+
     // Поля, редактируемые через select
-    const SELECT_EDITABLE_KEYS = new Set(['relative_type','university','gender','is_graduate','has_disability','rental_period']);
+    const SELECT_EDITABLE_KEYS = new Set(['relative_type','university','gender','is_graduate','has_disability','rental_period','paid']);
 
     function uniqueNonEmpty(list){
       return Array.from(new Set(list.map(v => String(v ?? '').trim()).filter(Boolean)));
@@ -459,6 +637,18 @@ let cache = { students: [], loaded: false };
         return [
           { value: 'true', label: 'Да' },
           { value: 'false', label: 'Нет' }
+        ];
+      }
+      if(key === 'paid'){
+        return [
+          { value: 'true', label: 'Да' },
+          { value: 'false', label: 'Нет' }
+        ];
+      }
+      if(key === 'has_left'){
+        return [
+          { value: 'false', label: 'Активный' },
+          { value: 'true', label: 'Выбывший' }
         ];
       }
       if(key === 'university'){
@@ -491,9 +681,15 @@ let cache = { students: [], loaded: false };
     }
     // Нормализация значения перед сохранением, чтобы типы совпадали с уже хранимыми
     function normalizeSelectCommit(key, selectedValue){
-      if(key === 'is_graduate' || key === 'has_disability'){
+      if(key === 'is_graduate' || key === 'has_disability' || key === 'paid' || key === 'has_left'){
         const wasBool = typeof (currentStudent?.[key]) === 'boolean';
-        const asBool = (selectedValue === 'true' || selectedValue === true || selectedValue === 'Да');
+        const asBool = (selectedValue === 'true' || selectedValue === true || selectedValue === 'Да' || selectedValue === 'Выбывший');
+        if(key === 'has_left'){
+          // For status we store either boolean (if it was boolean) or Russian labels to keep consistency with existing data
+          if(wasBool) return asBool;
+          return asBool ? 'Выбывший' : 'Активный';
+        }
+        // For other boolean-like fields, map to boolean when the original was boolean, else to Да/Нет
         return wasBool ? asBool : (asBool ? 'Да' : 'Нет');
       }
       if(key === 'gender'){
@@ -544,6 +740,10 @@ let cache = { students: [], loaded: false };
         const b = (value === true || value === 'true' || value === 1 || value === '1');
         return b ? 'Выбывший' : 'Активный';
       }
+      if (key === 'paid'){
+        const b = (value === true || value === 'true' || value === 1 || value === '1' || value === 'Да');
+        return b ? 'Да' : 'Нет';
+      }
       // Boolean → Да/Нет
       if (typeof value === 'boolean'){
         return value ? 'Да' : 'Нет';
@@ -589,7 +789,7 @@ let cache = { students: [], loaded: false };
         await ensureLoaded();
         const raw = qInput.value.trim();
         const base = raw ? filterStudents(cache.students, raw) : cache.students;
-        const list = sortByIdDesc(base);
+        const list = applySort(base);
         renderList(list);
       }catch(err){ console.error('[search error]', err); renderEmpty(err.message || 'Ошибка загрузки'); }
     }, 150);
@@ -606,6 +806,49 @@ let cache = { students: [], loaded: false };
     }
     function onlyDigits(str){
       return String(str || '').replace(/\D+/g,'');
+    }
+
+    // === Date helpers for inline date editing ===
+    const DATE_KEY_REGEX = /(_date|At|_at)$/i;
+    const EXPLICIT_DATE_KEYS = new Set(['document_issue_date','move_in_date','left_date','planned_left_date','actual_left_date','leftDate']);
+    function isDateKey(key){
+      // "Дата окончание аренды" редактировать нельзя — она авторассчитывается
+      if (key === 'left_date') return false;
+      return EXPLICIT_DATE_KEYS.has(key) || DATE_KEY_REGEX.test(key);
+    }
+    // Return YYYY-MM-DD without timezone surprises
+    function toYMD(date){
+      if(!date) return '';
+      // If we already have a Y-M-D string, return as-is
+      if (typeof date === 'string'){
+        const m = date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+      }
+      const d = (date instanceof Date) ? date : new Date(date);
+      if (isNaN(d)) return '';
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,'0');
+      const day = String(d.getDate()).padStart(2,'0');
+      return `${y}-${m}-${day}`;
+    }
+    // Parse various inputs; for YYYY-MM-DD build a local date (no UTC shift)
+    function parseAnyDate(val){
+      if(!val) return null;
+      if (typeof val === 'string'){
+        const m = val.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (m){
+          const y = Number(m[1]), mo = Number(m[2])-1, da = Number(m[3]);
+          return new Date(y, mo, da); // local date
+        }
+      }
+      const d = new Date(val);
+      return isNaN(d) ? null : d;
+    }
+    // Normalize any raw input (Date or string) to a YYYY-MM-DD string for equality checks
+    function normalizeYMD(val){
+      if(!val) return '';
+      const d = parseAnyDate(val);
+      return d ? toYMD(d) : '';
     }
 
     function normalizeKZPhoneDigits(raw){
@@ -625,6 +868,15 @@ let cache = { students: [], loaded: false };
       if(b) out += ' ' + b;
       if(c) out += ' ' + c;
       return out.trim();
+    }
+    // Normalize registration city to always start with "г.Астана" (no space after dot)
+    function normalizeRegistrationCity(raw){
+      let s = String(raw || '').trim();
+      // remove existing prefixes like "г", "г.", "город" at the start
+      s = s.replace(/^(г\.?|город)\s*/i, '');
+      s = s.replace(/\s+/g, ' ').trim();
+      if(!s) return 'г.';
+      return 'г.' + s;
     }
 
     // Letters-only validation (supports all Unicode letters)
@@ -694,6 +946,29 @@ let cache = { students: [], loaded: false };
         if(other && value === other) return 'Телефон номер и Телефон номер родственника не должны совпадать';
         return null;
       }
+      if(key === 'email'){
+        if(!value) return 'Email обязателен';
+        const ok = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(value));
+        if(!ok) return 'Некорректный email';
+        return null;
+      }
+      if(key === 'document_number'){
+        if(!value) return 'Номер документа обязателен';
+        if(!/^\d+$/.test(value)) return 'Номер документа должен содержать только цифры';
+        return null;
+      }
+      if(key === 'document_issuer'){
+        if(!value) return 'Орган выдавший документ обязателен';
+        return null;
+      }
+      if(key === 'registration_city'){
+        if(!value) return 'Город регистрации обязателен';
+        return null;
+      }
+      if(key === 'registration_address'){
+        if(!value) return 'Адрес регистрации обязателен';
+        return null;
+      }
       return null;
     }
     function validatePhoneDuplicates(){
@@ -713,7 +988,7 @@ let cache = { students: [], loaded: false };
     }
 
     function enforceRequiredBeforeSave(updates){
-      const requiredKeys = ['iin','phone','relative_phone'];
+      const requiredKeys = ['iin','phone','relative_phone','document_number','document_issuer','registration_city','registration_address','email'];
       let hasError = false;
       requiredKeys.forEach((k)=>{
         // вычисляем итоговое значение после сохранения
@@ -783,7 +1058,10 @@ let cache = { students: [], loaded: false };
         extraEntries.push(['planned_left_date', plan ? plan.plannedEnd : null]);
         extraEntries.push(['actual_left_date', student.left_date || student.leftDate || null]);
       }
-      const listEntries = entries.concat(extraEntries);
+      const ALWAYS_RENDER_KEYS = ['document_number','document_issuer','registration_city','registration_address','email'];
+      const baseEntries = entries.slice();
+      ALWAYS_RENDER_KEYS.forEach(k => { if(!keysSet.has(k)) baseEntries.push([k, '']); });
+      const listEntries = baseEntries.concat(extraEntries);
 
       const fioHtml = `
         <div class="kv kv--editable" data-key="fio_last">
@@ -810,7 +1088,7 @@ let cache = { students: [], loaded: false };
         .map(([k,v])=>{
           const label = ruLabel(k);
           const val = formatRuValue(k, v);
-          const editableClass = (NUMERIC_EDITABLE_KEYS.has(k) || PHONE_KEYS.has(k) || SELECT_EDITABLE_KEYS.has(k)) ? ' kv--editable' : '';
+          const editableClass = (NUMERIC_EDITABLE_KEYS.has(k) || PHONE_KEYS.has(k) || SELECT_EDITABLE_KEYS.has(k) || TEXT_EDITABLE_KEYS.has(k)) ? ' kv--editable' : '';
           return `
             <div class="kv${editableClass}" data-key="${k}">
               <div class="kv__label">${label}</div>
@@ -818,6 +1096,78 @@ let cache = { students: [], loaded: false };
             </div>
           `;
         }).join('');
+    // === Inline edit: текстовые поля (номер/орган документа, город/адрес регистрации, email) ===
+    dialogGrid.addEventListener('click', (e)=>{
+      const kv = e.target.closest('.kv');
+      if(!kv) return;
+      const key = kv.getAttribute('data-key');
+      if(!TEXT_EDITABLE_KEYS.has(key)) return;
+      const valEl = kv.querySelector('.kv__value');
+      if (!valEl || valEl.dataset.editing === '1') return;
+
+      const initialRaw = String(pendingUpdates[key] ?? currentStudent?.[key] ?? '').trim();
+      kv.classList.add('kv--editing');
+      valEl.dataset.editing = '1';
+      valEl.innerHTML = `<input class="inline-input" type="text" value="${escapeHtml(initialRaw)}" placeholder="Введите значение" />`;
+      const input = valEl.querySelector('input');
+      input.focus(); input.select();
+
+      // Only allow digits for document_number
+      if (key === 'document_number') {
+        input.addEventListener('input', () => {
+          const digits = input.value.replace(/\D+/g, '');
+          if (input.value !== digits) input.value = digits;
+        });
+      }
+
+      input.addEventListener('input', ()=>{
+        const cur = String(input.value || '').trim();
+        if(cur !== initialRaw){ kv.classList.add('kv--changed'); } else { kv.classList.remove('kv--changed'); }
+      });
+
+      const commit = () => {
+        const newVal = String(input.value || '').trim();
+        // Auto-normalize registration city to always start with "г. "
+        let valueForCommit = newVal;
+        if (key === 'registration_city') {
+          valueForCommit = normalizeRegistrationCity(newVal);
+        }
+
+        kv.classList.remove('kv--editing');
+        valEl.dataset.editing = '0';
+        valEl.textContent = valueForCommit || '—';
+
+        kv.classList.remove('kv--changed');
+        clearFieldError(kv);
+
+        // Validation after normalization
+        const err = validateField(key, valueForCommit);
+        if(err){
+          showFieldError(kv, err);
+          pendingUpdates[key] = valueForCommit; // keep draft
+          return;
+        }
+
+        if(valueForCommit !== initialRaw){
+          pendingUpdates[key] = valueForCommit;
+          kv.classList.add('kv--changed');
+        } else {
+          delete pendingUpdates[key];
+        }
+      };
+
+      const cancel = () => {
+        kv.classList.remove('kv--editing');
+        valEl.dataset.editing = '0';
+        valEl.textContent = initialRaw || '—';
+      };
+
+      input.addEventListener('keydown', (ev)=>{
+        if(ev.key === 'Enter'){ ev.preventDefault(); commit(); }
+        if(ev.key === 'Escape'){ ev.preventDefault(); cancel(); }
+      });
+      input.addEventListener('blur', commit);
+    });
 
       dialogGrid.innerHTML = fioHtml + restHtml;
 
@@ -835,6 +1185,82 @@ let cache = { students: [], loaded: false };
       openDialog();
     }
     // === Inline edit: select-поля ===
+    // === Inline edit: даты (Flatpickr) ===
+    dialogGrid.addEventListener('click', (e)=>{
+      const kv = e.target.closest('.kv');
+      if(!kv) return;
+      const key = kv.getAttribute('data-key');
+      if(!isDateKey(key)) return;
+      const valEl = kv.querySelector('.kv__value');
+      if (!valEl || valEl.dataset.editing === '1') return;
+
+      const currentRaw = pendingUpdates[key] ?? currentStudent?.[key] ?? '';
+      const currentDate = parseAnyDate(currentRaw);
+
+      kv.classList.add('kv--editing');
+      valEl.dataset.editing = '1';
+      valEl.innerHTML = `<input class="inline-input date-input" type="text" placeholder="ГГГГ-ММ-ДД" />`;
+      const input = valEl.querySelector('input');
+
+      // Init flatpickr with RU locale and Y-m-d format; show today as placeholder
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth()+1).padStart(2,'0');
+      const dd = String(today.getDate()).padStart(2,'0');
+      input.placeholder = `${yyyy}-${mm}-${dd}`;
+
+      const fp = flatpickr(input, {
+        dateFormat: 'Y-m-d',
+        defaultDate: currentDate || null,
+        allowInput: true,
+        locale: flatpickr.l10ns.ru,
+        onClose: () => commit(),
+      });
+
+      // open calendar immediately for convenience
+      setTimeout(()=> fp.open(), 0);
+
+      const commit = () => {
+        kv.classList.remove('kv--editing');
+        valEl.dataset.editing = '0';
+        const picked = fp.selectedDates && fp.selectedDates[0] ? fp.selectedDates[0] : parseAnyDate(input.value);
+        if(!picked){
+          // empty value cancels edit
+          valEl.textContent = currentRaw ? formatRuValue(key, currentRaw) : '—';
+          return;
+        }
+        const ymd = normalizeYMD(picked);
+        const initialYmd = normalizeYMD(currentRaw);
+
+        valEl.textContent = formatRuValue(key, picked);
+        kv.classList.remove('kv--changed');
+        clearFieldError(kv);
+
+        if(ymd && ymd !== initialYmd){
+          pendingUpdates[key] = ymd; // сохраняем в виде YYYY-MM-DD
+          kv.classList.add('kv--changed');
+
+          // Дата заселения изменилась → пересчитываем дату окончания единым способом
+          if(key === 'move_in_date' || key === 'moveInDate'){
+            recomputeLeaseEnd();
+          }
+        } else {
+          delete pendingUpdates[key];
+        }
+      };
+
+      const cancel = () => {
+        kv.classList.remove('kv--editing');
+        valEl.dataset.editing = '0';
+        valEl.textContent = currentRaw ? formatRuValue(key, currentRaw) : '—';
+      };
+
+      input.addEventListener('keydown', (ev)=>{
+        if(ev.key === 'Enter'){ ev.preventDefault(); commit(); }
+        if(ev.key === 'Escape'){ ev.preventDefault(); cancel(); }
+      });
+      input.addEventListener('blur', () => setTimeout(commit, 50)); // дать шанс onClose
+    });
     dialogGrid.addEventListener('click', (e)=>{
       const kv = e.target.closest('.kv');
       if(!kv) return;
@@ -903,6 +1329,8 @@ let cache = { students: [], loaded: false };
               }
             }
           }
+          // Срок аренды изменился → пересчитываем дату окончания единым способом
+          recomputeLeaseEnd();
         }
       };
 
@@ -985,7 +1413,7 @@ let cache = { students: [], loaded: false };
       await ensureLoaded();
       const raw = qInput.value.trim();
       const base = raw ? filterStudents(cache.students, raw) : cache.students;
-      renderList(sortByIdDesc(base));
+      renderList(applySort(base));
       const updated = cache.students.find(s => String(s.id) === String(currentStudent?.id));
       if(updated){ currentStudent = updated; }
       // перерисуем карточку
@@ -1160,6 +1588,8 @@ let cache = { students: [], loaded: false };
       if(!currentStudent) return;
       // Принудительно завершим активные инлайн-редактирования, чтобы сработали их валидации
       document.querySelectorAll('.kv .kv__value .inline-input').forEach(el => el.blur());
+      // перед сохранением гарантированно пересчитываем дату окончания
+      recomputeLeaseEnd();
       const updates = { ...pendingUpdates };
       // ФИО: фамилия и имя обязательны
       const kvLast = document.querySelector('.kv[data-key="fio_last"]');
@@ -1289,7 +1719,7 @@ let cache = { students: [], loaded: false };
     }
 
     // При загрузке страницы сразу тянем список и рендерим
-    (async ()=>{ try{ await ensureLoaded(); await ensureUniversities(); renderList(cache.students); } catch(e){ /* игнор, отобразится пустое состояние */ } })();
+    (async ()=>{ try{ await ensureLoaded(); await ensureUniversities(); renderList(applySort(cache.students)); } catch(e){ /* игнор, отобразится пустое состояние */ } })();
     // Пустое состояние при загрузке
     renderEmpty('Начните с поиска студента по ФИО или ИИН.');
   </script>

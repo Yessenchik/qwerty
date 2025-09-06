@@ -39,6 +39,17 @@
   <p id="error"></p>
 
   <script>
+  // Already logged in? Redirect away
+  (function(){
+    const token = localStorage.getItem('token');
+    if (token) {
+      const params = new URLSearchParams(location.search);
+      const back = params.get('return');
+      if (back) return location.replace(back);
+      return location.replace('edit.html');
+    }
+  })();
+
   function checkPassword() {
     const correctLogin = 'admin';
     const correctPassword = '1234';
@@ -47,8 +58,15 @@
     const passwordInput = document.getElementById('password').value;
 
     if (loginInput === correctLogin && passwordInput === correctPassword) {
-      localStorage.setItem('auth', 'ok');
-      window.location.href = 'st';
+      localStorage.setItem('token', 'ok');
+      // redirect back to original page if provided
+      const params = new URLSearchParams(location.search);
+      const back = params.get('return');
+      if (back) {
+        location.href = back;
+      } else {
+        location.href = 'edit.html';
+      }
     } else {
       document.getElementById('error').textContent = 'Неверный логин или пароль!';
     }

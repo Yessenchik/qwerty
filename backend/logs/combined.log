@@ -46877,3 +46877,3796 @@
       SET has_left = true
       WHERE left_date < CURRENT_DATE AND has_left = false
     
+[2025-08-26 10:40:28] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-26 10:40:28] INFO: 🟢 WebSocket сервер запущен
+[2025-08-26 10:40:33] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-26 10:40:39] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-26 10:40:40] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-26 10:45:52] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-26 10:45:52] INFO: 👥 Всего подключено клиентов: 1
+[2025-08-26 10:45:52] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-26 10:45:52] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-26 10:45:52] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-26 10:45:52] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-26 10:45:52] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-26 10:45:52] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-26 10:56:01] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-26 11:04:31] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-26 11:05:58] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-26 11:17:13] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-26 11:19:11] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-26 11:20:35] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-26 11:20:35] INFO: 👥 Осталось подключено: 0
+[2025-08-26 11:20:35] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-26 11:20:35] INFO: 👥 Всего подключено клиентов: 1
+[2025-08-26 11:20:35] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-26 11:20:35] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-26 11:20:35] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-26 11:20:35] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-26 11:20:35] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-26 11:20:35] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-26 11:40:28] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-26 12:25:31] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-26 12:25:31] INFO: 🟢 WebSocket сервер запущен
+[2025-08-26 12:27:27] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-26 12:27:27] INFO: 👥 Всего подключено клиентов: 1
+[2025-08-26 12:27:27] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-26 12:27:27] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-26 12:27:27] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-26 12:27:27] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-26 12:27:27] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-26 12:27:27] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-26 12:28:13] INFO: 🧾 SQL Query: SELECT 1 FROM students WHERE iin = $1
+[2025-08-26 13:38:10] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-26 13:58:10] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-26 13:58:10] INFO: 🟢 WebSocket сервер запущен
+[2025-08-26 13:58:16] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-26 13:58:16] INFO: 👥 Всего подключено клиентов: 1
+[2025-08-26 13:58:16] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-26 13:58:16] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-26 13:58:16] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-26 13:58:16] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-26 13:58:16] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-26 13:58:16] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-26 15:02:47] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-26 16:09:48] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-26 17:09:48] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-26 18:18:09] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-26 19:18:45] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-26 20:21:53] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-26 21:29:30] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-26 21:36:01] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-26 21:36:11] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-26 21:58:19] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-26 21:58:19] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-26 21:58:19] INFO: 👥 Всего подключено клиентов: 2
+[2025-08-26 21:58:19] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-26 21:58:19] INFO: 🧾 SQL Query: 
+      SELECT 
+        r.id,
+        r.places,
+        COUNT(a.*) FILTER (WHERE a.has_left = false) AS occupied
+      FROM rooms r
+      LEFT JOIN selections s ON s.room_id = r.id
+      LEFT JOIN accommodation a ON a.student_id = s.student_id
+      GROUP BY r.id, r.places
+    
+[2025-08-26 21:58:19] INFO: 📊 Получен актуальный статус занятости комнат (/api/rooms/status)
+[2025-08-26 22:03:50] INFO: 🧾 SQL Query: SELECT 1 FROM students WHERE iin = $1
+[2025-08-26 22:03:53] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-26 22:03:53] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-26 22:03:53] INFO: 🔌 Новое WebSocket-подключение от 192.168.1.91
+[2025-08-26 22:03:53] INFO: 👥 Всего подключено клиентов: 3
+[2025-08-26 22:03:53] INFO: 🧾 SQL Query: 
+      SELECT 
+        r.id,
+        r.places,
+        COUNT(a.*) FILTER (WHERE a.has_left = false) AS occupied
+      FROM rooms r
+      LEFT JOIN selections s ON s.room_id = r.id
+      LEFT JOIN accommodation a ON a.student_id = s.student_id
+      GROUP BY r.id, r.places
+    
+[2025-08-26 22:03:53] INFO: 📊 Получен актуальный статус занятости комнат (/api/rooms/status)
+[2025-08-26 22:04:06] INFO: 📥 Получен запрос на добавление студента:
+[2025-08-26 22:04:06] INFO: registration_city:
+[2025-08-26 22:04:06] INFO: registration_address:
+[2025-08-26 22:04:06] INFO: email:
+[2025-08-26 22:04:06] INFO: 🧾 SQL Query: INSERT INTO students (fio, iin, gender, phone, university, relative_type, relative_phone, card_number)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id
+[2025-08-26 22:04:06] INFO: 🧾 SQL Query: INSERT INTO documents (
+        student_id, document_number, document_issue_date, document_issuer, is_graduate, has_disability,
+        email, registration_city, registration_address, contract_number
+      )
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+[2025-08-26 22:04:06] INFO: 🧾 SQL Query: INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, paid, added_by, has_left, left_date)
+       VALUES ($1, $2, $3, $4, false, 'system', false, ($2::date + make_interval(months => $3::int)))
+[2025-08-26 22:04:06] INFO: 🧾 SQL Query: INSERT INTO selections (student_id, room_id, selected_at)
+       VALUES ($1, $2, CURRENT_TIMESTAMP)
+[2025-08-26 22:04:06] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.fio, s.iin, s.gender, s.phone, s.university, s.relative_type, s.relative_phone,
+        s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability,
+        d.email, d.registration_city, d.registration_address, d.contract_number,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+      WHERE s.id = $1
+    
+[2025-08-26 22:04:06] INFO: 📤 Отправлено событие newStudent для комнаты A-201
+[2025-08-26 22:04:06] INFO: 🧾 SQL Query: SELECT id, occupied, places FROM rooms WHERE id = $1
+[2025-08-26 22:04:06] INFO: 📤 Отправлено событие globalUpdate
+[2025-08-26 22:04:06] INFO: 📤 Рассылаем обновление комнаты A-201: 1/7
+[2025-08-26 22:04:06] INFO: 🧾 SQL Query: 
+      SELECT 
+        r.id,
+        r.places,
+        COUNT(a.*) FILTER (WHERE a.has_left = false) AS occupied
+      FROM rooms r
+      LEFT JOIN selections s ON s.room_id = r.id
+      LEFT JOIN accommodation a ON a.student_id = s.student_id
+      GROUP BY r.id, r.places
+    
+[2025-08-26 22:04:06] INFO: 📨 Получено сообщение от клиента: {"type":"roomUpdate","roomId":"A-201"}
+[2025-08-26 22:04:06] INFO: 🔁 Запрос обновления комнаты: A-201
+[2025-08-26 22:04:06] INFO: 🧾 SQL Query: SELECT id, occupied, places FROM rooms WHERE id = $1
+[2025-08-26 22:04:06] INFO: 📊 Получен актуальный статус занятости комнат (/api/rooms/status)
+[2025-08-26 22:04:06] INFO: 📤 Рассылаем обновление комнаты A-201: 1/7
+[2025-08-26 22:04:06] INFO: 🧾 SQL Query: 
+      SELECT 
+        r.id,
+        r.places,
+        COUNT(a.*) FILTER (WHERE a.has_left = false) AS occupied
+      FROM rooms r
+      LEFT JOIN selections s ON s.room_id = r.id
+      LEFT JOIN accommodation a ON a.student_id = s.student_id
+      GROUP BY r.id, r.places
+    
+[2025-08-26 22:04:06] INFO: 🧾 SQL Query: 
+      SELECT 
+        r.id,
+        r.places,
+        COUNT(a.*) FILTER (WHERE a.has_left = false) AS occupied
+      FROM rooms r
+      LEFT JOIN selections s ON s.room_id = r.id
+      LEFT JOIN accommodation a ON a.student_id = s.student_id
+      GROUP BY r.id, r.places
+    
+[2025-08-26 22:04:06] INFO: 📊 Получен актуальный статус занятости комнат (/api/rooms/status)
+[2025-08-26 22:04:06] INFO: 📊 Получен актуальный статус занятости комнат (/api/rooms/status)
+[2025-08-26 22:04:06] INFO: ❌ Клиент отключился: 192.168.1.91
+[2025-08-26 22:04:06] INFO: 👥 Осталось подключено: 2
+[2025-08-26 22:04:11] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-26 22:04:11] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-26 22:08:33] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-26 22:08:33] INFO: 👥 Осталось подключено: 1
+[2025-08-26 22:18:48] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-26 22:18:48] INFO: 👥 Осталось подключено: 0
+[2025-08-26 22:18:48] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-26 22:18:48] INFO: 👥 Всего подключено клиентов: 1
+[2025-08-26 22:18:48] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-26 22:18:48] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-26 22:18:48] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-26 22:18:48] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-26 22:18:49] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-26 22:18:49] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-26 22:29:30] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-26 23:42:22] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 00:47:59] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 01:58:39] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 02:59:40] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 04:00:40] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 05:01:40] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 06:02:40] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 07:03:41] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 08:04:41] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 09:05:41] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 10:06:41] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 11:07:41] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 12:08:41] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 13:09:41] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 14:10:41] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 15:11:41] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 16:12:41] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 17:16:52] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 18:16:52] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 18:20:39] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-27 18:20:39] INFO: 👥 Осталось подключено: 0
+[2025-08-27 19:16:52] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 20:17:03] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 21:20:18] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 22:21:53] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-27 23:36:16] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 00:37:07] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 01:38:58] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 02:47:03] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 03:56:24] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 05:07:47] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 06:21:25] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 07:29:54] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 08:42:30] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 09:43:56] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 10:45:25] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 11:45:25] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 12:30:49] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 12:30:49] INFO: 🟢 WebSocket сервер запущен
+[2025-08-28 12:31:12] INFO: 🧾 SQL Query: SELECT 1 FROM students WHERE iin = $1
+[2025-08-28 12:31:16] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-28 12:31:16] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-28 12:31:16] INFO: 👥 Всего подключено клиентов: 1
+[2025-08-28 12:31:16] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-28 12:31:16] INFO: 🧾 SQL Query: 
+      SELECT 
+        r.id,
+        r.places,
+        COUNT(a.*) FILTER (WHERE a.has_left = false) AS occupied
+      FROM rooms r
+      LEFT JOIN selections s ON s.room_id = r.id
+      LEFT JOIN accommodation a ON a.student_id = s.student_id
+      GROUP BY r.id, r.places
+    
+[2025-08-28 12:31:16] INFO: 📊 Получен актуальный статус занятости комнат (/api/rooms/status)
+[2025-08-28 12:31:22] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-28 12:31:22] INFO: 👥 Всего подключено клиентов: 2
+[2025-08-28 12:31:23] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 12:31:23] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-28 12:31:23] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-28 12:31:23] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-28 12:31:23] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-28 12:31:23] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-28 12:31:23] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-28 12:31:23] INFO: 👥 Осталось подключено: 1
+[2025-08-28 12:31:24] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-28 13:30:49] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 14:41:01] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 15:50:08] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 16:55:44] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 17:57:04] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 19:08:29] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 20:22:11] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 21:27:21] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 22:28:21] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-28 23:29:21] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 00:30:20] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 01:31:20] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 02:37:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 03:43:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 04:55:31] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 05:59:38] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 07:05:43] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 08:06:36] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 09:13:18] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 10:13:18] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 11:13:18] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 11:18:19] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 11:20:07] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-29 11:20:07] INFO: 👥 Всего подключено клиентов: 2
+[2025-08-29 11:20:07] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 11:20:07] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 11:20:07] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-29 11:20:07] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-29 11:20:07] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 11:20:07] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 11:20:28] INFO: 💰 Обновление статуса оплаты: ИИН = 979797979979
+[2025-08-29 11:20:28] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE student_id = (SELECT id FROM students WHERE iin = $1)
+      RETURNING student_id
+    
+[2025-08-29 11:20:28] INFO: 🧾 SQL Query: SELECT room_id FROM selections WHERE student_id = $1
+[2025-08-29 11:20:28] INFO: 🧾 SQL Query: SELECT id, occupied, places FROM rooms WHERE id = $1
+[2025-08-29 11:20:28] INFO: 📤 Отправлено событие studentUpdated для 979797979979 в комнате A-201
+[2025-08-29 11:20:28] INFO: 📤 Отправлено событие globalUpdate
+[2025-08-29 11:20:28] INFO: 📤 Рассылаем обновление комнаты A-201: 1/7
+[2025-08-29 11:20:28] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 11:20:28] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 11:20:28] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 11:20:34] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-29 11:20:34] INFO: 👥 Осталось подключено: 1
+[2025-08-29 11:20:34] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-29 11:20:34] INFO: 👥 Всего подключено клиентов: 2
+[2025-08-29 11:20:34] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 11:20:34] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 11:20:34] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 11:20:34] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-29 11:20:34] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-29 11:20:34] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 11:38:08] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-29 11:38:08] INFO: 👥 Осталось подключено: 1
+[2025-08-29 11:38:08] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-29 11:38:08] INFO: 👥 Всего подключено клиентов: 2
+[2025-08-29 11:38:08] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 11:38:08] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 11:38:08] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-29 11:38:08] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-29 11:38:08] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 11:38:08] INFO: 🧾 SQL Query: 
+        SELECT s.iin, s.fio, sel.room_id
+        FROM students s
+        LEFT JOIN selections sel ON sel.student_id = s.id
+        WHERE s.id = $1
+      
+[2025-08-29 11:38:08] INFO: 🧾 SQL Query: SELECT id, occupied, places FROM rooms WHERE id = $1
+[2025-08-29 11:38:08] INFO: 📤 Отправлено событие studentUpdated для 070919653990 в комнате A-215
+[2025-08-29 11:38:08] INFO: 📤 Отправлено событие globalUpdate
+[2025-08-29 11:38:08] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 11:38:08] INFO: 📤 Рассылаем обновление комнаты A-215: 5/6
+[2025-08-29 11:38:08] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 11:38:08] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 11:46:34] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 11:46:42] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-29 11:46:42] INFO: 👥 Осталось подключено: 1
+[2025-08-29 11:46:42] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-29 11:46:42] INFO: 👥 Всего подключено клиентов: 2
+[2025-08-29 11:46:42] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 11:46:42] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 11:46:42] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-29 11:46:42] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-29 11:46:42] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 11:46:42] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 11:47:03] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-29 11:47:03] INFO: 👥 Осталось подключено: 1
+[2025-08-29 11:47:03] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-29 11:47:03] INFO: 👥 Всего подключено клиентов: 2
+[2025-08-29 11:47:03] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 11:47:03] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 11:47:03] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-29 11:47:03] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-29 11:47:03] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 11:47:03] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 11:47:07] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-29 11:47:07] INFO: 👥 Осталось подключено: 1
+[2025-08-29 11:47:07] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-29 11:47:07] INFO: 👥 Всего подключено клиентов: 2
+[2025-08-29 11:47:07] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 11:47:07] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 11:47:07] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 11:47:07] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-29 11:47:07] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-29 11:47:07] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 11:47:08] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-29 11:47:08] INFO: 👥 Осталось подключено: 1
+[2025-08-29 11:47:08] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-29 11:47:08] INFO: 👥 Всего подключено клиентов: 2
+[2025-08-29 11:47:08] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 11:47:08] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 11:47:08] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 11:47:08] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-29 11:47:08] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-29 11:47:08] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 11:47:08] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-29 11:47:08] INFO: 👥 Осталось подключено: 1
+[2025-08-29 11:47:08] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-29 11:47:08] INFO: 👥 Всего подключено клиентов: 2
+[2025-08-29 11:47:08] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 11:47:08] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 11:47:08] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 11:47:08] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-29 11:47:08] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-29 11:47:08] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 11:47:09] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-29 11:47:09] INFO: 👥 Осталось подключено: 1
+[2025-08-29 11:47:09] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-29 11:47:09] INFO: 👥 Всего подключено клиентов: 2
+[2025-08-29 11:47:09] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 11:47:09] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 11:47:09] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 11:47:09] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-29 11:47:09] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-29 11:47:09] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 11:47:09] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-29 11:47:09] INFO: 👥 Осталось подключено: 1
+[2025-08-29 11:47:09] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-29 11:47:09] INFO: 👥 Всего подключено клиентов: 2
+[2025-08-29 11:47:09] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 11:47:09] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 11:47:09] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 11:47:09] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-29 11:47:09] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-29 11:47:09] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 11:49:59] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 11:56:02] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 12:13:09] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 12:13:18] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 12:23:16] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 12:41:30] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 12:45:31] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 12:46:34] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 13:13:18] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 14:13:18] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 14:18:26] INFO: 🧾 SQL Query: SELECT 1 FROM students WHERE iin = $1
+[2025-08-29 14:18:30] INFO: 🧾 SQL Query: SELECT 1 FROM students WHERE iin = $1
+[2025-08-29 14:40:34] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 14:41:50] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 14:44:14] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 14:46:16] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 14:49:46] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 15:08:34] INFO: 🧾 SQL Query: SELECT 1 FROM students WHERE iin = $1
+[2025-08-29 15:08:40] INFO: 🧾 SQL Query: SELECT 1 FROM students WHERE iin = $1
+[2025-08-29 15:09:33] INFO: 🧾 SQL Query: SELECT 1 FROM students WHERE iin = $1
+[2025-08-29 15:13:01] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 15:13:18] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 15:15:27] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 15:37:34] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 15:41:13] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 15:45:42] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 15:47:11] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 15:49:04] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 15:52:20] INFO: 🧾 SQL Query: 
+      SELECT 
+        r.id,
+        r.places,
+        COUNT(a.*) FILTER (WHERE a.has_left = false) AS occupied
+      FROM rooms r
+      LEFT JOIN selections s ON s.room_id = r.id
+      LEFT JOIN accommodation a ON a.student_id = s.student_id
+      GROUP BY r.id, r.places
+    
+[2025-08-29 15:52:20] INFO: 🧾 SQL Query: 
+      SELECT 
+        r.id,
+        r.places,
+        COUNT(a.*) FILTER (WHERE a.has_left = false) AS occupied
+      FROM rooms r
+      LEFT JOIN selections s ON s.room_id = r.id
+      LEFT JOIN accommodation a ON a.student_id = s.student_id
+      GROUP BY r.id, r.places
+    
+[2025-08-29 15:52:20] INFO: 📊 Получен актуальный статус занятости комнат (/api/rooms/status)
+[2025-08-29 15:52:20] INFO: 📊 Получен актуальный статус занятости комнат (/api/rooms/status)
+[2025-08-29 15:52:39] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 16:13:39] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 17:29:07] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 18:14:22] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 18:16:18] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 18:18:27] INFO: 🧾 SQL Query: SELECT 1 FROM students WHERE iin = $1
+[2025-08-29 18:27:37] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 18:27:58] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 18:27:58] INFO: 🟢 WebSocket сервер запущен
+[2025-08-29 18:28:03] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 18:28:35] INFO: ✏️ update-fields: id=3468
+[2025-08-29 18:28:35] INFO: 🧾 SQL Query: BEGIN
+[2025-08-29 18:28:35] INFO: 🧾 SQL Query: UPDATE students SET "fio" = $1, updated_at = NOW() WHERE id = $2
+[2025-08-29 18:28:35] ERROR: ❌ SQL Error: column "updated_at" of relation "students" does not exist
+Запрос: UPDATE students SET "fio" = $1, updated_at = NOW() WHERE id = $2
+[2025-08-29 18:28:35] INFO: 🧾 SQL Query: ROLLBACK
+[2025-08-29 18:28:35] ERROR: ❌ update-fields error: column "updated_at" of relation "students" does not exist
+[2025-08-29 18:30:48] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 18:30:48] INFO: 🟢 WebSocket сервер запущен
+[2025-08-29 18:31:03] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 18:31:10] INFO: ✏️ update-fields: id=3468
+[2025-08-29 18:31:10] INFO: 🧾 SQL Query: BEGIN
+[2025-08-29 18:31:10] INFO: 🧾 SQL Query: UPDATE students SET "fio" = $1 WHERE id = $2
+[2025-08-29 18:31:10] INFO: 🧾 SQL Query: UPDATE accommodation SET "left_date" = $1 WHERE student_id = $2
+[2025-08-29 18:31:10] INFO: 🧾 SQL Query: SELECT s.iin, s.fio, sel.room_id
+         FROM students s
+         LEFT JOIN selections sel ON sel.student_id = s.id
+        WHERE s.id = $1
+[2025-08-29 18:31:10] INFO: 🧾 SQL Query: COMMIT
+[2025-08-29 18:31:10] INFO: 🧾 SQL Query: SELECT id, occupied, places FROM rooms WHERE id = $1
+[2025-08-29 18:31:10] INFO: 📤 Отправлено событие studentUpdated для 070408550387 в комнате A-309
+[2025-08-29 18:31:10] INFO: 📤 Отправлено событие globalUpdate
+[2025-08-29 18:31:10] INFO: 📤 Рассылаем обновление комнаты A-309: 1/7
+[2025-08-29 18:31:10] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 18:31:14] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 18:31:33] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-29 18:31:33] INFO: 👥 Всего подключено клиентов: 1
+[2025-08-29 18:31:33] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 18:31:33] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 18:31:33] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-29 18:31:33] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-29 18:31:33] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 18:31:33] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 18:35:34] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:07:52] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:19:53] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:25:31] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:27:16] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:30:47] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:30:48] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 19:32:42] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:32:44] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-29 19:32:44] INFO: 👥 Всего подключено клиентов: 2
+[2025-08-29 19:32:44] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 19:32:44] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 19:32:44] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 19:32:44] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-29 19:32:44] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-29 19:32:44] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:34:30] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-29 19:34:30] INFO: 👥 Осталось подключено: 1
+[2025-08-29 19:34:53] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:34:55] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-29 19:34:55] INFO: 👥 Всего подключено клиентов: 2
+[2025-08-29 19:34:55] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 19:34:55] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 19:34:55] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 19:34:55] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-29 19:34:55] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-29 19:34:55] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:35:16] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-29 19:35:16] INFO: 👥 Всего подключено клиентов: 3
+[2025-08-29 19:35:16] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 19:35:16] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 19:35:16] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-29 19:35:16] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-29 19:35:16] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 19:35:16] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:35:17] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:35:17] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-29 19:35:17] INFO: 👥 Осталось подключено: 2
+[2025-08-29 19:35:17] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-29 19:35:17] INFO: 👥 Осталось подключено: 1
+[2025-08-29 19:35:19] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-29 19:35:19] INFO: 👥 Всего подключено клиентов: 2
+[2025-08-29 19:35:19] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 19:35:19] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 19:35:19] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 19:35:19] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-29 19:35:19] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-29 19:35:19] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:36:16] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-29 19:36:16] INFO: 👥 Всего подключено клиентов: 3
+[2025-08-29 19:36:16] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 19:36:16] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 19:36:16] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-29 19:36:16] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-29 19:36:16] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 19:36:16] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:36:16] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-29 19:36:16] INFO: 👥 Осталось подключено: 2
+[2025-08-29 19:36:16] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:36:17] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-29 19:36:17] INFO: 👥 Осталось подключено: 1
+[2025-08-29 19:36:20] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:36:33] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:36:34] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:38:59] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:42:52] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:42:56] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:43:08] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:44:09] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:45:41] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:48:01] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:50:27] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:52:51] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:55:15] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:55:38] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:57:47] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 19:58:03] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:02:42] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:02:57] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:03:31] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:04:24] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:04:24] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:04:29] INFO: 🧾 SQL Query: SELECT 1 FROM students WHERE iin = $1
+[2025-08-29 20:14:57] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 20:14:57] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-29 20:14:57] INFO: 👥 Всего подключено клиентов: 2
+[2025-08-29 20:14:57] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 20:14:57] INFO: 🧾 SQL Query: 
+      SELECT 
+        r.id,
+        r.places,
+        COUNT(a.*) FILTER (WHERE a.has_left = false) AS occupied
+      FROM rooms r
+      LEFT JOIN selections s ON s.room_id = r.id
+      LEFT JOIN accommodation a ON a.student_id = s.student_id
+      GROUP BY r.id, r.places
+    
+[2025-08-29 20:14:57] INFO: 📊 Получен актуальный статус занятости комнат (/api/rooms/status)
+[2025-08-29 20:16:00] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-29 20:16:00] INFO: 👥 Осталось подключено: 1
+[2025-08-29 20:16:24] INFO: 🧾 SQL Query: SELECT 1 FROM students WHERE iin = $1
+[2025-08-29 20:16:40] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 20:16:40] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-29 20:16:40] INFO: 👥 Всего подключено клиентов: 2
+[2025-08-29 20:16:40] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 20:16:40] INFO: 🧾 SQL Query: 
+      SELECT 
+        r.id,
+        r.places,
+        COUNT(a.*) FILTER (WHERE a.has_left = false) AS occupied
+      FROM rooms r
+      LEFT JOIN selections s ON s.room_id = r.id
+      LEFT JOIN accommodation a ON a.student_id = s.student_id
+      GROUP BY r.id, r.places
+    
+[2025-08-29 20:16:40] INFO: 📊 Получен актуальный статус занятости комнат (/api/rooms/status)
+[2025-08-29 20:22:01] INFO: 🧾 SQL Query: SELECT 1 FROM students WHERE iin = $1
+[2025-08-29 20:23:56] INFO: 📥 Получен запрос на добавление студента:
+[2025-08-29 20:23:56] INFO: registration_city:
+[2025-08-29 20:23:56] INFO: registration_address:
+[2025-08-29 20:23:56] INFO: email:
+[2025-08-29 20:23:56] INFO: 🧾 SQL Query: INSERT INTO students (fio, iin, gender, phone, university, relative_type, relative_phone, card_number)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id
+[2025-08-29 20:23:56] INFO: 🧾 SQL Query: INSERT INTO documents (
+        student_id, document_number, document_issue_date, document_issuer, is_graduate, has_disability,
+        email, registration_city, registration_address, contract_number
+      )
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+[2025-08-29 20:23:56] INFO: 🧾 SQL Query: INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, paid, added_by, has_left, left_date)
+       VALUES ($1, $2, $3, $4, false, 'system', false, ($2::date + make_interval(months => $3::int)))
+[2025-08-29 20:23:56] INFO: 🧾 SQL Query: INSERT INTO selections (student_id, room_id, selected_at)
+       VALUES ($1, $2, CURRENT_TIMESTAMP)
+[2025-08-29 20:23:56] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.fio, s.iin, s.gender, s.phone, s.university, s.relative_type, s.relative_phone,
+        s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability,
+        d.email, d.registration_city, d.registration_address, d.contract_number,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+      WHERE s.id = $1
+    
+[2025-08-29 20:23:56] INFO: 📤 Отправлено событие newStudent для комнаты A-301
+[2025-08-29 20:23:56] INFO: 🧾 SQL Query: SELECT id, occupied, places FROM rooms WHERE id = $1
+[2025-08-29 20:23:56] INFO: 📤 Отправлено событие globalUpdate
+[2025-08-29 20:23:56] INFO: 📤 Рассылаем обновление комнаты A-301: 2/7
+[2025-08-29 20:23:56] INFO: 🧾 SQL Query: 
+      SELECT 
+        r.id,
+        r.places,
+        COUNT(a.*) FILTER (WHERE a.has_left = false) AS occupied
+      FROM rooms r
+      LEFT JOIN selections s ON s.room_id = r.id
+      LEFT JOIN accommodation a ON a.student_id = s.student_id
+      GROUP BY r.id, r.places
+    
+[2025-08-29 20:23:56] INFO: 📨 Получено сообщение от клиента: {"type":"roomUpdate","roomId":"A-301"}
+[2025-08-29 20:23:56] INFO: 🔁 Запрос обновления комнаты: A-301
+[2025-08-29 20:23:56] INFO: 🧾 SQL Query: SELECT id, occupied, places FROM rooms WHERE id = $1
+[2025-08-29 20:23:56] INFO: 📊 Получен актуальный статус занятости комнат (/api/rooms/status)
+[2025-08-29 20:23:56] INFO: 📤 Рассылаем обновление комнаты A-301: 2/7
+[2025-08-29 20:23:56] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-29 20:23:56] INFO: 👥 Осталось подключено: 1
+[2025-08-29 20:24:06] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:24:27] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 20:24:27] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 20:24:39] INFO: ✏️ update-fields: id=3469
+[2025-08-29 20:24:39] INFO: 🧾 SQL Query: BEGIN
+[2025-08-29 20:24:39] INFO: 🧾 SQL Query: UPDATE students SET "fio" = $1 WHERE id = $2
+[2025-08-29 20:24:39] INFO: 🧾 SQL Query: UPDATE accommodation SET "left_date" = $1 WHERE student_id = $2
+[2025-08-29 20:24:39] INFO: 🧾 SQL Query: SELECT s.iin, s.fio, sel.room_id
+         FROM students s
+         LEFT JOIN selections sel ON sel.student_id = s.id
+        WHERE s.id = $1
+[2025-08-29 20:24:39] INFO: 🧾 SQL Query: COMMIT
+[2025-08-29 20:24:39] INFO: 🧾 SQL Query: SELECT id, occupied, places FROM rooms WHERE id = $1
+[2025-08-29 20:24:39] INFO: 📤 Отправлено событие studentUpdated для 789347839348 в комнате A-301
+[2025-08-29 20:24:39] INFO: 📤 Отправлено событие globalUpdate
+[2025-08-29 20:24:39] INFO: 📤 Рассылаем обновление комнаты A-301: 2/7
+[2025-08-29 20:24:39] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 20:24:39] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 20:24:39] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:24:47] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-29 20:24:47] INFO: 👥 Осталось подключено: 0
+[2025-08-29 20:24:47] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-29 20:24:47] INFO: 👥 Всего подключено клиентов: 1
+[2025-08-29 20:24:47] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 20:24:47] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 20:24:47] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 20:24:47] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-08-29 20:24:47] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-08-29 20:24:47] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:25:06] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-08-29 20:25:06] INFO: 👥 Всего подключено клиентов: 2
+[2025-08-29 20:25:09] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:25:30] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:27:11] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:30:48] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 20:31:09] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-08-29 20:31:09] INFO: 👥 Осталось подключено: 1
+[2025-08-29 20:31:38] INFO: 🧾 SQL Query: SELECT 1 FROM students WHERE iin = $1
+[2025-08-29 20:32:29] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 20:32:29] INFO: 🔌 Новое WebSocket-подключение от 192.168.1.98
+[2025-08-29 20:32:29] INFO: 👥 Всего подключено клиентов: 2
+[2025-08-29 20:32:29] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 20:32:30] INFO: 🧾 SQL Query: 
+      SELECT 
+        r.id,
+        r.places,
+        COUNT(a.*) FILTER (WHERE a.has_left = false) AS occupied
+      FROM rooms r
+      LEFT JOIN selections s ON s.room_id = r.id
+      LEFT JOIN accommodation a ON a.student_id = s.student_id
+      GROUP BY r.id, r.places
+    
+[2025-08-29 20:32:30] INFO: 📊 Получен актуальный статус занятости комнат (/api/rooms/status)
+[2025-08-29 20:33:54] INFO: ❌ Клиент отключился: 192.168.1.98
+[2025-08-29 20:33:54] INFO: 👥 Осталось подключено: 1
+[2025-08-29 20:40:37] INFO: 🧾 SQL Query: SELECT 1 FROM students WHERE iin = $1
+[2025-08-29 20:40:40] INFO: 🧾 SQL Query: SELECT 1 FROM students WHERE iin = $1
+[2025-08-29 20:41:45] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-08-29 20:41:45] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-08-29 20:41:45] INFO: 🔌 Новое WebSocket-подключение от 192.168.1.101
+[2025-08-29 20:41:45] INFO: 👥 Всего подключено клиентов: 2
+[2025-08-29 20:41:45] INFO: 🧾 SQL Query: 
+      SELECT 
+        r.id,
+        r.places,
+        COUNT(a.*) FILTER (WHERE a.has_left = false) AS occupied
+      FROM rooms r
+      LEFT JOIN selections s ON s.room_id = r.id
+      LEFT JOIN accommodation a ON a.student_id = s.student_id
+      GROUP BY r.id, r.places
+    
+[2025-08-29 20:41:45] INFO: 📊 Получен актуальный статус занятости комнат (/api/rooms/status)
+[2025-08-29 20:42:15] INFO: 📥 Получен запрос на добавление студента:
+[2025-08-29 20:42:15] INFO: registration_city:
+[2025-08-29 20:42:15] INFO: registration_address:
+[2025-08-29 20:42:15] INFO: email:
+[2025-08-29 20:42:15] INFO: 🧾 SQL Query: INSERT INTO students (fio, iin, gender, phone, university, relative_type, relative_phone, card_number)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id
+[2025-08-29 20:42:15] INFO: 🧾 SQL Query: INSERT INTO documents (
+        student_id, document_number, document_issue_date, document_issuer, is_graduate, has_disability,
+        email, registration_city, registration_address, contract_number
+      )
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+[2025-08-29 20:42:15] INFO: 🧾 SQL Query: INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, paid, added_by, has_left, left_date)
+       VALUES ($1, $2, $3, $4, false, 'system', false, ($2::date + make_interval(months => $3::int)))
+[2025-08-29 20:42:15] INFO: 🧾 SQL Query: INSERT INTO selections (student_id, room_id, selected_at)
+       VALUES ($1, $2, CURRENT_TIMESTAMP)
+[2025-08-29 20:42:15] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.fio, s.iin, s.gender, s.phone, s.university, s.relative_type, s.relative_phone,
+        s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability,
+        d.email, d.registration_city, d.registration_address, d.contract_number,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+      WHERE s.id = $1
+    
+[2025-08-29 20:42:15] INFO: 📤 Отправлено событие newStudent для комнаты A-221
+[2025-08-29 20:42:15] INFO: 🧾 SQL Query: SELECT id, occupied, places FROM rooms WHERE id = $1
+[2025-08-29 20:42:15] INFO: 📤 Отправлено событие globalUpdate
+[2025-08-29 20:42:15] INFO: 📤 Рассылаем обновление комнаты A-221: 7/7
+[2025-08-29 20:42:15] INFO: 🧾 SQL Query: 
+      SELECT 
+        r.id,
+        r.places,
+        COUNT(a.*) FILTER (WHERE a.has_left = false) AS occupied
+      FROM rooms r
+      LEFT JOIN selections s ON s.room_id = r.id
+      LEFT JOIN accommodation a ON a.student_id = s.student_id
+      GROUP BY r.id, r.places
+    
+[2025-08-29 20:42:15] INFO: 📨 Получено сообщение от клиента: {"type":"roomUpdate","roomId":"A-221"}
+[2025-08-29 20:42:15] INFO: 🔁 Запрос обновления комнаты: A-221
+[2025-08-29 20:42:15] INFO: 🧾 SQL Query: SELECT id, occupied, places FROM rooms WHERE id = $1
+[2025-08-29 20:42:15] INFO: 📊 Получен актуальный статус занятости комнат (/api/rooms/status)
+[2025-08-29 20:42:15] INFO: 📤 Рассылаем обновление комнаты A-221: 7/7
+[2025-08-29 20:42:15] INFO: ❌ Клиент отключился: 192.168.1.101
+[2025-08-29 20:42:15] INFO: 👥 Осталось подключено: 1
+[2025-08-29 20:42:36] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:44:04] INFO: 🧾 SQL Query: SELECT 1 FROM students WHERE iin = $1
+[2025-08-29 20:44:04] INFO: ✏️ update-fields: id=3470
+[2025-08-29 20:44:04] INFO: 🧾 SQL Query: BEGIN
+[2025-08-29 20:44:04] INFO: 🧾 SQL Query: UPDATE students SET "gender" = $1, "university" = $2, "relative_type" = $3, "fio" = $4 WHERE id = $5
+[2025-08-29 20:44:04] INFO: 🧾 SQL Query: UPDATE accommodation SET "left_date" = $1 WHERE student_id = $2
+[2025-08-29 20:44:04] INFO: 🧾 SQL Query: SELECT s.iin, s.fio, sel.room_id
+         FROM students s
+         LEFT JOIN selections sel ON sel.student_id = s.id
+        WHERE s.id = $1
+[2025-08-29 20:44:04] INFO: 🧾 SQL Query: COMMIT
+[2025-08-29 20:44:04] INFO: 🧾 SQL Query: SELECT id, occupied, places FROM rooms WHERE id = $1
+[2025-08-29 20:44:04] INFO: 📤 Отправлено событие studentUpdated для 778649064678 в комнате A-221
+[2025-08-29 20:44:04] INFO: 📤 Отправлено событие globalUpdate
+[2025-08-29 20:44:04] INFO: 📤 Рассылаем обновление комнаты A-221: 7/7
+[2025-08-29 20:44:04] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:44:07] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:44:36] INFO: 🧾 SQL Query: SELECT 1 FROM students WHERE iin = $1
+[2025-08-29 20:44:37] INFO: 🧾 SQL Query: SELECT 1 FROM students WHERE iin = $1
+[2025-08-29 20:44:37] INFO: ✏️ update-fields: id=3470
+[2025-08-29 20:44:37] INFO: 🧾 SQL Query: BEGIN
+[2025-08-29 20:44:37] INFO: 🧾 SQL Query: UPDATE students SET "iin" = $1 WHERE id = $2
+[2025-08-29 20:44:37] INFO: 🧾 SQL Query: UPDATE accommodation SET "left_date" = $1 WHERE student_id = $2
+[2025-08-29 20:44:37] INFO: 🧾 SQL Query: SELECT s.iin, s.fio, sel.room_id
+         FROM students s
+         LEFT JOIN selections sel ON sel.student_id = s.id
+        WHERE s.id = $1
+[2025-08-29 20:44:37] INFO: 🧾 SQL Query: COMMIT
+[2025-08-29 20:44:37] INFO: 🧾 SQL Query: SELECT id, occupied, places FROM rooms WHERE id = $1
+[2025-08-29 20:44:37] INFO: 📤 Отправлено событие studentUpdated для 555555555555 в комнате A-221
+[2025-08-29 20:44:37] INFO: 📤 Отправлено событие globalUpdate
+[2025-08-29 20:44:37] INFO: 📤 Рассылаем обновление комнаты A-221: 7/7
+[2025-08-29 20:44:37] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:44:39] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:46:08] INFO: ✏️ update-fields: id=3470
+[2025-08-29 20:46:08] INFO: 🧾 SQL Query: BEGIN
+[2025-08-29 20:46:08] INFO: 🧾 SQL Query: UPDATE accommodation SET "paid" = $1, "left_date" = $2 WHERE student_id = $3
+[2025-08-29 20:46:08] INFO: 🧾 SQL Query: SELECT s.iin, s.fio, sel.room_id
+         FROM students s
+         LEFT JOIN selections sel ON sel.student_id = s.id
+        WHERE s.id = $1
+[2025-08-29 20:46:08] INFO: 🧾 SQL Query: COMMIT
+[2025-08-29 20:46:08] INFO: 🧾 SQL Query: SELECT id, occupied, places FROM rooms WHERE id = $1
+[2025-08-29 20:46:08] INFO: 📤 Отправлено событие studentUpdated для 555555555555 в комнате A-221
+[2025-08-29 20:46:08] INFO: 📤 Отправлено событие globalUpdate
+[2025-08-29 20:46:08] INFO: 📤 Рассылаем обновление комнаты A-221: 7/7
+[2025-08-29 20:46:08] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:46:10] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:48:04] INFO: ✏️ update-fields: id=3470
+[2025-08-29 20:48:04] INFO: 🧾 SQL Query: BEGIN
+[2025-08-29 20:48:04] INFO: 🧾 SQL Query: UPDATE accommodation SET "left_date" = $1, "move_in_date" = $2 WHERE student_id = $3
+[2025-08-29 20:48:04] INFO: 🧾 SQL Query: SELECT s.iin, s.fio, sel.room_id
+         FROM students s
+         LEFT JOIN selections sel ON sel.student_id = s.id
+        WHERE s.id = $1
+[2025-08-29 20:48:04] INFO: 🧾 SQL Query: COMMIT
+[2025-08-29 20:48:04] INFO: 🧾 SQL Query: SELECT id, occupied, places FROM rooms WHERE id = $1
+[2025-08-29 20:48:04] INFO: 📤 Отправлено событие studentUpdated для 555555555555 в комнате A-221
+[2025-08-29 20:48:04] INFO: 📤 Отправлено событие globalUpdate
+[2025-08-29 20:48:04] INFO: 📤 Рассылаем обновление комнаты A-221: 7/7
+[2025-08-29 20:48:04] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:48:06] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:48:25] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:48:52] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:49:36] INFO: ✏️ update-fields: id=3470
+[2025-08-29 20:49:36] INFO: 🧾 SQL Query: BEGIN
+[2025-08-29 20:49:36] INFO: 🧾 SQL Query: UPDATE accommodation SET "rental_period" = $1, "payment" = $2, "left_date" = $3 WHERE student_id = $4
+[2025-08-29 20:49:36] INFO: 🧾 SQL Query: SELECT s.iin, s.fio, sel.room_id
+         FROM students s
+         LEFT JOIN selections sel ON sel.student_id = s.id
+        WHERE s.id = $1
+[2025-08-29 20:49:36] INFO: 🧾 SQL Query: COMMIT
+[2025-08-29 20:49:36] INFO: 🧾 SQL Query: SELECT id, occupied, places FROM rooms WHERE id = $1
+[2025-08-29 20:49:36] INFO: 📤 Отправлено событие studentUpdated для 555555555555 в комнате A-221
+[2025-08-29 20:49:36] INFO: 📤 Отправлено событие globalUpdate
+[2025-08-29 20:49:36] INFO: 📤 Рассылаем обновление комнаты A-221: 7/7
+[2025-08-29 20:49:36] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:50:29] INFO: ✏️ update-fields: id=3470
+[2025-08-29 20:50:29] INFO: 🧾 SQL Query: BEGIN
+[2025-08-29 20:50:29] INFO: 🧾 SQL Query: UPDATE accommodation SET "has_left" = $1, "left_date" = $2 WHERE student_id = $3
+[2025-08-29 20:50:29] INFO: 🧾 SQL Query: SELECT s.iin, s.fio, sel.room_id
+         FROM students s
+         LEFT JOIN selections sel ON sel.student_id = s.id
+        WHERE s.id = $1
+[2025-08-29 20:50:29] INFO: 🧾 SQL Query: COMMIT
+[2025-08-29 20:50:29] INFO: 🧾 SQL Query: SELECT id, occupied, places FROM rooms WHERE id = $1
+[2025-08-29 20:50:29] INFO: 📤 Отправлено событие studentUpdated для 555555555555 в комнате A-221
+[2025-08-29 20:50:29] INFO: 📤 Отправлено событие globalUpdate
+[2025-08-29 20:50:29] INFO: 📤 Рассылаем обновление комнаты A-221: 6/7
+[2025-08-29 20:50:29] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:54:39] INFO: ✏️ update-fields: id=3470
+[2025-08-29 20:54:39] INFO: 🧾 SQL Query: BEGIN
+[2025-08-29 20:54:39] INFO: 🧾 SQL Query: UPDATE accommodation SET "has_left" = $1, "left_date" = $2 WHERE student_id = $3
+[2025-08-29 20:54:39] INFO: 🧾 SQL Query: SELECT s.iin, s.fio, sel.room_id
+         FROM students s
+         LEFT JOIN selections sel ON sel.student_id = s.id
+        WHERE s.id = $1
+[2025-08-29 20:54:39] INFO: 🧾 SQL Query: COMMIT
+[2025-08-29 20:54:39] INFO: 🧾 SQL Query: SELECT id, occupied, places FROM rooms WHERE id = $1
+[2025-08-29 20:54:39] INFO: 📤 Отправлено событие studentUpdated для 555555555555 в комнате A-221
+[2025-08-29 20:54:39] INFO: 📤 Отправлено событие globalUpdate
+[2025-08-29 20:54:39] INFO: 📤 Рассылаем обновление комнаты A-221: 6/7
+[2025-08-29 20:54:39] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:54:43] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:56:33] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:57:40] INFO: 🧾 SQL Query: SELECT 1 FROM students WHERE iin = $1
+[2025-08-29 20:57:43] INFO: 🧾 SQL Query: SELECT 1 FROM students WHERE iin = $1
+[2025-08-29 20:57:43] INFO: ✏️ update-fields: id=3470
+[2025-08-29 20:57:43] INFO: 🧾 SQL Query: BEGIN
+[2025-08-29 20:57:43] INFO: 🧾 SQL Query: UPDATE students SET "gender" = $1, "iin" = $2, "relative_type" = $3, "fio" = $4 WHERE id = $5
+[2025-08-29 20:57:43] INFO: 🧾 SQL Query: UPDATE accommodation SET "left_date" = $1 WHERE student_id = $2
+[2025-08-29 20:57:43] INFO: 🧾 SQL Query: SELECT s.iin, s.fio, sel.room_id
+         FROM students s
+         LEFT JOIN selections sel ON sel.student_id = s.id
+        WHERE s.id = $1
+[2025-08-29 20:57:43] INFO: 🧾 SQL Query: COMMIT
+[2025-08-29 20:57:43] INFO: 🧾 SQL Query: SELECT id, occupied, places FROM rooms WHERE id = $1
+[2025-08-29 20:57:43] INFO: 📤 Отправлено событие studentUpdated для 565444444444 в комнате A-221
+[2025-08-29 20:57:43] INFO: 📤 Отправлено событие globalUpdate
+[2025-08-29 20:57:43] INFO: 📤 Рассылаем обновление комнаты A-221: 6/7
+[2025-08-29 20:57:43] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:57:54] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 20:58:27] INFO: ✏️ update-fields: id=3470
+[2025-08-29 20:58:27] INFO: 🧾 SQL Query: BEGIN
+[2025-08-29 20:58:27] INFO: 🧾 SQL Query: UPDATE accommodation SET "paid" = $1, "left_date" = $2 WHERE student_id = $3
+[2025-08-29 20:58:27] INFO: 🧾 SQL Query: SELECT s.iin, s.fio, sel.room_id
+         FROM students s
+         LEFT JOIN selections sel ON sel.student_id = s.id
+        WHERE s.id = $1
+[2025-08-29 20:58:27] INFO: 🧾 SQL Query: COMMIT
+[2025-08-29 20:58:27] INFO: 🧾 SQL Query: SELECT id, occupied, places FROM rooms WHERE id = $1
+[2025-08-29 20:58:27] INFO: 📤 Отправлено событие studentUpdated для 565444444444 в комнате A-221
+[2025-08-29 20:58:27] INFO: 📤 Отправлено событие globalUpdate
+[2025-08-29 20:58:27] INFO: 📤 Рассылаем обновление комнаты A-221: 6/7
+[2025-08-29 20:58:27] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-08-29 21:31:34] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 22:31:57] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-29 23:35:06] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-30 00:38:51] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-30 01:53:28] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-30 02:56:52] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-30 04:03:40] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-30 05:14:29] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-30 06:17:04] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-30 07:25:35] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-30 08:33:08] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-30 09:45:36] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-30 10:56:04] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-30 11:58:10] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-30 12:59:03] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-30 14:00:03] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-30 15:01:03] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-30 16:02:03] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-30 17:03:03] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-30 18:04:03] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-30 19:05:03] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-30 20:06:03] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-30 21:07:03] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-30 22:08:03] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-30 23:09:03] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-31 00:10:03] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-31 01:15:19] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-31 02:20:59] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-31 03:27:37] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-31 04:35:07] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-31 05:35:51] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-31 06:42:06] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-31 07:45:39] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-31 09:00:12] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-31 10:10:11] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-31 11:12:50] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-31 12:29:34] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-31 13:31:12] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-31 14:31:41] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-31 15:31:41] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-31 16:44:03] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-31 17:55:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-31 19:10:11] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-31 20:22:51] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-31 21:23:51] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-31 22:24:51] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-08-31 23:25:51] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-01 00:26:51] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-01 01:34:09] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-01 02:36:30] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-01 03:43:13] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-01 04:50:58] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-01 06:05:41] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-01 07:12:27] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-01 08:16:34] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-01 09:21:44] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-01 10:22:45] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-01 11:23:46] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-01 12:24:47] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-01 13:25:48] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-01 14:26:48] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-01 14:58:43] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-09-01 14:58:43] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-09-01 14:58:43] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-09-01 14:58:43] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-09-01 14:58:43] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-09-01 14:58:43] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-09-01 14:58:43] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-09-01 14:58:43] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-09-01 14:58:43] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-09-01 14:58:43] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-09-01 14:58:43] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-09-01 14:58:43] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-09-01 14:58:43] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-09-01 14:58:43] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-09-01 14:58:43] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-09-01 14:58:43] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-09-01 14:58:43] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-09-01 14:58:43] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-09-01 14:58:43] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-09-01 14:58:43] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-09-01 15:26:48] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-01 16:28:33] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-01 17:32:51] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-01 18:43:43] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-01 19:44:22] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-01 20:53:22] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-01 22:03:24] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-01 23:12:35] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 00:15:29] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 01:16:29] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 02:22:06] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 03:27:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 04:30:39] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 05:41:56] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 06:48:57] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 07:58:26] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 09:03:49] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 10:04:41] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 11:04:41] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 12:11:43] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 13:12:44] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 14:13:42] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 14:59:52] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-09-02 15:21:38] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 16:27:47] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 17:27:48] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 18:27:48] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 19:31:51] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 20:33:31] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 21:34:50] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 22:42:41] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-02 23:48:40] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 00:49:40] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 01:50:40] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 03:01:32] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 04:07:26] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 05:08:38] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 06:14:06] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 07:16:03] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 08:17:33] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 09:33:50] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 10:33:50] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 10:56:37] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-09-03 10:56:37] INFO: 👥 Осталось подключено: 0
+[2025-09-03 11:03:16] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 11:03:16] INFO: 🟢 WebSocket сервер запущен
+[2025-09-03 11:03:34] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-09-03 11:03:34] INFO: 👥 Всего подключено клиентов: 1
+[2025-09-03 11:03:34] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 11:03:34] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-09-03 11:03:34] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-09-03 11:03:34] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-09-03 11:03:34] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-09-03 11:03:34] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-09-03 11:03:48] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-09-03 11:38:01] INFO: 🔌 Новое WebSocket-подключение от 127.0.0.1
+[2025-09-03 11:38:01] INFO: 👥 Всего подключено клиентов: 2
+[2025-09-03 11:38:01] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 11:38:01] INFO: ⏰ Проверка истёкших арен: установка paid=true
+[2025-09-03 11:38:01] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    
+[2025-09-03 11:38:01] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-09-03 11:38:05] INFO: ❌ Клиент отключился: 127.0.0.1
+[2025-09-03 11:38:05] INFO: 👥 Осталось подключено: 1
+[2025-09-03 12:18:26] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 13:22:22] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 14:22:21] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 15:22:21] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 16:33:09] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 17:33:10] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 18:36:02] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 19:42:15] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 20:44:35] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 21:46:06] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 22:48:20] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-03 23:51:21] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-04 00:52:19] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-04 01:57:26] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-04 03:03:00] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-04 04:08:26] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-04 05:15:09] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-04 06:28:27] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-04 07:28:35] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-04 08:43:10] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-04 09:45:17] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-04 10:49:12] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-04 11:54:15] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-04 13:00:41] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-04 14:01:42] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-04 14:25:53] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-09-04 14:28:02] INFO: ✏️ update-fields: id=3470
+[2025-09-04 14:28:02] INFO: 🧾 SQL Query: BEGIN
+[2025-09-04 14:28:02] INFO: 🧾 SQL Query: UPDATE students SET "fio" = $1 WHERE id = $2
+[2025-09-04 14:28:02] INFO: 🧾 SQL Query: UPDATE documents SET "registration_city" = $1 WHERE student_id = $2
+[2025-09-04 14:28:02] INFO: 🧾 SQL Query: UPDATE accommodation SET "left_date" = $1 WHERE student_id = $2
+[2025-09-04 14:28:02] INFO: 🧾 SQL Query: SELECT s.iin, s.fio, sel.room_id
+         FROM students s
+         LEFT JOIN selections sel ON sel.student_id = s.id
+        WHERE s.id = $1
+[2025-09-04 14:28:02] INFO: 🧾 SQL Query: COMMIT
+[2025-09-04 14:28:02] INFO: 🧾 SQL Query: SELECT id, occupied, places FROM rooms WHERE id = $1
+[2025-09-04 14:28:02] INFO: 📤 Отправлено событие studentUpdated для 565444444444 в комнате A-221
+[2025-09-04 14:28:02] INFO: 📤 Отправлено событие globalUpdate
+[2025-09-04 14:28:02] INFO: 📤 Рассылаем обновление комнаты A-221: 6/7
+[2025-09-04 14:28:02] INFO: 🧾 SQL Query: 
+      SELECT 
+        s.*, s.card_number,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
+        sel.room_id
+      FROM students s
+      LEFT JOIN documents d ON s.id = d.student_id
+      LEFT JOIN accommodation a ON s.id = a.student_id
+      LEFT JOIN selections sel ON s.id = sel.student_id
+    
+[2025-09-04 14:36:26] INFO: 🧾 SQL Query: SELECT * FROM rooms
+[2025-09-04 14:36:26] INFO: 📦 Комнаты успешно получены (/api/rooms/all)
+[2025-09-04 15:01:42] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-04 16:01:42] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-04 17:01:42] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-04 18:04:10] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-04 19:06:31] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-04 20:06:40] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-04 21:23:16] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-04 22:24:53] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-04 23:37:04] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-05 00:42:56] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-05 01:50:09] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-05 02:57:17] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-05 03:57:50] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-05 05:07:57] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-05 06:15:24] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-05 07:16:08] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-05 08:21:06] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-05 09:21:06] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-05 10:35:12] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-05 11:35:57] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-05 12:46:08] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-05 13:51:42] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-05 14:51:42] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-05 15:51:42] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-05 16:52:05] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-05 17:52:05] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-05 18:57:57] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-05 20:05:55] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-05 21:09:44] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-05 22:10:44] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-05 23:11:44] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-06 00:12:44] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-06 01:13:44] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-06 02:20:33] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-06 03:21:22] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-06 04:26:02] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-06 05:36:53] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-06 06:43:42] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-06 07:54:26] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-06 08:56:47] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-06 10:09:14] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-06 11:10:13] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-06 12:11:13] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-06 13:12:13] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-06 14:13:13] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-06 15:14:13] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-06 16:15:13] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-06 17:16:13] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-06 18:17:13] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-06 19:18:13] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-06 20:19:13] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-06 21:20:13] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
+[2025-09-06 22:21:14] INFO: 🧾 SQL Query: 
+      UPDATE accommodation
+      SET has_left = true
+      WHERE left_date < CURRENT_DATE AND has_left = false
+    
