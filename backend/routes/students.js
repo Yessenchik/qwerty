@@ -38,8 +38,9 @@ router.get('/', async (req, res) => {
     const result = await db.query(`
       SELECT 
         s.*, s.card_number,
-        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability,
-        a.move_in_date, a.rental_period, a.payment, a.has_left, a.left_date,
+        d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability, d.contract_number,
+        d.email, d.registration_city, d.registration_address,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
         sel.room_id
       FROM students s
       LEFT JOIN documents d ON s.id = d.student_id
@@ -48,7 +49,9 @@ router.get('/', async (req, res) => {
     `);
     const studentsWithCyrillicBlock = result.rows.map(student => ({
       ...student,
-      block: convertBlockToCyrillic(student.block)
+      block: convertBlockToCyrillic(student.block),
+      contractNumber: student.contract_number,
+      cardNumber: student.card_number
     }));
     res.json(studentsWithCyrillicBlock);
   } catch (err) {
@@ -65,6 +68,7 @@ router.post('/', async (req, res) => {
     moveInDate,
     email, registration_city, registration_address,
     card_number,
+    contract_number,
   } = req.body;
 
   logger.info("📥 Получен запрос на добавление студента:");
@@ -83,16 +87,16 @@ router.post('/', async (req, res) => {
     await db.query(
       `INSERT INTO documents (
         student_id, document_number, document_issue_date, document_issuer, is_graduate, has_disability,
-        email, registration_city, registration_address
+        email, registration_city, registration_address, contract_number
       )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
       [studentId, document_number, document_issue_date, document_issuer, is_graduate, has_disability,
-       email, registration_city, registration_address]
+       email, registration_city, registration_address, contract_number]
     );
 
     await db.query(
-      `INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, added_by, has_left, left_date)
-       VALUES ($1, $2, $3, $4, 'system', false, $2::date + make_interval(months => $3 - 1))`,
+      `INSERT INTO accommodation (student_id, move_in_date, rental_period, payment, paid, added_by, has_left, left_date)
+       VALUES ($1, $2, $3, $4, false, 'system', false, ($2::date + make_interval(months => $3::int)))`,
       [studentId, moveInDate, rental_period, payment]
     );
 
@@ -107,8 +111,8 @@ router.post('/', async (req, res) => {
         s.fio, s.iin, s.gender, s.phone, s.university, s.relative_type, s.relative_phone,
         s.card_number,
         d.document_number, d.document_issue_date, d.document_issuer, d.is_graduate, d.has_disability,
-        d.email, d.registration_city, d.registration_address,
-        a.move_in_date, a.rental_period, a.payment, a.has_left, a.left_date,
+        d.email, d.registration_city, d.registration_address, d.contract_number,
+        a.move_in_date, a.rental_period, a.payment, a.paid, a.has_left, a.left_date,
         sel.room_id
       FROM students s
       LEFT JOIN documents d ON s.id = d.student_id
@@ -138,10 +142,12 @@ router.post('/', async (req, res) => {
       registrationCity: fullStudent.registration_city,
       registrationAddress: fullStudent.registration_address,
       payment: fullStudent.payment,
+      paid: fullStudent.paid,
       moveInDate: fullStudent.move_in_date,
       rentalPeriod: fullStudent.rental_period,
       left: fullStudent.has_left,
-      leftDate: fullStudent.left_date
+      leftDate: fullStudent.left_date,
+      contractNumber: fullStudent.contract_number
     };
 
     broadcastNewStudent(frontendStudent, normalizedRoomId);
@@ -203,7 +209,8 @@ router.patch('/leave/:iin', async (req, res) => {
       UPDATE accommodation
       SET has_left = true,
           left_date = CURRENT_DATE,
-          payment = $2
+          payment = $2,
+          paid = true
       WHERE student_id = (SELECT id FROM students WHERE iin = $1)
       RETURNING student_id
     `, [iin, payment]);
@@ -232,31 +239,71 @@ router.patch('/leave/:iin', async (req, res) => {
 
 // Обновление срока аренды
 router.post('/update-rental', async (req, res) => {
-  const { iin, room, rentalPeriod } = req.body;
-  logger.info(`✏️ Обновление срока аренды: ИИН = ${iin}, срок = ${rentalPeriod} мес.`);
-
+  // Ожидает: { iin, rentalPeriod }
   try {
-    const updateRes = await db.query(`
-      UPDATE accommodation
-      SET rental_period = $1,
-          left_date = move_in_date + make_interval(months => $1)
-      WHERE student_id = (SELECT id FROM students WHERE iin = $2)
-      RETURNING student_id
-    `, [rentalPeriod, iin]);
-
-    if (updateRes.rowCount === 0) {
-      return res.status(404).json({ success: false, error: "Студент не найден" });
+    const { iin, rentalPeriod } = req.body;
+    if (!iin || !rentalPeriod) {
+      return res.status(400).json({ success: false, error: 'iin and rentalPeriod are required' });
     }
 
-    const normalizedRoomId = normalizeRoomId(room);
-    broadcastRoomUpdate(normalizedRoomId);
-    broadcastGlobalUpdate();
-    broadcastStudentUpdated({ iin, rentalPeriod }, normalizedRoomId);
+    const months = parseInt(rentalPeriod, 10);
+    if (!Number.isInteger(months) || months <= 0) {
+      return res.status(400).json({ success: false, error: 'rentalPeriod must be a positive integer' });
+    }
 
-    res.json({ success: true });
+    // Логика:
+    // - rental_period := months
+    // - payment := months * 30000
+    // - left_date := если has_left=true, оставить как есть; иначе move_in_date + (months) месяцев (тот же день месяца)
+    const result = await db.query(
+      `UPDATE accommodation
+         SET rental_period = $1,
+             payment = ($1::int * 30000),
+             left_date = CASE
+                           WHEN has_left THEN left_date
+                           ELSE (move_in_date + make_interval(months => $1::int))
+                         END
+       WHERE student_id = (SELECT id FROM students WHERE iin = $2)
+       RETURNING student_id`,
+      [months, iin]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ success: false, error: 'student not found' });
+    }
+
+    // Получаем актуальные поля студента и комнату для рассылки по WS
+    const { rows: infoRows } = await db.query(
+      `SELECT s.iin, s.fio,
+              a.rental_period, a.payment, a.left_date, a.move_in_date,
+              sel.room_id
+       FROM students s
+       JOIN accommodation a ON a.student_id = s.id
+       LEFT JOIN selections sel ON sel.student_id = s.id
+       WHERE s.id = $1`,
+      [result.rows[0].student_id]
+    );
+
+    if (infoRows.length) {
+      const r = infoRows[0];
+      const normalizedRoomId = normalizeRoomId(r.room_id || '');
+      // Рассылаем обновления: комната, сам студент и глобальная статистика
+      broadcastRoomUpdate(normalizedRoomId);
+      broadcastStudentUpdated({
+        iin: r.iin,
+        fio: r.fio,
+        rentalPeriod: String(r.rental_period),
+        payment: Number(r.payment || 0),
+        leftDate: r.left_date,
+        moveInDate: r.move_in_date
+      }, normalizedRoomId);
+      broadcastGlobalUpdate();
+    }
+
+    return res.json({ success: true, student_id: result.rows[0].student_id });
   } catch (err) {
-    logger.error("❌ Ошибка при обновлении срока аренды: " + err.message);
-    res.status(500).json({ success: false, error: "Ошибка при обновлении срока аренды" });
+    console.error('update-rental error:', err);
+    return res.status(500).json({ success: false, error: 'internal_error' });
   }
 });
 
@@ -287,6 +334,238 @@ router.post('/update-card', async (req, res) => {
   } catch (err) {
     logger.error("❌ Ошибка при обновлении номера карточки: " + err.message);
     res.status(500).json({ success: false, error: "Ошибка при обновлении номера карточки" });
+  }
+});
+
+router.post('/mark-paid', async (req, res) => {
+  const { iin } = req.body;
+
+  logger.info(`💰 Обновление статуса оплаты: ИИН = ${iin}`);
+
+  try {
+    const updateRes = await db.query(`
+      UPDATE accommodation
+      SET paid = true
+      WHERE student_id = (SELECT id FROM students WHERE iin = $1)
+      RETURNING student_id
+    `, [iin]);
+
+    if (updateRes.rowCount === 0) {
+      return res.status(404).json({ success: false, error: "Студент не найден" });
+    }
+
+    const { rows } = await db.query(`SELECT room_id FROM selections WHERE student_id = $1`, [updateRes.rows[0].student_id]);
+    const roomId = rows[0]?.room_id || '';
+    const normalizedRoomId = normalizeRoomId(roomId);
+
+    broadcastRoomUpdate(normalizedRoomId);
+    broadcastStudentUpdated({ iin, paid: true }, normalizedRoomId);
+    broadcastGlobalUpdate();
+
+    res.json({ success: true });
+  } catch (err) {
+    logger.error("❌ Ошибка при обновлении оплаты: " + err.message);
+    res.status(500).json({ success: false, error: "Ошибка при обновлении оплаты" });
+  }
+});
+
+// Массовая установка paid=true по истёкшим срокам аренды
+router.post('/mark-expired-paid', async (req, res) => {
+  logger.info('⏰ Проверка истёкших арен: установка paid=true');
+
+  try {
+    const updateRes = await db.query(`
+      UPDATE accommodation
+      SET paid = true
+      WHERE paid = false AND ( (left_date IS NOT NULL AND left_date <= CURRENT_DATE) OR has_left = true )
+      RETURNING student_id
+    `);
+
+    const updatedIds = updateRes.rows.map(r => r.student_id);
+
+    for (const studentId of updatedIds) {
+      const { rows } = await db.query(`
+        SELECT s.iin, s.fio, sel.room_id
+        FROM students s
+        LEFT JOIN selections sel ON sel.student_id = s.id
+        WHERE s.id = $1
+      `, [studentId]);
+
+      const info = rows[0] || {};
+      const normalizedRoomId = normalizeRoomId(info.room_id || '');
+      broadcastRoomUpdate(normalizedRoomId);
+      broadcastStudentUpdated({ iin: info.iin, paid: true }, normalizedRoomId);
+    }
+
+    if (updatedIds.length > 0) {
+      broadcastGlobalUpdate();
+    }
+
+    res.json({ success: true, updatedCount: updatedIds.length });
+  } catch (err) {
+    logger.error('❌ Ошибка при массовом обновлении paid: ' + err.message);
+    res.status(500).json({ success: false, error: 'Ошибка при обновлении статуса оплаты' });
+  }
+});
+
+// Частичное обновление полей студента из модалки
+// POST /api/students/update-fields  -> { id: number, updates: { key: value, ... } }
+router.post('/update-fields', async (req, res) => {
+  const { id, updates } = req.body || {};
+  logger.info(`✏️ update-fields: id=${id}`);
+
+  if (!id || !updates || typeof updates !== 'object') {
+    return res.status(400).json({ error: 'id и updates обязательны' });
+  }
+
+  // Карта разрешённых ключей по таблицам
+  const STUDENTS = new Map([
+    ['fio', 'fio'],
+    ['iin', 'iin'],
+    ['gender', 'gender'],
+    ['phone', 'phone'],
+    ['university', 'university'],
+    ['relative', 'relative_type'], // фронт может прислать relative
+    ['relative_type', 'relative_type'],
+    ['relative_phone', 'relative_phone'],
+    ['cardNumber', 'card_number'], // фронт может прислать cardNumber
+    ['card_number', 'card_number'],
+  ]);
+
+  const DOCUMENTS = new Map([
+    ['document_number', 'document_number'],
+    ['document_issue_date', 'document_issue_date'],
+    ['document_issuer', 'document_issuer'],
+    ['is_graduate', 'is_graduate'],
+    ['has_disability', 'has_disability'],
+    ['email', 'email'],
+    ['registration_city', 'registration_city'],
+    ['registrationCity', 'registration_city'],
+    ['registration_address', 'registration_address'],
+    ['registrationAddress', 'registration_address'],
+    ['contract_number', 'contract_number'],
+    ['contractNumber', 'contract_number'],
+  ]);
+
+  const ACCOMMODATION = new Map([
+    ['move_in_date', 'move_in_date'],
+    ['moveInDate', 'move_in_date'],
+    ['rental_period', 'rental_period'],
+    ['rentalPeriod', 'rental_period'],
+    ['payment', 'payment'],
+    ['paid', 'paid'],
+    ['has_left', 'has_left'],
+    ['left', 'has_left'],
+    ['left_date', 'left_date'],
+    ['leftDate', 'left_date'],
+  ]);
+
+  const SELECTIONS = new Map([
+    ['room_id', 'room_id'],
+    ['room', 'room_id'],
+  ]);
+
+  // Нормализация значений
+  const normalize = (k, v) => {
+    if (k === 'paid' || k === 'has_left' || k === 'left') {
+      if (typeof v === 'string') {
+        const s = v.trim().toLowerCase();
+        return (s === 'true' || s === '1' || s === 'да' || s === 'yes');
+      }
+      return !!v;
+    }
+    if (k === 'rental_period' || k === 'rentalPeriod') {
+      const n = Number(String(v).replace(/\D+/g, ''));
+      return Number.isFinite(n) ? n : null;
+    }
+    if (k === 'payment') {
+      const num = Number(String(v).replace(/[\s\u00A0\u202F]/g, '').replace(',', '.'));
+      return Number.isFinite(num) ? num : null;
+    }
+    if (k === 'registration_city' || k === 'registrationCity') {
+      // приведение к виду "г.Астана" (без пробела)
+      let s = String(v || '').trim();
+      s = s.replace(/^(г\.?|город)\s*/i, '');
+      s = s.replace(/\s+/g, ' ').trim();
+      return s ? `г.${s}` : 'г.';
+    }
+    return v;
+  };
+
+  // Подготовка наборов по таблицам
+  const sSets = []; const sVals = [];
+  const dSets = []; const dVals = [];
+  const aSets = []; const aVals = [];
+  const selSets = []; const selVals = [];
+
+  for (const [k, v] of Object.entries(updates)) {
+    const nv = normalize(k, v);
+
+    if (STUDENTS.has(k)) { sSets.push(`"${STUDENTS.get(k)}" = $${sVals.length + 1}`); sVals.push(nv); continue; }
+    if (DOCUMENTS.has(k)) { dSets.push(`"${DOCUMENTS.get(k)}" = $${dVals.length + 1}`); dVals.push(nv); continue; }
+    if (ACCOMMODATION.has(k)) { aSets.push(`"${ACCOMMODATION.get(k)}" = $${aVals.length + 1}`); aVals.push(nv); continue; }
+    if (SELECTIONS.has(k)) { selSets.push(`"${SELECTIONS.get(k)}" = $${selVals.length + 1}`); selVals.push(nv); continue; }
+  }
+
+  if (!sSets.length && !dSets.length && !aSets.length && !selSets.length) {
+    return res.status(400).json({ error: 'Нет допустимых полей для обновления' });
+  }
+
+  try {
+    await db.query('BEGIN');
+
+    // STUDENTS
+    if (sSets.length) {
+      const sql = `UPDATE students SET ${sSets.join(', ')} WHERE id = $${sVals.length + 1}`;
+      await db.query(sql, [...sVals, id]);
+    }
+
+    // DOCUMENTS
+    if (dSets.length) {
+      const sql = `UPDATE documents SET ${dSets.join(', ')} WHERE student_id = $${dVals.length + 1}`;
+      await db.query(sql, [...dVals, id]);
+    }
+
+    // ACCOMMODATION
+    if (aSets.length) {
+      const sql = `UPDATE accommodation SET ${aSets.join(', ')} WHERE student_id = $${aVals.length + 1}`;
+      await db.query(sql, [...aVals, id]);
+    }
+
+    // SELECTIONS (если меняем комнату — обновим selected_at)
+    if (selSets.length) {
+      selSets.push('selected_at = CURRENT_TIMESTAMP');
+      const sql = `UPDATE selections SET ${selSets.join(', ')} WHERE student_id = $${selVals.length + 1}`;
+      await db.query(sql, [...selVals, id]);
+    }
+
+    // Получаем актуальную комнату и ключевые поля для WS
+    const { rows: infoRows } = await db.query(
+      `SELECT s.iin, s.fio, sel.room_id
+         FROM students s
+         LEFT JOIN selections sel ON sel.student_id = s.id
+        WHERE s.id = $1`,
+      [id]
+    );
+
+    await db.query('COMMIT');
+
+    const info = infoRows[0] || {};
+    const roomId = info.room_id || '';
+    const normalizedRoomId = normalizeRoomId(roomId);
+
+    // WS оповещения
+    if (normalizedRoomId) {
+      broadcastRoomUpdate(normalizedRoomId);
+      broadcastStudentUpdated({ iin: info.iin, fio: info.fio, ...updates }, normalizedRoomId);
+    }
+    broadcastGlobalUpdate();
+
+    return res.json({ success: true });
+  } catch (err) {
+    await db.query('ROLLBACK');
+    logger.error('❌ update-fields error: ' + err.message);
+    return res.status(500).json({ error: 'Ошибка при обновлении данных' });
   }
 });
 

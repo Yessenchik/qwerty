@@ -53,6 +53,9 @@
           <span class="close" id="closeDepartedModal">&times;</span>
         </div>
         <div class="modal-body">
+          <div style="margin-bottom: 10px;">
+            <input type="text" id="departedSearchInput" class="modal-search" placeholder="Поиск по ФИО или ИИН..." oninput="filterDepartedList(this.value)">
+          </div>
           <div id="departedContent"></div>
         </div>
       </div>
@@ -65,6 +68,7 @@
           <span class="close" id="closeNotificationsModal">&times;</span>
         </div>
         <div class="modal-body">
+          <input type="text" id="notificationsSearchInput" class="modal-search" placeholder="Поиск по ФИО или ИИН..." oninput="filterNotificationsTab(this.value)" style="margin-bottom: 10px;">
           <div class="tabs">
             <button id="expiredTab" class="tab-btn">Истекли</button>
             <button id="expiringTab" class="tab-btn">Истекают</button>
@@ -84,6 +88,9 @@
           <span class="close" id="closeTodayAddedModal">&times;</span>
         </div>
         <div class="modal-body">
+          <div style="margin-bottom: 10px;">
+            <input type="text" id="todaySearchInput" class="modal-search" placeholder="Поиск по ФИО или ИИН..." oninput="filterTodayAddedList(this.value)">
+          </div>
           <div id="todayAddedContent"></div>
         </div>
       </div>
@@ -156,7 +163,7 @@
   </body>
   <script>
     if (localStorage.getItem('auth') !== 'ok') {
-      window.location.href = 'login.html';
+      window.location.href = 'login.html?return=statistics.html';
     }
   </script>
   <script>
@@ -183,6 +190,26 @@
           todayAdded: false
         }
       };
+
+      // === Helpers to normalize truthy/falsey payment values from API/DB ===
+      function isPaid(value) {
+        if (value === true) return true;
+        if (typeof value === "number") return value === 1;
+        if (typeof value === "string") {
+          const s = value.trim().toLowerCase();
+          return s === "1" || s === "true" || s === "yes" || s === "y";
+        }
+        return false;
+      }
+
+      function normalizePaidEverywhere() {
+        for (const room in students) {
+          students[room] = (students[room] || []).map(s => ({
+            ...s,
+            paid: isPaid(s.paid)
+          }));
+        }
+      }
 
       function addMonths(date, months) {
         let d = new Date(date);
@@ -520,7 +547,11 @@ socket.addEventListener("message", function (event) {
               relativePhone: student.relativePhone || "",
               rentalPeriod: student.rentalPeriod || "",
               moveInDate: student.moveInDate || "",
-              date_added: now.toDateString()
+              date_added: now.toDateString(),
+              cardNumber: student.card_number,
+              contractNumber: student.contractNumber,
+              // normalize paid from DB (true/1/"1" -> true)
+              paid: isPaid(student.paid),
             };
 
             if (!students[roomId]) students[roomId] = [];
@@ -635,7 +666,10 @@ socket.addEventListener("message", function (event) {
                 students[room].splice(index, 1);
                 showToast(`Студент удалён: ИИН ${data.iin}`, "info");
                 // generateBlocks(); // ❌ Удалено: мешает раскрытым этажам
-                if (currentRoom === room) openDossierModal(room);
+                const dossierModalEl = document.getElementById("dossierModal");
+                if (dossierModalEl && dossierModalEl.style.display === "flex" && currentRoom === room) {
+                  openDossierModal(room);
+                }
               }
             }
           }
@@ -651,7 +685,10 @@ socket.addEventListener("message", function (event) {
             }
             showToast(`Студент обновлён: ${data.student.fio}`, "info");
             // generateBlocks(); // ❌ Удалено: мешает раскрытым этажам
-            if (currentRoom === room) openDossierModal(room);
+            const dossierModalEl2 = document.getElementById("dossierModal");
+            if (dossierModalEl2 && dossierModalEl2.style.display === "flex" && currentRoom === room) {
+              openDossierModal(room);
+            }
             updateGlobalStats();
           }
           // === Новый блок: обработка события leftStudent ===
@@ -667,7 +704,10 @@ socket.addEventListener("message", function (event) {
             }
             showToast(`🚪 Студент выбыл: ${data.student?.fio || "Неизвестный"} из комнаты ${data.roomId}`, "warning");
             // Можно добавить обновление комнаты, если нужно (например, updateSingleRoom)
-            if (currentRoom === roomId) openDossierModal(roomId);
+            const dossierModalEl3 = document.getElementById("dossierModal");
+            if (dossierModalEl3 && dossierModalEl3.style.display === "flex" && currentRoom === roomId) {
+              openDossierModal(roomId);
+            }
             updateGlobalStats();
           }
 
@@ -749,6 +789,9 @@ socket.addEventListener("message", function (event) {
         console.log("🔍 В модалке активные студенты:");
         (activeStudents || []).forEach(s => console.log("  →", s.fio));
 
+        // Debug log for cardNumber/card_number fields
+        console.log("🧪 Студенты для модалки (поля cardNumber/card_number):", activeStudents.map(s => ({ fio: s.fio, cardNumber: s.cardNumber, card_number: s.card_number })));
+
         state.currentRoom = room;
         const departedStudents = filtered !== null ? filtered.filter(s => s.left) : roomStudents.filter(s => s.left);
         // Сортировка выбывших студентов по дате заселения (от новых к старым)
@@ -780,7 +823,7 @@ socket.addEventListener("message", function (event) {
               highlight = 'style="background-color: #cce5ff;"';
             }
 
-            // Безопасная обработка moveInDate
+            // Безопасная обработка moveInDate (+1 день для отображения в модалке)
             const moveInDateObj = student.moveInDate ? new Date(student.moveInDate) : null;
             let moveInDateFormatted = "—";
             if (moveInDateObj && !isNaN(moveInDateObj)) {
@@ -794,10 +837,23 @@ socket.addEventListener("message", function (event) {
               temp.setDate(temp.getDate() + 1);
               moveOutDateFormatted = temp.toISOString().split("T")[0];
             } else if (student.moveInDate && !isNaN(new Date(student.moveInDate))) {
-              const temp = addMonths(new Date(student.moveInDate), parseInt(student.rentalPeriod));
-              temp.setDate(temp.getDate() + 1);
+              const base = new Date(student.moveInDate);
+              const temp = addMonths(base, parseInt(student.rentalPeriod) - 1);
               moveOutDateFormatted = temp.toISOString().split("T")[0];
             }
+
+            // Определяем статус оплаты для активных студентов (надёжная нормализация)
+            const paidBool = isPaid(student.paid);
+            const paymentStatusHtml = paidBool
+              ? `<p><strong>Статус оплаты:</strong>
+                <span style="color: green;">Оплачено</span>
+              </p>`
+              : `<p><strong>Статус оплаты:</strong>
+                <span style="color: red;">Не оплачено</span>
+              </p>`;
+
+            // Safely resolve card number from camelCase or snake_case
+            const cardNum = student.cardNumber ?? student.card_number ?? "—";
 
             dossierContent.innerHTML += `
               <div class="student-entry" ${highlight}>
@@ -808,19 +864,17 @@ socket.addEventListener("message", function (event) {
                 <p><strong>Родственник:</strong> ${student.relative}</p>
                 <p><strong>Телефон родственника:</strong> ${student.relativePhone}</p>
                 <p><strong>Сумма оплаты:</strong> ${Number(student.payment).toLocaleString("ru-RU")} ₸</p>
+                ${paymentStatusHtml}
                 <p><strong>Дата заселения:</strong> ${moveInDateFormatted}</p>
                 <p><strong>Срок аренды:</strong> ${student.rentalPeriod} мес.</p>
                 <p><strong>Окончание аренды:</strong> ${moveOutDateFormatted}</p>
                 <p><strong>Номер карточки:</strong>
-                  <span class="card-number-span">${student.cardNumber || "—"}</span>
+                  <span class="card-number-span">${cardNum}</span>
                   <button class="btn btn-sm btn-secondary" onclick="editCardNumber('${room}', '${student.iin}')">
-                    ${student.cardNumber ? "Редактировать" : "Добавить"}
+                    ${cardNum !== "—" ? "Редактировать" : "Добавить"}
                   </button>
                 </p>
                 <p><strong>Статус:</strong> Активен</p>
-                <button class="btn btn-danger" onclick="deleteStudent('${room}', '${student.iin}')">Удалить</button>
-                <button class="btn" onclick="markStudentLeft('${room}', '${student.iin}')">Отметить как выбывшего</button>
-                <button class="btn btn-warning" onclick="extendRentalPeriod('${room}', '${student.iin}')">Продлить аренду</button>
                 <button class="btn btn-sm btn-warning" onclick="generateContract('${room}', '${student.iin}')">Договор</button>
                 <hr>
               </div>
@@ -838,7 +892,7 @@ socket.addEventListener("message", function (event) {
             const plannedPayment = parseInt(student.rentalPeriod || "0") * 30 * 1000;
             const actualAmount = student.payment;
 
-            // Безопасная обработка moveInDate
+            // Безопасная обработка moveInDate (+1 день для отображения в модалке)
             const moveInDateObj = student.moveInDate ? new Date(student.moveInDate) : null;
             let moveInDateFormatted = "—";
             if (moveInDateObj && !isNaN(moveInDateObj)) {
@@ -849,17 +903,13 @@ socket.addEventListener("message", function (event) {
             let moveOutDateFormatted = "—";
             if (student.moveInDate && !isNaN(new Date(student.moveInDate)) && student.rentalPeriod) {
               const moveIn = new Date(student.moveInDate);
-              moveIn.setMonth(moveIn.getMonth() - 1); // на месяц назад
-              const moveOut = new Date(moveIn);
-              moveOut.setMonth(moveOut.getMonth() + parseInt(student.rentalPeriod));
-              moveOut.setDate(moveOut.getDate() + 1);
+              const moveOut = addMonths(moveIn, parseInt(student.rentalPeriod) - 1);
               moveOutDateFormatted = moveOut.toISOString().split("T")[0];
             }
             // Фактическая дата выбытия
             let leftDateFormatted = "—";
             if (student.leftDate && !isNaN(new Date(student.leftDate))) {
               const leftDateObj = new Date(student.leftDate);
-              leftDateObj.setDate(leftDateObj.getDate() + 1);
               leftDateFormatted = leftDateObj.toISOString().split("T")[0];
             }
 
@@ -878,6 +928,9 @@ socket.addEventListener("message", function (event) {
               }, 2500);
             }
 
+            // Определяем статус оплаты для выбывших (надёжная нормализация)
+            const paidBoolDeparted = isPaid(student.paid);
+
             studentDiv.innerHTML = `
               <p><strong>ФИО:</strong> ${student.fio}</p>
               <p><strong>ИИН:</strong> ${student.iin}</p>
@@ -889,6 +942,7 @@ socket.addEventListener("message", function (event) {
               <p><strong>Срок аренды:</strong> ${student.rentalPeriod} мес.</p>
               <p><strong>Плановая дата окончания аренды:</strong> ${moveOutDateFormatted}</p>
               <p><strong>Фактическая дата выбытия:</strong> ${leftDateFormatted}</p>
+              <p><strong>Статус оплаты:</strong> <span style="color: ${paidBoolDeparted ? 'green' : 'red'};">${paidBoolDeparted ? 'Оплачено' : 'Не оплачено'}</span></p>
               <p><strong>Статус:</strong> Выбывший</p>
               <button class="btn btn-danger" onclick="deleteStudent('${room}', '${student.iin}')">Удалить</button>
               <hr>
@@ -930,7 +984,10 @@ socket.addEventListener("message", function (event) {
           return;
         }
 
-        student.rentalPeriod = String(parseInt(student.rentalPeriod || "0") + extraMonths);
+        const newMonths = parseInt(student.rentalPeriod || "0") + extraMonths;
+        student.rentalPeriod = String(newMonths);
+        // Мгновенно обновим локальную сумму оплаты, чтобы UI отобразил верное значение
+        student.payment = newMonths * 30000;
 
         // Лог перед отправкой запроса
         console.log("📤 Подтверждение продления:", { room, iin, newPeriod: student.rentalPeriod });
@@ -989,59 +1046,121 @@ socket.addEventListener("message", function (event) {
         document.getElementById("addStudentModal").style.display = "flex";
       }
 
-      function deleteStudent(room, iin) {
-        if (confirm(`Удалить студента с ИИН ${iin} из комнаты ${room}?`)) {
-          // --- ДОБАВЛЕНО: удаление папки документов по ФИО ---
-          const student = students[room]?.find((s) => s.iin === iin);
-          const fullName = student?.fio?.trim() || (
-            `${student?.lastName || ""} ${student?.firstName || ""} ${student?.middleName || ""}`.trim()
-          );
-          console.log("📂 Удаление папки для:", fullName);
-          if (fullName) {
-            fetch("/api/upload/delete-folder", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ fullName })
-            }).then(res => {
-              if (!res.ok) {
-                console.warn("❌ Не удалось удалить папку с документами для:", fullName);
-              }
-            });
-          }
-          fetch(`/api/students/delete/${encodeURIComponent(iin)}`, {
-            method: "DELETE"
-          })
+      function deleteStudent(roomId, iin) {
+        if (!confirm(`Удалить студента с ИИН ${iin}?`)) return;
+
+        fetch(`/api/students/delete/${encodeURIComponent(iin)}`, {
+          method: "DELETE"
+        })
           .then(res => {
             if (res.ok) {
-              showToast("Студент удален!", "info");
-              if (students[room]) {
-                const index = students[room].findIndex((s) => s.iin === iin);
-                if (index !== -1) {
-                  students[room].splice(index, 1);
+              // 1) Обновляем локальное состояние
+              if (students[roomId]) {
+                const idx = students[roomId].findIndex(s => s.iin === iin);
+                if (idx !== -1) {
+                  students[roomId].splice(idx, 1);
                 }
               }
-              generateBlocks();
-              const searchQuery = document.getElementById("searchInput").value.trim().toLowerCase();
-              if (searchQuery) {
-                const filtered = (students[room] || []).filter(
-                  (s) =>
-                    s.fio.toLowerCase().includes(searchQuery) ||
-                    s.iin.toLowerCase().includes(searchQuery)
-                );
-                openDossierModal(room, filtered);
-              } else {
-                openDossierModal(room);
+
+              showToast("🗑️ Студент удалён", "info");
+
+              // 2) Если открыта модалка досье по этой комнате — перерисуем её
+              const dossierModalEl = document.getElementById("dossierModal");
+              if (dossierModalEl && dossierModalEl.style.display === "flex" && currentRoom === roomId) {
+                openDossierModal(roomId);
+              }
+
+              // 3) Обновим счётчик комнаты и глобальные статусы
+              const activeCount = (students[roomId] || []).filter(s => !s.left).length;
+              updateSingleRoom(roomId, {
+                places: roomCapacities[roomId] || 0,
+                occupied: activeCount
+              });
+              updateGlobalStats();
+
+              // 4) Если модалка уведомлений УЖЕ открыта — просто перерисуем её (но не открываем заново)
+              const notifModal = document.getElementById("notificationsModal");
+              if (notifModal && notifModal.style.display === "flex") {
+                openNotificationsModal();
               }
             } else {
-              showToast("Ошибка при удалении студента", "error");
+              showToast("❌ Ошибка при удалении", "error");
             }
           })
           .catch(err => {
-            console.error("❌ Ошибка удаления студента:", err);
-            showToast("Ошибка при удалении студента", "error");
+            console.error("Ошибка удаления:", err);
+            showToast("❌ Сетевая ошибка", "error");
           });
-        }
       }
+      // --- Дополнительные функции для работы со студентами ---
+
+      // --- Ингест данных студентов с бэкенда (нормализация полей и статусов) ---
+      // Ожидает массив вида [{ fio, iin, phone, university, payment, paid, has_left, left_date, move_in_date, rental_period, room_id, ... }]
+      function ingestStudentsFromApi(rawList) {
+        if (!Array.isArray(rawList)) return;
+        const byRoom = {};
+        rawList.forEach((x) => {
+          const room = normalizeRoomId(x.room_id || x.roomId || x.room || "");
+          if (!room) return;
+          const normalized = {
+            fio: x.fio || "",
+            iin: x.iin || "",
+            phone: x.phone || "",
+            university: x.university || "",
+            relative: x.relative_type || x.relative || "",
+            relativePhone: x.relative_phone || x.relativePhone || "",
+            payment: Number(x.payment || 0),
+            paid: isPaid(x.paid),
+            left: Boolean(x.has_left || x.left),
+            leftDate: x.left_date || x.leftDate || "",
+            moveInDate: x.move_in_date || x.moveInDate || "",
+            rentalPeriod: x.rental_period || x.rentalPeriod || "",
+            cardNumber: x.cardNumber ?? x.card_number ?? null,
+            contractNumber: x.contractNumber ?? x.contract_number ?? null,
+            room_number: x.room_id || x.room_number || "",
+          };
+          if (!byRoom[room]) byRoom[room] = [];
+          byRoom[room].push(normalized);
+        });
+        // Сливаем в глобальный объект students
+        for (const room in byRoom) {
+          if (!students[room]) students[room] = [];
+          // Заменяем список по комнате на свежие данные от API
+          students[room] = byRoom[room];
+        }
+        normalizePaidEverywhere();
+        updateGlobalStats();
+      }
+      function markStudentAsPaid(iin, roomId) {
+        fetch("/api/students/mark-paid", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ iin })
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              showToast("✅ Оплата подтверждена", "success");
+              // локально обновляем статус оплаты
+              const list = students[roomId] || [];
+              const st = list.find(s => s.iin === iin);
+              if (st) st.paid = true;
+              // если сейчас открыта модалка досье по этой комнате — перерисуем
+              if (document.getElementById("dossierModal").style.display === "flex" && currentRoom === roomId) {
+                openDossierModal(roomId);
+              }
+              openNotificationsModal(); // обновить модалку
+            } else {
+              showToast("❌ Ошибка при обновлении оплаты", "error");
+            }
+          })
+          .catch(err => {
+            console.error("Ошибка оплаты:", err);
+            showToast("❌ Сетевая ошибка", "error");
+          });
+      }
+
+      // (Удалён дублирующийся блок функции deleteStudent)
 
       function markStudentLeft(room, iin) {
         if (students[room]) {
@@ -1235,7 +1354,6 @@ socket.addEventListener("message", function (event) {
         expiringContent.innerHTML = '';
         const noCardContent = document.getElementById('noCardContent');
         if (noCardContent) noCardContent.innerHTML = '';
-
         const expired = [];
         const expiring = [];
 
@@ -1254,8 +1372,7 @@ socket.addEventListener("message", function (event) {
             let rent_end = null;
             const parsedDate = new Date(student.moveInDate);
             if (!isNaN(parsedDate) && student.rentalPeriod) {
-              rent_end = addMonths(parsedDate, parseInt(student.rentalPeriod));
-              rent_end.setDate(rent_end.getDate() + 1);
+              rent_end = addMonths(parsedDate, parseInt(student.rentalPeriod) - 1);
               rent_end.setHours(0, 0, 0, 0);
             }
             if (!rent_end || isNaN(rent_end)) return;
@@ -1277,12 +1394,10 @@ socket.addEventListener("message", function (event) {
             const rent_end_str = (() => {
               if (hasLeft && student.leftDate && !isNaN(new Date(student.leftDate))) {
                 const leftDateObj = new Date(student.leftDate);
-                leftDateObj.setDate(leftDateObj.getDate() + 1);
                 return leftDateObj.toISOString().split("T")[0];
               } else if (student.moveInDate && !isNaN(new Date(student.moveInDate)) && student.rentalPeriod) {
                 const moveIn = new Date(student.moveInDate);
-                const end = addMonths(moveIn, parseInt(student.rentalPeriod));
-                end.setDate(end.getDate() + 1);
+                const end = addMonths(moveIn, parseInt(student.rentalPeriod) - 1);
                 return end.toISOString().split("T")[0];
               }
               return "—";
@@ -1370,12 +1485,12 @@ socket.addEventListener("message", function (event) {
           expiringContent.innerHTML = '<p>Нет студентов с истекающим сроком аренды.</p>';
         }
 
-
         // --- Секция "Без карточки" ---
         const noCardStudents = [];
         Object.entries(students).forEach(([roomId, arr]) => {
           arr.forEach(student => {
-            if (!student.left && (!student.cardNumber || student.cardNumber === "—")) {
+            const cardNumLocal = student.cardNumber ?? student.card_number ?? "";
+            if (!student.left && (!cardNumLocal || cardNumLocal === "—")) {
               noCardStudents.push({
                 room: roomId,
                 full_name: student.fio || "",
@@ -1416,8 +1531,8 @@ socket.addEventListener("message", function (event) {
         // Табы
         const expiredTab = document.getElementById("expiredTab");
         const expiringTab = document.getElementById("expiringTab");
-        const cardTab = document.getElementById("cardTab");
         const noCardTab = document.getElementById("noCardTab");
+        // По умолчанию активная вкладка: expiredTab, остальные скрыты
         expiredTab.classList.add("active");
         expiringTab.classList.remove("active");
         if (noCardTab) noCardTab.classList.remove("active");
@@ -1535,25 +1650,38 @@ socket.addEventListener("message", function (event) {
       // --- Функция генерации договора ---
       function generateContract(room, iin) {
         fetch(`/contracts/${encodeURIComponent(iin)}`)
-          .then(response => {
-            if (response.ok) {
-              return response.blob();
-            } else {
+          .then(async (response) => {
+            if (!response.ok) {
               throw new Error("Файл не найден");
             }
-          })
-          .then(blob => {
+
+            // Считываем имя файла с бэка (RFC5987 filename*)
+            const dispo = response.headers.get("Content-Disposition") || "";
+            let fileName = `Договор ${iin}.docx`;
+            const starMatch = dispo.match(/filename\*=UTF-8''([^;\n]+)/i);
+            if (starMatch && starMatch[1]) {
+              try {
+                fileName = decodeURIComponent(starMatch[1]);
+              } catch (_) {}
+            } else {
+              const plainMatch = dispo.match(/filename="?([^";]+)"?/i);
+              if (plainMatch && plainMatch[1]) {
+                fileName = plainMatch[1];
+              }
+            }
+
+            const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = `Договор ${iin}.docx`;
+            a.download = fileName; // ← полное имя из папки «договоры студентов»
             document.body.appendChild(a);
             a.click();
             a.remove();
             window.URL.revokeObjectURL(url);
             showToast("📄 Договор загружен", "success");
           })
-          .catch(err => {
+          .catch((err) => {
             console.error("Ошибка при загрузке договора:", err);
             showToast("❌ Не удалось скачать договор", "error");
           });
@@ -1589,6 +1717,41 @@ socket.addEventListener("message", function (event) {
         if (event.target === notificationsModal) closeNotificationsModal();
         if (event.target === todayAddedModal) closeTodayAddedModal();
         if (event.target === accountingModal) closeAccountingModal();
+      });
+
+      // === Обновлять paid при загрузке страницы ===
+      function markExpiredPaidOnLoad() {
+        fetch('/api/students/mark-expired-paid', { method: 'POST' })
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.success) {
+              if (typeof showToast === 'function') {
+                showToast(`✅ Обновлено оплачено у ${data.updatedCount || 0} студентов`, 'success');
+              } else {
+                console.log('✅ mark-expired-paid success:', data);
+              }
+              // опционально: обновим уведомления/блоки, если модалки открыты
+              try { if (state?.modals?.notifications) openNotificationsModal(); } catch(e){}
+              try { updateGlobalStats(); } catch(e){}
+            } else {
+              if (typeof showToast === 'function') {
+                showToast('⚠️ Не удалось обновить статусы оплаты', 'error');
+              } else {
+                console.warn('mark-expired-paid response:', data);
+              }
+            }
+          })
+          .catch(err => {
+            if (typeof showToast === 'function') {
+              showToast('❌ Ошибка запроса mark-expired-paid', 'error');
+            }
+            console.error('mark-expired-paid error:', err);
+          });
+      }
+
+      // Вызывать функцию при каждой перезагрузке statistics.html
+      window.addEventListener('load', () => {
+        markExpiredPaidOnLoad();
       });
 function openAccountingModal() {
   const monthlyData = {};
@@ -1722,7 +1885,15 @@ function openAccountingModal() {
     const div = document.createElement("div");
     div.style.padding = "6px 0";
     div.style.borderBottom = "1px dashed #ddd";
-    div.innerHTML = `<strong>${year}: ${monthName}</strong> — ${Number(sum).toLocaleString("ru-RU")} ₸`;
+    // Новый код: считаем студентов для месяца (учитываем всех выбывших, даже если payment = 0)
+    const count = allStudents.filter(s => {
+      if (!s.moveInDate || !s.rentalPeriod) return false;
+      const moveIn = new Date(s.moveInDate);
+      const keyCheck = `${moveIn.getFullYear()}-${moveIn.getMonth()}`;
+      return keyCheck === key;
+    }).length;
+
+    div.innerHTML = `<strong>${year}: ${monthName}</strong> — ${Number(sum).toLocaleString("ru-RU")} ₸ <span style="color: #777;">(${count} студент${count === 1 ? "" : "а"})</span>`;
     income.appendChild(div);
   });
 
@@ -1778,6 +1949,26 @@ document.getElementById("closeAccountingModal").addEventListener("click", closeA
       }
 
       // --- Обновлённая функция updateBlockStats ---
+
+      // --- Функция фильтрации для архива выбывших ---
+      function filterDepartedList(query) {
+        const value = query.trim().toLowerCase();
+        const items = document.querySelectorAll("#departedContent > div");
+        items.forEach(item => {
+          const text = item.innerText.toLowerCase();
+          item.style.display = text.includes(value) ? "block" : "none";
+        });
+      }
+
+      // --- Функция фильтрации для "Сегодня добавили" ---
+      function filterTodayAddedList(query) {
+        const value = query.trim().toLowerCase();
+        const items = document.querySelectorAll("#todayAddedContent > div");
+        items.forEach(item => {
+          const text = item.innerText.toLowerCase();
+          item.style.display = text.includes(value) ? "block" : "none";
+        });
+      }
       function updateBlockStats(blockDiv) {
         if (!blockDiv) return;
         const statsEl = blockDiv.querySelector(".block-stats");
@@ -2262,7 +2453,7 @@ document.getElementById("exportExcelBtn").addEventListener("click", () => {
     <script>
     document.getElementById("logoutBtn").addEventListener("click", function () {
       localStorage.removeItem("auth");
-      window.location.href = "login.html";
+      window.location.href = "login.html?return=statistics.html";
     });
     function editCardNumber(room, iin) {
       const student = students[room]?.find(s => s.iin === iin);
@@ -2360,6 +2551,91 @@ document.getElementById("exportExcelBtn").addEventListener("click", () => {
         current = new Date(y, m + 1, 1);
       }
       return breakdown;
+    }
+  </script>
+  <script>
+    const paymentStatusTab = document.getElementById("paymentStatusTab");
+    const paymentStatusContent = document.getElementById("paymentStatusContent");
+
+    paymentStatusTab.onclick = () => {
+      // переключаем табы
+      document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+      document.querySelectorAll(".tab-content").forEach(el => el.style.display = "none");
+      paymentStatusTab.classList.add("active");
+      paymentStatusContent.style.display = "block";
+
+      // рендерим студентов
+      renderUnpaidStudents();
+    };
+
+    function renderUnpaidStudents() {
+      const container = document.getElementById("paymentStatusContent");
+      container.innerHTML = "";
+
+      // Собираем всех студентов из всех комнат
+      const allStudents = Object.entries(students).flatMap(([room, arr]) =>
+        arr.map(s => ({ ...s, room }))
+      );
+
+      // Оставляем только активных и не оплативших
+      const unpaid = allStudents.filter(s =>
+        !s.left && s.paid !== true
+      );
+
+      if (unpaid.length === 0) {
+        container.innerHTML = "<p>Нет студентов со статусом 'Не оплачено'.</p>";
+        return;
+      }
+
+      unpaid.forEach(s => {
+        const block = document.createElement("div");
+        block.className = "student-payment-entry";
+        block.style.padding = "10px";
+        block.style.borderBottom = "1px solid #ccc";
+
+        block.innerHTML = `
+          <strong>${s.fio}</strong> (${s.iin}) — комната ${s.room}<br>
+          <button class="btn btn-sm btn-success" onclick="markStudentPaid('${s.room}', '${s.iin}')">Оплачено</button>
+          <button class="btn btn-sm btn-danger" style="margin-left: 8px;" onclick="deleteStudent('${s.room}', '${s.iin}')">Удалить</button>
+        `;
+
+        container.appendChild(block);
+      });
+    }
+
+    function markStudentPaid(room, iin) {
+      fetch("/api/payment-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ iin, status: true })
+      }).then(res => res.json()).then(data => {
+        showToast("Студент отмечен как оплаченный", "success");
+        const student = students[room]?.find(s => s.iin === iin);
+        if (student) student.payment = 1;
+        renderUnpaidStudents();
+      });
+    }
+  </script>
+  <script>
+    function filterNotificationsTab(query) {
+      const value = query.trim().toLowerCase();
+
+      const tabContents = {
+        expiredContent: document.getElementById("expiredContent"),
+        expiringContent: document.getElementById("expiringContent"),
+        noCardContent: document.getElementById("noCardContent"),
+        paymentStatusContent: document.getElementById("paymentStatusContent")
+      };
+
+      for (const [id, container] of Object.entries(tabContents)) {
+        if (!container || container.style.display === "none") continue;
+
+        const items = Array.from(container.children);
+        items.forEach((item) => {
+          const text = item.innerText.toLowerCase();
+          item.style.display = text.includes(value) ? "block" : "none";
+        });
+      }
     }
   </script>
   </body>

@@ -1,4 +1,3 @@
-<!-- login.html -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -39,16 +38,72 @@
   <p id="error"></p>
 
   <script>
+  function resolveBackParam(back){
+    if (!back) return null;
+    // reject external urls
+    if (/^[a-z]+:\/\//i.test(back) || back.startsWith('//')) return null;
+    const b = back.trim().toLowerCase();
+    // common variants / typos
+    if (b.includes('statistics') || b.includes('statistcs')) return 'statistics.html';
+    if (b.includes('edit') || b.includes('edt')) return 'edit.html';
+    // strict allow-list
+    if (b === 'statistics.html') return 'statistics.html';
+    if (b === 'edit.html') return 'edit.html';
+    return null;
+  }
+
+  // Already logged in? Redirect away
+  (function(){
+    const hasToken = localStorage.getItem('token') === 'ok';
+    const hasAuth  = localStorage.getItem('auth') === 'ok';
+    const params = new URLSearchParams(location.search);
+    const resolved = resolveBackParam(params.get('return'));
+
+    if (!resolved) return; // show form
+
+    if (resolved === 'edit.html') {
+      if (hasToken) return location.replace('edit.html'); // only token allows edit
+      return; // do not fallback to statistics
+    }
+    if (resolved === 'statistics.html') {
+      if (hasAuth) return location.replace('statistics.html'); // only auth allows statistics
+      return; // do not fallback to edit
+    }
+  })();
+
   function checkPassword() {
-    const correctLogin = 'admin';
-    const correctPassword = '1234';
+    const USERS = { 'admin': '1234', 'admin2': '4444' };
 
     const loginInput = document.getElementById('login').value;
     const passwordInput = document.getElementById('password').value;
 
-    if (loginInput === correctLogin && passwordInput === correctPassword) {
-      localStorage.setItem('auth', 'ok');
-      window.location.href = 'st';
+    if (USERS[loginInput] && USERS[loginInput] === passwordInput) {
+      // mark delete restriction for admin/1234
+      if (loginInput === 'admin' && passwordInput === '1234') {
+        localStorage.setItem('deleteDisabled', '1');
+      } else {
+        localStorage.removeItem('deleteDisabled');
+      }
+      const params = new URLSearchParams(location.search);
+      const resolved = resolveBackParam(params.get('return'));
+
+      let dest = 'edit.html';
+      if (resolved === 'edit.html') {
+        // from edit.html → only token
+        localStorage.setItem('token', 'ok');
+        dest = 'edit.html';
+      } else if (resolved === 'statistics.html') {
+        // from statistics.html → only auth
+        localStorage.setItem('auth', 'ok');
+        dest = 'statistics.html';
+      } else {
+        // default behavior → only token
+        localStorage.setItem('token', 'ok');
+        dest = 'edit.html';
+      }
+
+      // always navigate to normalized destination (avoid typos)
+      location.href = dest;
     } else {
       document.getElementById('error').textContent = 'Неверный логин или пароль!';
     }

@@ -492,7 +492,9 @@
           </div>
           <div class="custom-options" id="optionsRentalPeriod">
             <div data-value="">Выберите срок</div>
+            <div data-value="2" value="2">2</div>
             <div data-value="3">3</div>
+            <div data-value="4">4</div>
             <div data-value="6">6</div>
             <div data-value="9">9</div>
             <div data-value="10">10</div>
@@ -504,7 +506,9 @@
             style="display: none"
           >
             <option value="">Выберите срок</option>
+            <option value="2">2</option>
             <option value="3">3</option>
+            <option data-value="4">4</option>
             <option value="6">6</option>
             <option value="9">9</option>
             <option value="10">10</option>
@@ -869,7 +873,7 @@
           if (iinExists) {
             console.log("❌ ИИН уже существует в базе:", currentIin);
             showError(iin, "Такой ИИН уже существует");
-            isValid = false;
+            return; // Stop further processing and do not submit form
           } else {
             console.log("✅ ИИН свободен:", currentIin);
           }

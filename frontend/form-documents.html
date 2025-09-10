@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
   <head>
@@ -58,28 +57,6 @@
         margin-bottom: 20px;
         font-size: 20px;
       }
-      input[type="file"] {
-        width: 100%;
-        padding: 10px 12px;
-        margin-top: 4px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        box-sizing: border-box;
-        font-family: "Segoe UI", sans-serif;
-        font-size: 14px;
-        height: auto;
-      }
-      .selfie-wrapper input[type="file"].field-error-input {
-        border-color: red !important;
-        box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2);
-      }
-      .selfie-wrapper.field-error-input {
-        border: 1px solid red !important;
-        border-radius: 6px;
-        padding: 10px;
-        box-sizing: border-box;
-      }
       .btn {
         font-family: "Segoe UI", sans-serif;
         font-size: 14px;
@@ -117,15 +94,6 @@
       }
       .arrow {
         font-weight: normal;
-      }
-      video,
-      canvas {
-        display: block;
-        margin: 10px auto;
-        max-width: 100%;
-      }
-      video {
-        transform: scaleX(-1);
       }
       .field-error {
         color: red;
@@ -204,33 +172,6 @@
         color: white;
       }
 
-#uploadOverlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(255, 255, 255, 0.85);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  font-size: 16px;
-  font-family: "Segoe UI", sans-serif;
-}
-.loader {
-  border: 6px solid #ccc;
-  border-top: 6px solid #004d99;
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  animation: spin 1s linear infinite;
-  margin-bottom: 12px;
-}
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
     </style>
     <link
       rel="stylesheet"
@@ -244,49 +185,24 @@
     <div class="form-wrapper">
       <h2>Загрузка документов студента</h2>
       <form id="documentForm" novalidate>
-        <label
-          >Удостоверение личности (фотография или скан-копия):
-          <input type="file" id="idCard" accept="image/*,application/pdf" />
-          <img
-            id="idCardPreview"
-            alt="Предпросмотр удостоверения"
-            style="display: none; max-height: 150px; margin-top: 10px"
-          />
-        </label>
 
-        <label
-          >Справка с места учёбы:
-          <input
-            type="file"
-            id="universityProof"
-            accept="image/*,application/pdf"
-          />
-          <img
-            id="universityProofPreview"
-            alt="Предпросмотр справки"
-            style="display: none; max-height: 150px; margin-top: 10px"
-          />
-        </label>
+        <!-- 🔽 Блок загрузки документов -->
+        <div style="margin-top: 10px">
+          <label for="idCard">Удостоверение личности (фото или PDF):</label>
+          <input type="file" id="idCard" name="idCard" accept=".pdf,image/*" required />
 
-        <label>
-          Снимок флюрографии:
-          <input type="file" id="fluorographyScan" accept="image/*,application/pdf" />
-          <img
-            id="fluorographyPreview"
-            alt="Предпросмотр флюорографии"
-            style="display: none; max-height: 150px; margin-top: 10px"
-          />
-        </label>
+          <label for="universityProof">Справка от университета (фото или PDF):</label>
+          <input type="file" id="universityProof" name="universityProof" accept=".pdf,image/*" required />
 
-        <label>
-          Снимок камеры (селфи):
-          <input type="file" id="selfieUpload" accept="image/*" />
-          <img
-            id="selfiePreview"
-            alt="Предпросмотр селфи"
-            style="display: none; max-height: 150px; margin-top: 10px"
-          />
-        </label>
+          <label for="fluorography">Снимок флюорографии (фото или PDF):</label>
+          <input type="file" id="fluorography" name="fluorography" accept=".pdf,image/*" required />
+
+          <label for="dormReferral">Направление в Общежитие (фото или PDF):</label>
+          <input type="file" id="dormReferral" name="dormReferral" accept=".pdf,image/*" required />
+
+          <label for="selfie">Снимок фото лица (селфи, только фото):</label>
+          <input type="file" id="selfie" name="selfie" accept="image/*" required />
+        </div>
 
         <div style="margin-top: 20px">
           <h2 style="text-align: center; margin-bottom: 20px; font-size: 20px">
@@ -380,34 +296,7 @@
 
     <script>
       const form = document.getElementById("documentForm");
-      function dataURLtoBlob(dataurl) {
-        const arr = dataurl.split(',');
-        const mime = arr[0].match(/:(.*?);/)[1];
-        const bstr = atob(arr[1]);
-        let n = bstr.length;
-        const u8arr = new Uint8Array(n);
-        while (n--) {
-          u8arr[n] = bstr.charCodeAt(n);
-        }
-        return new Blob([u8arr], { type: mime });
-      }
-      const idCardInput = document.getElementById("idCard");
-      const fluorographyInput = document.getElementById("fluorographyScan");
-      const fluorographyPreview = document.getElementById("fluorographyPreview");
-      const selfieInput = document.getElementById("selfieUpload");
-      const selfiePreview = document.getElementById("selfiePreview");
-      // Превью для fluorography
-      fluorographyInput.addEventListener("change", () => {
-        previewFile(fluorographyInput, fluorographyPreview);
-      });
-      selfieInput.addEventListener("change", () => {
-        previewFile(selfieInput, selfiePreview);
-      });
-      const universityProofInput = document.getElementById("universityProof");
-      const idCardPreview = document.getElementById("idCardPreview");
-      const universityProofPreview = document.getElementById(
-        "universityProofPreview"
-      );
+      // Нет загрузки файлов и превью, только текстовые поля
       const documentNumberInput = document.getElementById("documentNumber");
       // Автоматическая очистка от нецифровых символов
       documentNumberInput.addEventListener("input", () => {
@@ -423,68 +312,41 @@
       const backButton = document.getElementById("backButton");
       const nextButton = document.getElementById("nextButton");
 
+      // --- File inputs & upload endpoint ---
+      const idCardInput = document.getElementById("idCard");
+      const universityProofInput = document.getElementById("universityProof");
+      const fluorographyInput = document.getElementById("fluorography");
+      const dormReferralInput = document.getElementById("dormReferral");
+      const selfieInput = document.getElementById("selfie");
 
-      // Превью для idCard
-      idCardInput.addEventListener("change", () => {
-        previewFile(idCardInput, idCardPreview);
-      });
-
-      // Превью для universityProof
-      universityProofInput.addEventListener("change", () => {
-        previewFile(universityProofInput, universityProofPreview);
-      });
-
-      // Превью для selfieUpload (мобильное)
-      // (canvas больше не используется, превью не делаем)
-
-      function previewFile(inputElement, previewImg) {
-        if (inputElement.files && inputElement.files[0]) {
-          const file = inputElement.files[0];
-          if (file.type.startsWith("image/")) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-              previewImg.src = e.target.result;
-              previewImg.style.display = "block";
-            };
-            reader.readAsDataURL(file);
-          } else {
-            previewImg.src = "";
-            previewImg.style.display = "none";
-          }
-        } else {
-          previewImg.src = "";
-          previewImg.style.display = "none";
-        }
-      }
+      // Путь до эндпоинта загрузки на бэке (см. upload.js)
+      const UPLOAD_URL = "/api/upload";
 
 
-      // Сброс формы и очистка localStorage, preview, canvas и ошибок
+
+
+      // Сброс формы и очистка localStorage и ошибок (без превью файлов)
       resetButton.onclick = function () {
         form.reset();
         localStorage.removeItem("studentDocuments");
-        idCardPreview.src = "";
-        idCardPreview.style.display = "none";
-        universityProofPreview.src = "";
-        universityProofPreview.style.display = "none";
-        fluorographyPreview.src = "";
-        fluorographyPreview.style.display = "none";
         document.querySelectorAll(".field-error").forEach((e) => e.remove());
         document.querySelectorAll(".field-error-input").forEach((el) => {
           el.classList.remove("field-error-input");
           el.style.border = "";
         });
-        // Убрать выделения radio-кнопок и ошибки
         document
           .querySelectorAll(".gender-card")
           .forEach((card) => card.classList.remove("selected"));
         document
-          .querySelectorAll(".gender-selection + .field-error")
+          .querySelectorAll('.gender-selection + .field-error')
           .forEach((err) => err.remove());
-        // Сбросить выбор radio-кнопок
         document
           .querySelectorAll('input[type="radio"]')
           .forEach((r) => (r.checked = false));
-        // (end radio reset)
+        // очистим ошибки для файлов
+        [idCardInput, universityProofInput, fluorographyInput, dormReferralInput, selfieInput].forEach((el) => {
+          if (el) removeError(el);
+        });
       };
 
       // captureSelfie больше не используется
@@ -509,23 +371,6 @@
         });
       }
 
-      // Конвертация файла в base64
-      function fileToBase64(file) {
-        return new Promise((resolve) => {
-          if (!file) {
-            resolve(null);
-            return;
-          }
-          const reader = new FileReader();
-          reader.onload = function (e) {
-            resolve(e.target.result);
-          };
-          reader.onerror = function () {
-            resolve(null);
-          };
-          reader.readAsDataURL(file);
-        });
-      }
 
       // Сохранение только текстовых данных в localStorage
       function saveToLocalStorage(data) {
@@ -614,59 +459,12 @@
         });
       };
 
-      // Создаем контейнер для ошибки селфи (один раз)
-      let selfieErrorContainerEl = null;
-      function getSelfieErrorContainer() {
-        const selfieUpload = document.getElementById("selfieUpload");
-
-        if (selfieErrorContainerEl && selfieErrorContainerEl.parentNode)
-          return selfieErrorContainerEl;
-
-        selfieErrorContainerEl = document.createElement("div");
-        selfieErrorContainerEl.className = "selfie-error-container";
-
-        selfieUpload.insertAdjacentElement("afterend", selfieErrorContainerEl);
-
-        return selfieErrorContainerEl;
-      }
-
-      // --- Определяем selfieUpload только после всех innerHTML ---
-      const selfieUpload = document.getElementById("selfieUpload");
-
+      // Обработчик отправки формы — только текстовые поля, без загрузки файлов
       form.onsubmit = function (e) {
         e.preventDefault();
 
         let hasErrors = false;
 
-        removeError(documentNumberInput);
-        removeError(documentIssueDateInput);
-        removeError(documentIssuerInput);
-
-        // Remove previous errors for file inputs
-        removeError(idCardInput);
-        removeError(universityProofInput);
-
-        // Remove previous errors for radio groups
-        const isGraduateInput = document.querySelector(
-          'input[name="isGraduate"]:checked'
-        );
-        const hasDisabilityInput = document.querySelector(
-          'input[name="hasDisability"]:checked'
-        );
-
-        // Remove previous errors
-        document
-          .querySelectorAll('input[name="isGraduate"]')
-          .forEach((el) => removeError(el));
-        document
-          .querySelectorAll('input[name="hasDisability"]')
-          .forEach((el) => removeError(el));
-
-        // Удаляем ошибку селфи
-        const selfieErrorContainer = getSelfieErrorContainer();
-        removeError(selfieErrorContainer);
-
-        // Новая валидация для email, registrationCity, registrationAddress
         const emailInput = document.getElementById("email");
         const registrationCityInput = document.getElementById("registrationCity");
         const registrationAddressInput = document.getElementById("registrationAddress");
@@ -689,220 +487,158 @@
           hasErrors = true;
         }
 
-        // Validate document number (мягкая проверка: только цифры)
+        removeError(documentNumberInput);
+        removeError(documentIssueDateInput);
+        removeError(documentIssuerInput);
+
         if (!/^\d+$/.test(documentNumberInput.value.trim())) {
           showError(documentNumberInput, "Введите номер удостоверения");
           hasErrors = true;
         }
-        // Validate issue date (только на заполненность)
         if (!documentIssueDateInput.value.trim()) {
           showError(documentIssueDateInput, "Введите дату выдачи документа");
           hasErrors = true;
         }
-        // Validate issuer (только на заполненность)
         if (!documentIssuerInput.value.trim()) {
           showError(documentIssuerInput, "Введите, кем выдан документ");
           hasErrors = true;
         }
 
-        // --- LOG FILES BEFORE FILE VALIDATION ---
-        console.log("📄 Проверка файлов перед отправкой:");
-        console.log("🪪 Удостоверение личности:", idCardInput?.files?.[0]);
-        console.log("🏫 Справка с места учёбы:", universityProofInput?.files?.[0]);
-        console.log("🩻 Снимок флюрографии:", fluorographyInput?.files?.[0]);
-        console.log("📸 Селфи:", selfieUpload?.files?.[0]);
+        const isGraduateInput = document.querySelector('input[name="isGraduate"]:checked');
+        const hasDisabilityInput = document.querySelector('input[name="hasDisability"]:checked');
 
+        document
+          .querySelectorAll('input[name="isGraduate"]')
+          .forEach((el) => removeError(el));
+        document
+          .querySelectorAll('input[name="hasDisability"]')
+          .forEach((el) => removeError(el));
 
-        // Validate radio buttons
         if (!isGraduateInput) {
-          showError(
-            document.querySelector('input[name="isGraduate"]'),
-            "Выберите вариант для 'Магистрант'"
-          );
+          showError(document.querySelector('input[name="isGraduate"]'), "Выберите вариант для 'Магистрант'");
           hasErrors = true;
         }
         if (!hasDisabilityInput) {
-          showError(
-            document.querySelector('input[name="hasDisability"]'),
-            "Выберите вариант для 'Инвалидность'"
-          );
+          showError(document.querySelector('input[name="hasDisability"]'), "Выберите вариант для 'Инвалидность'");
           hasErrors = true;
         }
 
-        // --- ДОБАВЛЕНА ВАЛИДАЦИЯ ФАЙЛОВ ---
-        // 1. fluorographyInput
-        if (!fluorographyInput.files.length) {
-          showError(fluorographyInput, "Загрузите снимок флюорографии");
-          hasErrors = true;
-        }
-        // 2. selfieUpload (селфи)
-        if (!selfieUpload.files.length) {
-          showError(getSelfieErrorContainer(), "Загрузите селфи");
-          hasErrors = true;
-        }
-        // 3. idCardInput
-        if (!idCardInput.files.length) {
-          showError(idCardInput, "Загрузите удостоверение личности");
-          hasErrors = true;
-        }
-        // 4. universityProofInput
-        if (!universityProofInput.files.length) {
-          showError(universityProofInput, "Загрузите справку с места учёбы");
+        // Валидация файлов
+        removeError(idCardInput);
+        removeError(universityProofInput);
+        removeError(fluorographyInput);
+        removeError(dormReferralInput);
+        removeError(selfieInput);
+
+        const filesMissing = [];
+        if (!idCardInput.files[0]) { showError(idCardInput, "Загрузите удостоверение личности"); hasErrors = true; filesMissing.push("idCard"); }
+        if (!universityProofInput.files[0]) { showError(universityProofInput, "Загрузите справку от университета"); hasErrors = true; filesMissing.push("universityProof"); }
+        if (!fluorographyInput.files[0]) { showError(fluorographyInput, "Загрузите снимок флюорографии"); hasErrors = true; filesMissing.push("fluorography"); }
+        if (!dormReferralInput.files[0]) { showError(dormReferralInput, "Загрузите направление от университета"); hasErrors = true; filesMissing.push("dormReferral"); }
+        if (!selfieInput.files[0]) { showError(selfieInput, "Загрузите селфи"); hasErrors = true; filesMissing.push("selfie"); }
+        // селфи только фото
+        if (selfieInput.files[0] && !selfieInput.files[0].type.startsWith("image/")) {
+          showError(selfieInput, "Селфи должно быть только фото (JPEG/PNG и т.п.)");
           hasErrors = true;
         }
 
         if (hasErrors) {
           showToast("Пожалуйста, исправьте ошибки в форме");
           return;
-        } else {
-          // если ошибок нет — сохранить в localStorage
-          const documentData = {
-            email: emailInput.value.trim(),
-            registrationCity: registrationCityInput.value.trim(),
-            registrationAddress: registrationAddressInput.value.trim(),
-            documentNumber: documentNumberInput.value.trim(),
-            documentIssueDate: documentIssueDateInput.value.trim(),
-            documentIssuer: documentIssuerInput.value.trim(),
-            isGraduate: isGraduateInput?.value || "",
-            hasDisability: hasDisabilityInput?.value || ""
-          };
-          // Гарантируем сохранение registrationCity и registrationAddress
-          saveToLocalStorage({
-            ...documentData,
-            registrationCity: registrationCityInput.value.trim(),
-            registrationAddress: registrationAddressInput.value.trim()
-          });
         }
 
-        // Проверка данных со страницы form-personal.html
+        // Теперь отправляем файлы и данные на бэк через UPLOAD_URL и только после успешной загрузки идём далее.
+        // 1) Сохраняем минимальные данные (как раньше)
+        const documentData = {
+          email: emailInput.value.trim(),
+          registrationCity: registrationCityInput.value.trim(),
+          registrationAddress: registrationAddressInput.value.trim(),
+          documentNumber: documentNumberInput.value.trim(),
+          documentIssueDate: documentIssueDateInput.value.trim(),
+          documentIssuer: documentIssuerInput.value.trim(),
+          isGraduate: isGraduateInput?.value || "",
+          hasDisability: hasDisabilityInput?.value || ""
+        };
+        saveToLocalStorage(documentData);
+
+        // 2) Достаём личные данные (ФИО и др.) из localStorage
         const personalDataRaw = localStorage.getItem("studentFormData");
-        console.log("Raw data:", personalDataRaw);
         if (!personalDataRaw) {
-          alert(
-            "Личные данные не найдены. Пожалуйста, заполните предыдущую форму."
-          );
+          alert("Личные данные не найдены. Пожалуйста, заполните предыдущую форму.");
           window.location.href = "form-personal.html";
           return;
         }
-
         let personalData;
         try {
           personalData = JSON.parse(personalDataRaw);
-          console.log("Parsed data:", personalData);
         } catch (e) {
           alert("Ошибка чтения личных данных. Повторите ввод.");
           window.location.href = "form-personal.html";
           return;
         }
-
-        if (
-          !personalData.firstName ||
-          !personalData.lastName ||
-          !personalData.phone ||
-          personalData.firstName.trim() === "" ||
-          personalData.lastName.trim() === "" ||
-          personalData.phone.trim() === ""
-        ) {
-          alert(
-            "Личные данные заполнены некорректно. Вернитесь и проверьте информацию."
-          );
+        if (!personalData.firstName || !personalData.lastName || !personalData.phone ||
+            personalData.firstName.trim() === "" || personalData.lastName.trim() === "" || personalData.phone.trim() === "") {
+          alert("Личные данные заполнены некорректно. Вернитесь и проверьте информацию.");
           window.location.href = "form-personal.html";
           return;
         }
 
-        // --- Overlay show and disable nextButton ---
-        document.getElementById("uploadOverlay").style.display = "flex";
+        // 3) Собираем FormData для отправки на бэк
+        const formData = new FormData();
+        // ФИО и поля бэку (см. upload.js)
+        formData.append("firstName", personalData.firstName || "");
+        formData.append("lastName", personalData.lastName || "");
+        formData.append("middleName", personalData.middleName || "");
+        formData.append("iin", personalData.iin || "");
+        formData.append("phone", personalData.phone || "");
+        formData.append("email", documentData.email || "");
+        formData.append("university", personalData.university || "");
+        formData.append("room", personalData.room || "");
+        formData.append("block", personalData.block || "");
+        formData.append("registrationAddress", documentData.registrationAddress || "");
+        // дополнительные текстовые поля
+        formData.append("documentNumber", documentData.documentNumber || "");
+        formData.append("documentIssueDate", documentData.documentIssueDate || "");
+        formData.append("documentIssuer", documentData.documentIssuer || "");
+        formData.append("hasDisability", documentData.hasDisability || "");
+        formData.append("isGraduate", documentData.isGraduate || "");
+
+        // 4) Прикрепляем файлы с правильными именами полей
+        formData.append("idCard", idCardInput.files[0]);
+        formData.append("universityProof", universityProofInput.files[0]);
+        formData.append("fluorography", fluorographyInput.files[0]);
+        formData.append("dormReferral", dormReferralInput.files[0]);
+        formData.append("selfie", selfieInput.files[0]); // только image/*
+
+        // Если есть дата заселения, добавим как query (?moveInDate=...)
+        const moveInDate = personalData.moveInDate || personalData.settlementDate || "";
+        const uploadUrl = moveInDate ? `${UPLOAD_URL}?moveInDate=${encodeURIComponent(moveInDate)}` : UPLOAD_URL;
+
+        // 5) Отправляем на бэк и ждём ответ
         nextButton.disabled = true;
-
-        collectFormData().then((documentData) => {
-          // Проверка на пустое имя/фамилию
-          if (!personalData.firstName || !personalData.lastName) {
-            alert("❌ Имя и фамилия не найдены. Заполните форму с личными данными.");
-            return;
-          }
-          // Проверка на пустые файлы
-          if (
-            !idCardInput.files[0] ||
-            !universityProofInput.files[0] ||
-            !fluorographyInput.files[0] ||
-            !selfieUpload.files[0]
-          ) {
-            alert("❌ Один или несколько файлов отсутствуют. Загрузите все 4 документа.");
-            return;
-          }
-          const formData = new FormData();
-          // Добавляем ФИО из personalData
-          formData.append("firstName", personalData.firstName);
-          formData.append("lastName", personalData.lastName);
-          formData.append("middleName", personalData.middleName || "");
-          formData.append("idCard", idCardInput.files[0]);
-          formData.append("universityProof", universityProofInput.files[0]);
-          formData.append("fluorography", fluorographyInput.files[0]);
-          // Формируем selfieBlob и добавляем в formData
-          if (selfieUpload.files.length) {
-            const selfieFile = selfieUpload.files[0];
-            console.log("📤 SELFIE FILE:", selfieFile);
-            console.log("📤 SELFIE name:", selfieFile.name);
-            console.log("📤 SELFIE size:", selfieFile.size);
-            console.log("📤 SELFIE type:", selfieFile.type);
-            formData.append("selfie", selfieFile);
-            showToast("✅ Селфи выбрано: " + selfieFile.name);
-          } else {
-            console.warn("❌ Селфи не выбрано или не читается");
-            alert("❌ Селфи не выбрано или не читается — проверьте файл на телефоне.");
-          }
-
-          formData.append("documentNumber", documentNumberInput.value.trim());
-          formData.append("documentIssueDate", documentIssueDateInput.value.trim());
-          formData.append("documentIssuer", documentIssuerInput.value.trim());
-          formData.append("isGraduate", isGraduateInput.value);
-          formData.append("hasDisability", hasDisabilityInput.value);
-
-          // --- Добавляем поля из form-personal.html и form-documents.html ---
-          formData.append("iin", personalData.iin || "");
-          formData.append("phone", personalData.phone || "");
-          formData.append("email", documentData.email || "");
-          formData.append("university", personalData.university || "");
-          formData.append("registrationAddress", documentData.registrationAddress || "");
-          formData.append("room", personalData.room || "");
-          formData.append("block", personalData.block || "");
-
-          // Отправка на сервер
-          console.log("📤 Отправляем данные на сервер...");
-          const baseURL = location.origin;
-          console.log("🌐 fetch URL:", baseURL + "/api/upload");
-          fetch(baseURL + "/api/upload", {
-            method: "POST",
-            body: formData,
+        nextButton.querySelector(".btn-label").textContent = "Загрузка...";
+        fetch(uploadUrl, {
+          method: "POST",
+          body: formData
+        })
+          .then(async (res) => {
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok || data.success === false) {
+              const msg = data.message || "Ошибка загрузки документов";
+              throw new Error(msg);
+            }
+            showToast("Документы успешно загружены");
+            // переходим дальше только при успехе
+            window.location.href = "pick-room.html";
           })
-            .then((response) => {
-              document.getElementById("uploadOverlay").style.display = "none";
-              nextButton.disabled = false;
-              if (!response.ok) throw new Error("Ошибка при загрузке");
-              return response.json();
-            })
-            .then((data) => {
-              document.getElementById("uploadOverlay").style.display = "none";
-              nextButton.disabled = false;
-              if (data.success) {
-                showToast("Документы успешно загружены");
-                window.location.href = "pick-room.html";
-              } else {
-                showToast(data.message || "Ошибка: документы не были загружены полностью");
-              }
-            })
-            .catch(async (error) => {
-              document.getElementById("uploadOverlay").style.display = "none";
-              nextButton.disabled = false;
-              console.error("❌ Ошибка загрузки:", error);
-              if (error.response) {
-                const errorText = await error.response.text();
-                console.error("📄 Ответ сервера:", errorText);
-              }
-              alert("❌ Ошибка загрузки: " + error.message);
-              showToast("Ошибка загрузки: " + error.message);
-            });
-        });
+          .catch((err) => {
+            console.error(err);
+            showToast(err.message || "Не удалось загрузить документы");
+          })
+          .finally(() => {
+            nextButton.disabled = false;
+            nextButton.querySelector(".btn-label").textContent = "Далее";
+          });
       };
 
       // Всплывающее уведомление
@@ -922,29 +658,14 @@
       function showError(el, message) {
         removeError(el);
         const error = document.createElement("div");
-        // Если это контейнер для селфи-ошибки, просто append, но только если нет уже field-error
-        if (
-          el.classList && el.classList.contains("selfie-error-container") &&
-          el.querySelector(".field-error")
-        ) return;
-        if (el.classList && el.classList.contains("selfie-error-container")) {
-          error.className = "field-error";
-          error.innerHTML = "<b>" + message + "</b>";
-          el.appendChild(error);
-          const selfieInput = document.getElementById("selfieUpload");
-          selfieInput.classList.add("field-error-input");
-          // Удаляем добавление класса на родителя, чтобы не было двойной рамки
-          //selfieInput.parentElement?.classList.add("field-error-input");
-          selfieInput.style.border = "";
-        } else if (el.type === "radio") {
+        if (el.type === "radio") {
           const group = document.querySelectorAll(`input[name="${el.name}"]`);
           const groupWrapper = group[0].closest(".gender-selection");
           group.forEach((input) => {
             input.classList.add("field-error-input");
-            // Удаляем прямое добавление border, только класс
             if (input.parentElement) {
               input.parentElement.classList.add("field-error-input");
-              input.parentElement.style.border = ""; // remove direct style
+              input.parentElement.style.border = "";
             }
           });
           if (
@@ -957,37 +678,16 @@
             groupWrapper.insertAdjacentElement("afterend", error);
           }
         } else {
-          if (el.type === "file") {
-            error.className = "field-error";
-            error.innerHTML = "<b>" + message + "</b>";
-            const parentLabel = el.closest("label");
-            if (parentLabel && !parentLabel.querySelector(".field-error")) {
-              parentLabel.insertAdjacentElement("beforeend", error);
-            } else if (!parentLabel) {
-              el.insertAdjacentElement("afterend", error);
-            }
-          } else {
-            error.className = "field-error";
-            error.textContent = message;
-            el.insertAdjacentElement("afterend", error);
-          }
+          error.className = "field-error";
+          error.textContent = message;
+          el.insertAdjacentElement("afterend", error);
           el.classList.add("field-error-input");
-          el.style.border = ""; // remove direct style
+          el.style.border = "";
         }
       }
 
       function removeError(el) {
-        // Если это контейнер для селфи-ошибки, удаляем все field-error внутри
-        if (el.classList && el.classList.contains("selfie-error-container")) {
-          Array.from(el.querySelectorAll(".field-error")).forEach((e) =>
-            e.remove()
-          );
-          const selfieInput = document.getElementById("selfieUpload");
-          selfieInput.classList.remove("field-error-input");
-          selfieInput.parentElement?.classList.remove("field-error-input");
-          selfieInput.parentElement?.classList.remove("field-error-input");
-          selfieInput.style.border = "";
-        } else if (el.type === "radio") {
+        if (el.type === "radio") {
           const group = document.querySelectorAll(`input[name="${el.name}"]`);
           group.forEach((input) => {
             input.classList.remove("field-error-input");
@@ -1068,9 +768,5 @@
       //   localStorage.setItem("selectedRoom", JSON.stringify(room));
       // });
     </script>
-    <div id="uploadOverlay" style="display: none;">
-      <div class="loader"></div>
-      <div class="message">Загрузка документов...</div>
-    </div>
   </body>
 </html>
