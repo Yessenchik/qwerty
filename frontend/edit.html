@@ -195,7 +195,7 @@ header h1 { text-align:center; color:#0a66c2; font-weight:700; font-size:28px; m
   <script>
     // Проверка авторизации (как в statistics.html)
     if (localStorage.getItem('token') !== 'ok') {
-      window.location.href = 'login.html';
+      window.location.href = 'login.html?return=edit.html';
     }
     // Используем единый префикс для бэкенда (если роутер смонтирован как app.use('/api/students', ...))
     const API_PREFIX = '/api'; // поменяй на '' если без префикса
@@ -218,14 +218,46 @@ header h1 { text-align:center; color:#0a66c2; font-weight:700; font-size:28px; m
     const btnMarkLeft = document.getElementById('btnMarkLeft');
     const btnMarkPaid = document.getElementById('btnMarkPaid');
 
+    // Disable delete for admin/1234 logins
+    const DELETE_DISABLED = localStorage.getItem('deleteDisabled') === '1';
+    if (DELETE_DISABLED && btnDeleteStudent) {
+      btnDeleteStudent.disabled = true;
+      btnDeleteStudent.title = 'Удаление недоступно для вашей роли';
+    }
+
+    // Read-only mode for admin/1234: block ALL edits and actions in modal
+    const READONLY = localStorage.getItem('deleteDisabled') === '1';
+    if (READONLY) {
+      // disable action buttons in the footer
+      const roButtons = [btnMarkLeft, btnMarkPaid, document.getElementById('btnSaveAll')];
+      roButtons.forEach(btn => {
+        if (btn) {
+          btn.disabled = true;
+          btn.title = 'Редактирование недоступно для вашей роли';
+        }
+      });
+      // prevent any inline edits inside the dialog (capture before other listeners)
+      dialogGrid.addEventListener('click', (e) => {
+        const kv = e.target.closest('.kv');
+        if (kv) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          // optional: brief visual feedback
+          // console.debug('[readonly] edit attempt blocked');
+        }
+      }, true);
+    }
+
     const btnSaveAll = document.getElementById('btnSaveAll');
     // === Auth: logout logic ===
     document.getElementById("logoutBtn").addEventListener("click", function () {
       localStorage.removeItem("token");
-      window.location.href = "login.html";
+      localStorage.removeItem('deleteDisabled');
+      window.location.href = "login.html?return=edit.html";
     });
 
     btnMarkPaid.addEventListener('click', async ()=>{
+      if (localStorage.getItem('deleteDisabled') === '1') { alert('Редактирование недоступно для вашей роли'); return; }
       if(!currentStudent) return;
       const iin = currentStudent.iin;
       if(!iin) return alert('Неизвестен ИИН студента');
@@ -245,6 +277,7 @@ header h1 { text-align:center; color:#0a66c2; font-weight:700; font-size:28px; m
     });
 
 btnMarkLeft.addEventListener('click', async ()=>{
+  if (localStorage.getItem('deleteDisabled') === '1') { alert('Редактирование недоступно для вашей роли'); return; }
   if(!currentStudent) return;
   const iin = currentStudent.iin;
   if(!iin) return alert('Неизвестен ИИН студента');
@@ -1585,6 +1618,7 @@ let cache = { students: [], loaded: false };
 
 
     btnSaveAll?.addEventListener('click', async ()=>{
+      if (localStorage.getItem('deleteDisabled') === '1') { alert('Редактирование недоступно для вашей роли'); return; }
       if(!currentStudent) return;
       // Принудительно завершим активные инлайн-редактирования, чтобы сработали их валидации
       document.querySelectorAll('.kv .kv__value .inline-input').forEach(el => el.blur());
